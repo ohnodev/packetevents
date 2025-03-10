@@ -66,10 +66,16 @@ public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
             }
 
             PacketEventsImplHelper.handleServerBoundPacket(ctx.channel(), user, player, input, !preViaVersion);
-
             out.add(ByteBufHelper.retain(input));
         } catch (Throwable e) {
-            throw new PacketProcessException(e);
+            // We must be sure all the exceptions caused by our handlers are PacketProcessExceptions
+            // In the case we have thrown an exception that is not a PacketProcessException, let's wrap it in order to
+            // allow exceptionCaught to handle it properly
+            if (ExceptionUtil.isException(e, PacketProcessException.class)) {
+                throw e;
+            } else {
+                throw new PacketProcessException(e);
+            }
         }
     }
 
@@ -82,18 +88,27 @@ public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        // If we didn't cause the exception, let the server handle it.
         if (!ExceptionUtil.isException(cause, PacketProcessException.class)) {
             super.exceptionCaught(ctx, cause);
             return;
         }
 
-        if (!SpigotReflectionUtil.isMinecraftServerInstanceDebugging()) {
-            if (user != null && user.getDecoderState() != ConnectionState.HANDSHAKING) {
-                if (PacketEvents.getAPI().getSettings().isFullStackTraceEnabled()) {
-                    PacketEvents.getAPI().getLogger().log(Level.WARNING, cause, () -> "An error occurred while processing a packet from " + user.getProfile().getName() + " (preVia: " + preViaVersion + ")");
-                } else {
-                    PacketEvents.getAPI().getLogManager().warn(cause.getMessage());
-                }
+        boolean debug = PacketEvents.getAPI().getSettings().isDebugEnabled() || SpigotReflectionUtil.isMinecraftServerInstanceDebugging();
+        // We log exceptions only if the server is in debug mode or the player is fully connected to the server.
+        if (debug || (user != null && user.getDecoderState() != ConnectionState.HANDSHAKING)) {
+            if (PacketEvents.getAPI().getSettings().isFullStackTraceEnabled()) {
+                String state = user != null ? user.getDecoderState().name() : "null";
+                String clientVersion = user != null ? user.getClientVersion().getReleaseName() : "null";
+
+                PacketEvents.getAPI().getLogger().log(Level.WARNING, cause, () ->
+                        "An error occurred while processing a packet from " + user.getProfile().getName() +
+                        " (state: " + state +
+                        ", clientVersion: " + clientVersion +
+                        ", serverVersion: " + PacketEvents.getAPI().getServerManager().getVersion().getReleaseName() + ")" +
+                        ", preVia: " + preViaVersion);
+            } else {
+                PacketEvents.getAPI().getLogManager().warn(cause.getMessage());
             }
         }
 
