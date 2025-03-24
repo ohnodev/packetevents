@@ -19,6 +19,7 @@
 package com.github.retrooper.packetevents.protocol.player;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.ProtocolPacketEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.netty.channel.ChannelHelper;
 import com.github.retrooper.packetevents.protocol.ConnectionState;
@@ -94,15 +95,26 @@ public class User implements IRegistryHolder {
         return (InetSocketAddress) ChannelHelper.remoteAddress(channel);
     }
 
-    public ConnectionState getConnectionState() {
+    /**
+     * <strong>WARNING</strong>: Usage of this method should be avoided. Please use either
+     * {@link User#getDecoderState()} or {@link User#getEncoderState()}.<br>
+     * To access the specific state a packet event was sent/received in, use {@link ProtocolPacketEvent#getConnectionState()}.
+     * <p>
+     * Since 1.20.2, the Minecraft protocol allows the decoder/encoder connection states to de-sync.
+     *
+     * @throws IllegalStateException if encoder/decoder connection states do not match
+     */
+    @ApiStatus.Obsolete
+    public ConnectionState getConnectionState() throws IllegalStateException {
         ConnectionState decoderState = this.decoderState;
         ConnectionState encoderState = this.encoderState;
         if (decoderState != encoderState) {
-            throw new IllegalArgumentException("Can't get common connection state: " + decoderState + " != " + encoderState);
+            throw new IllegalStateException("Can't get common connection state: " + decoderState + " != " + encoderState);
         }
         return decoderState;
     }
 
+    @ApiStatus.Internal
     public void setConnectionState(ConnectionState connectionState) {
         this.setDecoderState(connectionState);
         this.setEncoderState(connectionState);
@@ -112,6 +124,7 @@ public class User implements IRegistryHolder {
         return this.decoderState;
     }
 
+    @ApiStatus.Internal
     public void setDecoderState(ConnectionState decoderState) {
         this.decoderState = decoderState;
         PacketEvents.getAPI().getLogManager().debug(
@@ -122,6 +135,7 @@ public class User implements IRegistryHolder {
         return this.encoderState;
     }
 
+    @ApiStatus.Internal
     public void setEncoderState(ConnectionState encoderState) {
         this.encoderState = encoderState;
         PacketEvents.getAPI().getLogManager().debug(
