@@ -1561,7 +1561,14 @@ public class WrappedBlockState {
             if (this.string == null) {
                 StringBuilder builder = new StringBuilder();
                 for (Map.Entry<StateValue, Object> entry : this.map.entrySet()) {
-                    builder.append(entry.getKey()).append('=').append(entry.getValue()).append(',');
+                    builder
+                            .append(entry.getKey().getName())
+                            .append('=')
+                            // this is technically incorrect as block property values are case-sensitive, but it
+                            // doesn't matter for this use case as we do String#toUpperCase while reading anyway;
+                            // the current block state property system is already enough of a mess
+                            .append(String.valueOf(entry.getValue()).toLowerCase(Locale.ROOT))
+                            .append(',');
                 }
                 this.string = builder.length() == 0 ? "" : '[' + builder.substring(0, builder.length() - 1) + ']';
             }

@@ -89,5 +89,8 @@ public class MappingIntegrityTest extends BaseDummyAPITest {
         WrappedBlockState state = StateTypes.PALE_OAK_LOG.createBlockState(ClientVersion.V_1_21_2);
         state.setAxis(Axis.Z);
         assertEquals(159, state.getGlobalId());
+
+        assertEquals("stone", StateTypes.STONE.createBlockState().toString());
+        assertEquals("acacia_log[axis=y]", StateTypes.ACACIA_LOG.createBlockState().toString());
     }
 }
