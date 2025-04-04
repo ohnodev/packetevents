@@ -21,6 +21,18 @@ package com.github.retrooper.packetevents.util.mappings;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.chat.ChatType;
 import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatVariant;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatVariants;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenVariant;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenVariants;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowVariant;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowVariants;
+import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariant;
+import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariants;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigVariant;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigVariants;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariants;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariant;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariants;
 import com.github.retrooper.packetevents.protocol.item.banner.BannerPattern;
@@ -70,12 +82,20 @@ public final class SynchronizedRegistriesHandler {
     private static final Map<ResourceLocation, RegistryEntry<?>> REGISTRY_KEYS = new HashMap<>();
 
     static {
+        // packetevents ignores a few unimportant registries which aren't used anywhere else in the protocol:
+        // test_environment, test_instance
         Stream.of(
                 new RegistryEntry<>(Biomes.getRegistry(), Biome::decode),
                 new RegistryEntry<>(ChatTypes.getRegistry(), ChatType::decode),
                 new RegistryEntry<>(TrimPatterns.getRegistry(), TrimPattern::decode),
                 new RegistryEntry<>(TrimMaterials.getRegistry(), TrimMaterial::decode),
                 new RegistryEntry<>(WolfVariants.getRegistry(), WolfVariant::decode),
+                new RegistryEntry<>(WolfSoundVariants.getRegistry(), WolfSoundVariant::decode),
+                new RegistryEntry<>(PigVariants.getRegistry(), PigVariant::decode),
+                new RegistryEntry<>(FrogVariants.getRegistry(), FrogVariant::decode),
+                new RegistryEntry<>(CatVariants.getRegistry(), CatVariant::decode),
+                new RegistryEntry<>(CowVariants.getRegistry(), CowVariant::decode),
+                new RegistryEntry<>(ChickenVariants.getRegistry(), ChickenVariant::decode),
                 new RegistryEntry<>(PaintingVariants.getRegistry(), PaintingVariant::decode),
                 new RegistryEntry<>(DimensionTypes.getRegistry(), DimensionType::decode),
                 new RegistryEntry<>(DamageTypes.getRegistry(), DamageType::decode),

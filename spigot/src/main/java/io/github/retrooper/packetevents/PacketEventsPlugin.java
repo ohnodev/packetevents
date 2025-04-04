@@ -81,7 +81,6 @@ public class PacketEventsPlugin extends JavaPlugin {
                     ((Player) event.getPlayer()).sendMessage("Type: " + bc.getBlockState().getType().getName());
                 } else if (event.getPacketType() == PacketType.Play.Server.SYSTEM_CHAT_MESSAGE) {
                     WrapperPlayServerSystemChatMessage packet = new WrapperPlayServerSystemChatMessage(event);
-                    System.out.println("System chat message: " + AdventureSerializer.asVanilla(packet.getMessage()));
                 }
             }
 

@@ -62,9 +62,6 @@ import com.github.retrooper.packetevents.protocol.chat.RemoteChatSession;
 import com.github.retrooper.packetevents.protocol.chat.SignedCommandArgument;
 import com.github.retrooper.packetevents.protocol.chat.filter.FilterMask;
 import com.github.retrooper.packetevents.protocol.chat.filter.FilterMaskType;
-import com.github.retrooper.packetevents.protocol.component.ComponentType;
-import com.github.retrooper.packetevents.protocol.component.ComponentTypes;
-import com.github.retrooper.packetevents.protocol.component.PatchableComponentMap;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
@@ -75,8 +72,7 @@ import com.github.retrooper.packetevents.protocol.entity.villager.profession.Vil
 import com.github.retrooper.packetevents.protocol.entity.villager.type.VillagerType;
 import com.github.retrooper.packetevents.protocol.entity.villager.type.VillagerTypes;
 import com.github.retrooper.packetevents.protocol.item.ItemStack;
-import com.github.retrooper.packetevents.protocol.item.type.ItemType;
-import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
+import com.github.retrooper.packetevents.protocol.item.ItemStackSerialization;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
@@ -93,6 +89,7 @@ import com.github.retrooper.packetevents.protocol.recipe.data.MerchantOffer;
 import com.github.retrooper.packetevents.protocol.world.Dimension;
 import com.github.retrooper.packetevents.protocol.world.WorldBlockPosition;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
+import com.github.retrooper.packetevents.util.Either;
 import com.github.retrooper.packetevents.util.KnownPack;
 import com.github.retrooper.packetevents.util.MathUtil;
 import com.github.retrooper.packetevents.util.StringUtil;
@@ -435,7 +432,15 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     }
 
     public <K, V> Map<K, V> readMap(Reader<K> keyFunction, Reader<V> valueFunction) {
-        int size = readVarInt();
+        return this.readMap(keyFunction, valueFunction, Integer.MAX_VALUE);
+    }
+
+    public <K, V> Map<K, V> readMap(Reader<K> keyFunction, Reader<V> valueFunction, int maxSize) {
+        int size = this.readVarInt();
+        if (size > maxSize) {
+            throw new RuntimeException(size + " elements exceeded max size of: " + maxSize);
+        }
+
         Map<K, V> map = new HashMap<>(size);
         for (int i = 0; i < size; i++) {
             K key = keyFunction.apply(this);
@@ -468,34 +473,8 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         writeVarInt(data.getLevel());
     }
 
-    // item stack serialization was basically completely rewritten in 1.20.5
-    @SuppressWarnings("unchecked")
     public ItemStack readItemStackModern() {
-        int count = this.readVarInt();
-        if (count <= 0) {
-            return ItemStack.EMPTY;
-        }
-        ItemType itemType = this.readMappedEntity(ItemTypes.getRegistry());
-
-        // read component patch counts
-        int presentCount = this.readVarInt();
-        int absentCount = this.readVarInt();
-        if (presentCount == 0 && absentCount == 0) {
-            return ItemStack.builder().type(itemType).amount(count).build();
-        }
-
-        PatchableComponentMap components = new PatchableComponentMap(
-                itemType.getComponents(this.serverVersion.toClientVersion()),
-                new HashMap<>(4));
-        for (int i = 0; i < presentCount; i++) {
-            ComponentType<?> type = this.readMappedEntity(ComponentTypes.getRegistry());
-            components.set((ComponentType<Object>) type, type.read(this));
-        }
-        for (int i = 0; i < absentCount; i++) {
-            components.unset(this.readMappedEntity(ComponentTypes.getRegistry()));
-        }
-
-        return ItemStack.builder().type(itemType).amount(count).components(components).build();
+        return ItemStackSerialization.readModern(this);
     }
 
     public ItemStack readPresentItemStack() {
@@ -507,74 +486,12 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     }
 
     public @NotNull ItemStack readItemStack() {
-        if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_20_5)) {
-            return this.readItemStackModern();
-        }
-
-        boolean v1_13_2 = serverVersion.isNewerThanOrEquals(ServerVersion.V_1_13_2);
-        if (v1_13_2) {
-            if (!readBoolean()) {
-                return ItemStack.EMPTY;
-            }
-        }
-        int typeID = v1_13_2 ? readVarInt() : readShort();
-        if (typeID < 0 && !v1_13_2) { // 1.13.2 doesn't have this logic
-            return ItemStack.EMPTY;
-        }
-        ItemType type = ItemTypes.getById(serverVersion.toClientVersion(), typeID);
-        int amount = readByte();
-        int legacyData = v1_13_2 ? -1 : readShort();
-        NBTCompound nbt = readNBT();
-        return ItemStack.builder()
-                .type(type)
-                .amount(amount)
-                .nbt(nbt)
-                .legacyData(legacyData)
-                .build();
+        return ItemStackSerialization.read(this);
     }
 
     // item stack serialization was basically completely rewritten in 1.20.5
-    @SuppressWarnings("unchecked")
-    public void writeItemStackModern(ItemStack itemStack) {
-        if (itemStack.isEmpty()) {
-            this.writeByte(0);
-            return;
-        }
-        this.writeVarInt(itemStack.getAmount());
-        this.writeMappedEntity(itemStack.getType());
-
-        if (!itemStack.hasComponentPatches()) {
-            this.writeShort(0);
-            return; // early return
-        }
-
-        // write component patch counts
-        Map<ComponentType<?>, Optional<?>> allPatches = itemStack.getComponents().getPatches();
-        int presentCount = 0, absentCount = 0;
-        for (Map.Entry<ComponentType<?>, Optional<?>> patch : allPatches.entrySet()) {
-            if (patch.getValue().isPresent()) {
-                presentCount++;
-            } else {
-                absentCount++;
-            }
-        }
-        this.writeVarInt(presentCount);
-        this.writeVarInt(absentCount);
-
-        // write present patches
-        for (Map.Entry<ComponentType<?>, Optional<?>> patch : allPatches.entrySet()) {
-            if (patch.getValue().isPresent()) {
-                this.writeVarInt(patch.getKey().getId(this.serverVersion.toClientVersion()));
-                ((ComponentType<Object>) patch.getKey()).write(this, patch.getValue().get());
-            }
-        }
-
-        // write absent patches
-        for (Map.Entry<ComponentType<?>, Optional<?>> patch : allPatches.entrySet()) {
-            if (!patch.getValue().isPresent()) {
-                this.writeVarInt(patch.getKey().getId(this.serverVersion.toClientVersion()));
-            }
-        }
+    public void writeItemStackModern(ItemStack stack) {
+        ItemStackSerialization.writeModern(this, stack);
     }
 
     public void writePresentItemStack(ItemStack itemStack) {
@@ -584,38 +501,8 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         this.writeItemStack(itemStack);
     }
 
-    public void writeItemStack(ItemStack itemStack) {
-        if (itemStack == null) {
-            itemStack = ItemStack.EMPTY;
-        }
-
-        if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_20_5)) {
-            this.writeItemStackModern(itemStack);
-            return;
-        }
-
-        boolean v1_13_2 = serverVersion.isNewerThanOrEquals(ServerVersion.V_1_13_2);
-        if (v1_13_2) {
-            if (itemStack.isEmpty()) {
-                writeBoolean(false);
-            } else {
-                writeBoolean(true);
-                int typeID = itemStack.getType().getId(serverVersion.toClientVersion());
-                writeVarInt(typeID);
-                writeByte(itemStack.getAmount());
-                writeNBT(itemStack.getNBT());
-            }
-        } else {
-            if (itemStack.isEmpty()) {
-                writeShort(-1);
-            } else {
-                int typeID = itemStack.getType().getId(serverVersion.toClientVersion());
-                writeShort(typeID);
-                writeByte(itemStack.getAmount());
-                writeShort(itemStack.getLegacyData());
-                writeNBT(itemStack.getNBT());
-            }
-        }
+    public void writeItemStack(ItemStack stack) {
+        ItemStackSerialization.write(this, stack);
     }
 
     public NBTCompound readNBT() {
@@ -667,7 +554,7 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     @Deprecated
     public String readComponentJSON() {
         // needs to be converted to nbt as of 1.20.3
-        return AdventureSerializer.asVanilla(this.readComponent());
+        return this.getSerializers().asJson(this.readComponent());
     }
 
     public void writeString(String s) {
@@ -691,10 +578,14 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         }
     }
 
+    public AdventureSerializer getSerializers() {
+        return AdventureSerializer.serializer(this.serverVersion.toClientVersion());
+    }
+
     @Deprecated
     public void writeComponentJSON(String json) {
         // needs to be converted to nbt as of 1.20.3
-        this.writeComponent(AdventureSerializer.parseComponent(json));
+        this.writeComponent(this.getSerializers().fromJson(json));
     }
 
     public Component readComponent() {
@@ -703,12 +594,12 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     }
 
     public Component readComponentAsNBT() {
-        return AdventureSerializer.fromNbt(readNBTRaw());
+        return this.getSerializers().fromNbtTag(this.readNBTRaw());
     }
 
     public Component readComponentAsJSON() {
         String jsonString = this.readString(this.getMaxMessageLength());
-        return AdventureSerializer.parseComponent(jsonString);
+        return this.getSerializers().fromJson(jsonString);
     }
 
     public void writeComponent(Component component) {
@@ -720,20 +611,20 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     }
 
     public void writeComponentAsNBT(Component component) {
-        writeNBTRaw(AdventureSerializer.toNbt(component));
+        this.writeNBTRaw(this.getSerializers().asNbtTag(component));
     }
 
     public void writeComponentAsJSON(Component component) {
-        String jsonString = AdventureSerializer.toJson(component);
+        String jsonString = this.getSerializers().asJson(component);
         this.writeString(jsonString, this.getMaxMessageLength());
     }
 
     public Style readStyle() {
-        return AdventureSerializer.getNBTSerializer().deserializeStyle(readNBT());
+        return this.getSerializers().nbt().deserializeStyle(this.readNBT());
     }
 
     public void writeStyle(Style style) {
-        writeNBT(AdventureSerializer.getNBTSerializer().serializeStyle(style));
+        this.writeNBT(this.getSerializers().nbt().serializeStyle(style));
     }
 
     public ResourceLocation readIdentifier(int maxLen) {
@@ -965,8 +856,9 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         writeByte(id);
     }
 
-    public List<EntityData> readEntityMetadata() {
-        List<EntityData> list = new ArrayList<>();
+    @SuppressWarnings("unchecked")
+    public List<EntityData<?>> readEntityMetadata() {
+        List<EntityData<?>> list = new ArrayList<>();
         if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_9)) {
             boolean v1_10 = serverVersion.isNewerThanOrEquals(ServerVersion.V_1_10);
             short index;
@@ -976,43 +868,44 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
                 if (type == null) {
                     throw new IllegalStateException("Unknown entity metadata type id: " + typeID + " version " + serverVersion.toClientVersion());
                 }
-                list.add(new EntityData(index, type, type.read(this)));
+                list.add(new EntityData<>(index, (EntityDataType<Object>) type, type.read(this)));
             }
         } else {
             for (byte data = readByte(); data != Byte.MAX_VALUE; data = readByte()) {
                 int typeID = (data & 0xE0) >> 5;
                 int index = data & 0x1F;
                 EntityDataType<?> type = EntityDataTypes.getById(serverVersion.toClientVersion(), typeID);
-                EntityData entityData = new EntityData(index, type, type.read(this));
+                EntityData<?> entityData = new EntityData<>(index, (EntityDataType<Object>) type, type.read(this));
                 list.add(entityData);
             }
         }
         return list;
     }
 
-    public void writeEntityMetadata(List<EntityData> list) {
+    @SuppressWarnings("unchecked")
+    public void writeEntityMetadata(List<EntityData<?>> list) {
         if (list == null) {
             list = new ArrayList<>();
         }
         if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_9)) {
             boolean v1_10 = serverVersion.isNewerThanOrEquals(ServerVersion.V_1_10);
-            for (EntityData entityData : list) {
+            for (EntityData<?> entityData : list) {
                 writeByte(entityData.getIndex());
                 if (v1_10) {
                     writeVarInt(entityData.getType().getId(serverVersion.toClientVersion()));
                 } else {
                     writeByte(entityData.getType().getId(serverVersion.toClientVersion()));
                 }
-                ((EntityDataType<? super Object>) entityData.getType()).write(this, entityData.getValue());
+                ((EntityDataType<Object>) entityData.getType()).write(this, entityData.getValue());
             }
             writeByte(255); // End of metadata array
         } else {
-            for (EntityData entityData : list) {
+            for (EntityData<?> entityData : list) {
                 int typeID = entityData.getType().getId(serverVersion.toClientVersion());
                 int index = entityData.getIndex();
                 int data = (typeID << 5 | index & 31) & 255;
                 writeByte(data);
-                ((EntityDataType<? super Object>) entityData.getType()).write(this, entityData.getValue());
+                ((EntityDataType<Object>) entityData.getType()).write(this, entityData.getValue());
             }
             writeByte(127); // End of metadata array
         }
@@ -1158,15 +1051,18 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     }
 
     public LastSeenMessages.Update readLastSeenMessagesUpdate() {
-        int signedMessages = readVarInt();
-        BitSet seen = BitSet.valueOf(readBytes(3));
-        return new LastSeenMessages.Update(signedMessages, seen);
+        int signedMessages = this.readVarInt();
+        BitSet seen = BitSet.valueOf(this.readBytes(3));
+        byte checksum = this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_5) ? this.readByte() : (byte) 0;
+        return new LastSeenMessages.Update(signedMessages, seen, checksum);
     }
 
     public void writeLastSeenMessagesUpdate(LastSeenMessages.Update update) {
-        writeVarInt(update.getOffset());
-        byte[] lastSeen = Arrays.copyOf(update.getAcknowledged().toByteArray(), 3);
-        writeBytes(lastSeen);
+        this.writeVarInt(update.getOffset());
+        this.writeBytes(Arrays.copyOf(update.getAcknowledged().toByteArray(), 3));
+        if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_5)) {
+            this.writeByte(update.getChecksum());
+        }
     }
 
     public LastSeenMessages.LegacyUpdate readLegacyLastSeenMessagesUpdate() {
@@ -1579,6 +1475,22 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
             this.writeVarInt(containerId);
         } else {
             this.writeByte(containerId);
+        }
+    }
+
+    public <L, R> Either<L, R> readEither(Reader<L> leftReader, Reader<R> rightReader) {
+        return this.readBoolean()
+                ? Either.createLeft(leftReader.apply(this))
+                : Either.createRight(rightReader.apply(this));
+    }
+
+    public <L, R> void writeEither(Either<L, R> either, Writer<L> leftWriter, Writer<R> rightWriter) {
+        if (either.isLeft()) {
+            this.writeBoolean(true);
+            leftWriter.accept(this, either.getLeft());
+        } else {
+            this.writeBoolean(false);
+            rightWriter.accept(this, either.getRight());
         }
     }
 

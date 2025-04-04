@@ -87,7 +87,7 @@ public interface Instrument extends MappedEntity, CopyableEntity<Instrument>, De
         Sound sound = Sound.decode(compound.getTagOrThrow("sound_event"), version);
         float useSeconds = compound.getNumberTagOrThrow("use_duration").getAsFloat();
         float range = compound.getNumberTagOrThrow("range").getAsFloat();
-        Component description = AdventureSerializer.fromNbt(compound.getTagOrThrow("description"));
+        Component description = AdventureSerializer.serializer(version).fromNbtTag(compound.getTagOrThrow("description"));
         return new StaticInstrument(data, sound, useSeconds, range, description);
     }
 
@@ -96,7 +96,7 @@ public interface Instrument extends MappedEntity, CopyableEntity<Instrument>, De
         compound.setTag("sound_event", Sound.encode(instrument.getSound(), version));
         compound.setTag("use_duration", new NBTFloat(instrument.getUseSeconds()));
         compound.setTag("range", new NBTFloat(instrument.getRange()));
-        compound.setTag("description", AdventureSerializer.toNbt(instrument.getDescription()));
+        compound.setTag("description", AdventureSerializer.serializer(version).asNbtTag(instrument.getDescription()));
         return compound;
     }
 }

@@ -113,7 +113,7 @@ public interface TrimMaterial extends MappedEntity, CopyableEntity<TrimMaterial>
         } else {
             overrideArmorMaterials = Collections.emptyMap();
         }
-        Component description = AdventureSerializer.fromNbt(((NBTCompound) nbt).getTagOrThrow("description"));
+        Component description = AdventureSerializer.serializer(version).fromNbtTag(((NBTCompound) nbt).getTagOrThrow("description"));
         return new StaticTrimMaterial(data, assetName, ingredient, itemModelIndex, overrideArmorMaterials, description);
     }
 
@@ -139,7 +139,7 @@ public interface TrimMaterial extends MappedEntity, CopyableEntity<TrimMaterial>
         if (overrideArmorMaterialsTag != null) {
             compound.setTag("override_armor_materials", overrideArmorMaterialsTag);
         }
-        compound.setTag("description", AdventureSerializer.toNbt(material.getDescription()));
+        compound.setTag("description", AdventureSerializer.serializer(version).asNbtTag(material.getDescription()));
         return compound;
     }
 }

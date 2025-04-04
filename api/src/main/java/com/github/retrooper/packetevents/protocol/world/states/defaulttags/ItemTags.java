@@ -81,9 +81,8 @@ public class ItemTags {
     @Deprecated
     public static final ItemTags TALL_FLOWERS = bind("tall_flowers");
     /**
-     * Removed with 1.21.4
+     * Removed with 1.21.4, re-added with 1.21.5
      */
-    @Deprecated
     public static final ItemTags FLOWERS = bind("flowers");
     public static final ItemTags PIGLIN_REPELLENTS = bind("piglin_repellents");
     public static final ItemTags PIGLIN_LOVED = bind("piglin_loved");
@@ -479,6 +478,15 @@ public class ItemTags {
      */
     public static final ItemTags WITHER_SKELETON_DISLIKED_WEAPONS = bind("wither_skeleton_disliked_weapons");
 
+    /**
+     * Added with 1.21.5
+     */
+    public static final ItemTags EGGS = bind("eggs");
+    /**
+     * Added with 1.21.5
+     */
+    public static final ItemTags BOOK_CLONING_TARGET = bind("book_cloning_target");
+
     static {
         copy(BlockTags.WOOL, ItemTags.WOOL);
         copy(BlockTags.PLANKS, ItemTags.PLANKS);
@@ -522,6 +530,7 @@ public class ItemTags {
         ItemTags.DUPLICATES_ALLAYS.add(ItemTypes.AMETHYST_SHARD);
         ItemTags.BREWING_FUEL.add(ItemTypes.BLAZE_POWDER);
         copy(BlockTags.SHULKER_BOXES, ItemTags.SHULKER_BOXES);
+        ItemTags.EGGS.add(ItemTypes.EGG, ItemTypes.BLUE_EGG, ItemTypes.BROWN_EGG);
         ItemTags.MEAT.add(ItemTypes.BEEF, ItemTypes.CHICKEN, ItemTypes.COOKED_BEEF, ItemTypes.COOKED_CHICKEN, ItemTypes.COOKED_MUTTON, ItemTypes.COOKED_PORKCHOP, ItemTypes.COOKED_RABBIT, ItemTypes.MUTTON, ItemTypes.PORKCHOP, ItemTypes.RABBIT, ItemTypes.ROTTEN_FLESH);
         ItemTags.SNIFFER_FOOD.add(ItemTypes.TORCHFLOWER_SEEDS);
         ItemTags.PIGLIN_FOOD.add(ItemTypes.PORKCHOP, ItemTypes.COOKED_PORKCHOP);
@@ -607,6 +616,7 @@ public class ItemTags {
         ItemTags.DYEABLE.add(ItemTypes.LEATHER_HELMET, ItemTypes.LEATHER_CHESTPLATE, ItemTypes.LEATHER_LEGGINGS, ItemTypes.LEATHER_BOOTS, ItemTypes.LEATHER_HORSE_ARMOR, ItemTypes.WOLF_ARMOR);
         copy(ItemTags.COALS, ItemTags.FURNACE_MINECART_FUEL);
         ItemTags.BUNDLES.add(ItemTypes.BUNDLE, ItemTypes.BLACK_BUNDLE, ItemTypes.BLUE_BUNDLE, ItemTypes.BROWN_BUNDLE, ItemTypes.CYAN_BUNDLE, ItemTypes.GRAY_BUNDLE, ItemTypes.GREEN_BUNDLE, ItemTypes.LIGHT_BLUE_BUNDLE, ItemTypes.LIGHT_GRAY_BUNDLE, ItemTypes.LIME_BUNDLE, ItemTypes.MAGENTA_BUNDLE, ItemTypes.ORANGE_BUNDLE, ItemTypes.PINK_BUNDLE, ItemTypes.PURPLE_BUNDLE, ItemTypes.RED_BUNDLE, ItemTypes.YELLOW_BUNDLE, ItemTypes.WHITE_BUNDLE);
+        ItemTags.BOOK_CLONING_TARGET.add(ItemTypes.WRITABLE_BOOK);
         ItemTags.SKELETON_PREFERRED_WEAPONS.add(ItemTypes.BOW);
         ItemTags.DROWNED_PREFERRED_WEAPONS.add(ItemTypes.TRIDENT);
         ItemTags.PIGLIN_PREFERRED_WEAPONS.add(ItemTypes.CROSSBOW);
@@ -625,6 +635,7 @@ public class ItemTags {
         copy(BlockTags.STAIRS, ItemTags.STAIRS);
         copy(BlockTags.SLABS, ItemTags.SLABS);
         copy(BlockTags.TRAPDOORS, ItemTags.TRAPDOORS);
+        copy(BlockTags.FLOWERS, ItemTags.FLOWERS);
         copy(BlockTags.FENCES, ItemTags.FENCES);
         ItemTags.PIGLIN_LOVED.addTag(ItemTags.GOLD_ORES).add(ItemTypes.GOLD_BLOCK, ItemTypes.GILDED_BLACKSTONE, ItemTypes.LIGHT_WEIGHTED_PRESSURE_PLATE, ItemTypes.GOLD_INGOT, ItemTypes.BELL, ItemTypes.CLOCK, ItemTypes.GOLDEN_CARROT, ItemTypes.GLISTERING_MELON_SLICE, ItemTypes.GOLDEN_APPLE, ItemTypes.ENCHANTED_GOLDEN_APPLE, ItemTypes.GOLDEN_HELMET, ItemTypes.GOLDEN_CHESTPLATE, ItemTypes.GOLDEN_LEGGINGS, ItemTypes.GOLDEN_BOOTS, ItemTypes.GOLDEN_HORSE_ARMOR, ItemTypes.GOLDEN_SWORD, ItemTypes.GOLDEN_PICKAXE, ItemTypes.GOLDEN_SHOVEL, ItemTypes.GOLDEN_AXE, ItemTypes.GOLDEN_HOE, ItemTypes.RAW_GOLD, ItemTypes.RAW_GOLD_BLOCK);
         ItemTags.WOLF_FOOD.addTag(ItemTags.MEAT).add(ItemTypes.COD, ItemTypes.COOKED_COD, ItemTypes.SALMON, ItemTypes.COOKED_SALMON, ItemTypes.TROPICAL_FISH, ItemTypes.PUFFERFISH, ItemTypes.RABBIT_STEW);

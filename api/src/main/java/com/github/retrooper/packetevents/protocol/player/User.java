@@ -19,6 +19,7 @@
 package com.github.retrooper.packetevents.protocol.player;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.PacketEventsAPI;
 import com.github.retrooper.packetevents.event.ProtocolPacketEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.netty.channel.ChannelHelper;
@@ -46,6 +47,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSystemChatMessage;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTitle;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -239,8 +241,7 @@ public class User implements IRegistryHolder {
     }
 
     public void sendMessage(String legacyMessage) {
-        Component component = AdventureSerializer.fromLegacyFormat(legacyMessage);
-        sendMessage(component);
+        this.sendMessage(this.getSerializers().fromLegacy(legacyMessage));
     }
 
     public void sendMessage(Component component) {
@@ -248,14 +249,13 @@ public class User implements IRegistryHolder {
     }
 
     public void sendMessage(Component component, ChatType type) {
-        ServerVersion version = PacketEvents.getAPI().getInjector().isProxy() ? getClientVersion().toServerVersion() :
-                PacketEvents.getAPI().getServerManager().getVersion();
+        ClientVersion version = this.getPacketVersion();
         PacketWrapper<?> chatPacket;
-        if (version.isNewerThanOrEquals(ServerVersion.V_1_19)) {
+        if (version.isNewerThanOrEquals(ClientVersion.V_1_19)) {
             chatPacket = new WrapperPlayServerSystemChatMessage(false, component);
         } else {
             ChatMessage message;
-            if (version.isNewerThanOrEquals(ServerVersion.V_1_16)) {
+            if (version.isNewerThanOrEquals(ClientVersion.V_1_16)) {
                 message = new ChatMessage_v1_16(component, type, new UUID(0L, 0L));
             } else {
                 message = new ChatMessageLegacy(component, type);
@@ -267,15 +267,14 @@ public class User implements IRegistryHolder {
 
     public void sendTitle(String legacyTitle, String legacySubtitle,
                           int fadeInTicks, int stayTicks, int fadeOutTicks) {
-        Component title = AdventureSerializer.fromLegacyFormat(legacyTitle);
-        Component subtitle = AdventureSerializer.fromLegacyFormat(legacySubtitle);
+        LegacyComponentSerializer serializer = this.getSerializers().legacy();
+        Component title = serializer.deserialize(legacyTitle);
+        Component subtitle = serializer.deserialize(legacySubtitle);
         sendTitle(title, subtitle, fadeInTicks, stayTicks, fadeOutTicks);
     }
 
     public void sendTitle(Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
-        ClientVersion version = PacketEvents.getAPI().getInjector().isProxy() ? getClientVersion() :
-                PacketEvents.getAPI().getServerManager().getVersion().toClientVersion();
-        boolean modern = version.isNewerThanOrEquals(ClientVersion.V_1_17);
+        boolean modern = this.getPacketVersion().isNewerThanOrEquals(ClientVersion.V_1_17);
         PacketWrapper<?> animation;
         PacketWrapper<?> setTitle = null;
         PacketWrapper<?> setSubtitle = null;
@@ -309,6 +308,18 @@ public class User implements IRegistryHolder {
         if (setSubtitle != null) {
             sendPacket(setSubtitle);
         }
+    }
+
+    public ClientVersion getPacketVersion() {
+        PacketEventsAPI<?> api = PacketEvents.getAPI();
+        if (api.getInjector().isProxy()) {
+            return this.getClientVersion();
+        }
+        return api.getServerManager().getVersion().toClientVersion();
+    }
+
+    public AdventureSerializer getSerializers() {
+        return AdventureSerializer.serializer(this.getPacketVersion());
     }
 
     //TODO sendTitle that is cross-version

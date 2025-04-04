@@ -62,8 +62,8 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
 
     @VisibleForTesting
     @ApiStatus.Internal
-    public boolean isMappingDataLoaded() {
-        return this.typesBuilder.isMappingDataLoaded();
+    public TypesBuilder getTypesBuilder() {
+        return this.typesBuilder;
     }
 
     @ApiStatus.Internal

@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.protocol.component.builtin.item;
 
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntitySet;
@@ -25,6 +26,7 @@ import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.protocol.sound.Sound;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -39,7 +41,9 @@ public class ItemEquippable {
     private boolean dispensable;
     private boolean swappable;
     private boolean damageOnHurt;
+    private boolean equipOnInteract;
 
+    @ApiStatus.Obsolete
     public ItemEquippable(
             EquipmentSlot slot,
             Sound equipSound,
@@ -50,6 +54,21 @@ public class ItemEquippable {
             boolean swappable,
             boolean damageOnHurt
     ) {
+        this(slot, equipSound, assetId, cameraOverlay, allowedEntities,
+                dispensable, swappable, damageOnHurt, false);
+    }
+
+    public ItemEquippable(
+            EquipmentSlot slot,
+            Sound equipSound,
+            @Nullable ResourceLocation assetId,
+            @Nullable ResourceLocation cameraOverlay,
+            @Nullable MappedEntitySet<EntityType> allowedEntities,
+            boolean dispensable,
+            boolean swappable,
+            boolean damageOnHurt,
+            boolean equipOnInteract
+    ) {
         this.slot = slot;
         this.equipSound = equipSound;
         this.assetId = assetId;
@@ -58,20 +77,22 @@ public class ItemEquippable {
         this.dispensable = dispensable;
         this.swappable = swappable;
         this.damageOnHurt = damageOnHurt;
+        this.equipOnInteract = equipOnInteract;
     }
 
     public static ItemEquippable read(PacketWrapper<?> wrapper) {
         EquipmentSlot slot = wrapper.readEnum(EquipmentSlot.values());
         Sound equipSound = Sound.read(wrapper);
-        ResourceLocation model = wrapper.readOptional(PacketWrapper::readIdentifier);
+        ResourceLocation assetId = wrapper.readOptional(PacketWrapper::readIdentifier);
         ResourceLocation cameraOverlay = wrapper.readOptional(PacketWrapper::readIdentifier);
         MappedEntitySet<EntityType> allowedEntities = wrapper.readOptional(
                 ew -> MappedEntitySet.read(ew, EntityTypes::getById));
         boolean dispensable = wrapper.readBoolean();
         boolean swappable = wrapper.readBoolean();
         boolean damageOnHurt = wrapper.readBoolean();
-        return new ItemEquippable(slot, equipSound, model,
-                cameraOverlay, allowedEntities, dispensable, swappable, damageOnHurt);
+        boolean equipOnInteract = wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_21_5) && wrapper.readBoolean();
+        return new ItemEquippable(slot, equipSound, assetId,
+                cameraOverlay, allowedEntities, dispensable, swappable, damageOnHurt, equipOnInteract);
     }
 
     public static void write(PacketWrapper<?> wrapper, ItemEquippable equippable) {
@@ -83,6 +104,9 @@ public class ItemEquippable {
         wrapper.writeBoolean(equippable.dispensable);
         wrapper.writeBoolean(equippable.swappable);
         wrapper.writeBoolean(equippable.damageOnHurt);
+        if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_21_5)) {
+            wrapper.writeBoolean(equippable.equipOnInteract);
+        }
     }
 
     public EquipmentSlot getSlot() {
@@ -149,6 +173,20 @@ public class ItemEquippable {
         this.damageOnHurt = damageOnHurt;
     }
 
+    /**
+     * Added with 1.21.5
+     */
+    public boolean isEquipOnInteract() {
+        return this.equipOnInteract;
+    }
+
+    /**
+     * Added with 1.21.5
+     */
+    public void setEquipOnInteract(boolean equipOnInteract) {
+        this.equipOnInteract = equipOnInteract;
+    }
+
     @Deprecated
     public @Nullable ResourceLocation getModel() {
         return this.assetId;
@@ -171,16 +209,17 @@ public class ItemEquippable {
         if (!Objects.equals(this.equipSound, that.equipSound)) return false;
         if (!Objects.equals(this.assetId, that.assetId)) return false;
         if (!Objects.equals(this.cameraOverlay, that.cameraOverlay)) return false;
-        return Objects.equals(this.allowedEntities, that.allowedEntities);
+        if (!Objects.equals(this.allowedEntities, that.allowedEntities)) return false;
+        return Objects.equals(this.equipOnInteract, that.equipOnInteract);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.slot, this.equipSound, this.assetId, this.cameraOverlay, this.allowedEntities, this.dispensable, this.swappable, this.damageOnHurt);
+        return Objects.hash(this.slot, this.equipSound, this.assetId, this.cameraOverlay, this.allowedEntities, this.dispensable, this.swappable, this.damageOnHurt, this.equipOnInteract);
     }
 
     @Override
     public String toString() {
-        return "ItemEquippable{slot=" + this.slot + ", equipSound=" + this.equipSound + ", model=" + this.assetId + ", cameraOverlay=" + this.cameraOverlay + ", allowedEntities=" + this.allowedEntities + ", dispensable=" + this.dispensable + ", swappable=" + this.swappable + ", damageOnHurt=" + this.damageOnHurt + '}';
+        return "ItemEquippable{slot=" + this.slot + ", equipSound=" + this.equipSound + ", assetId=" + this.assetId + ", cameraOverlay=" + this.cameraOverlay + ", allowedEntities=" + this.allowedEntities + ", dispensable=" + this.dispensable + ", swappable=" + this.swappable + ", damageOnHurt=" + this.damageOnHurt + ", equipOnInteract=" + this.equipOnInteract + '}';
     }
 }

@@ -40,6 +40,7 @@ import com.github.retrooper.packetevents.protocol.packettype.clientbound.Clientb
 import com.github.retrooper.packetevents.protocol.packettype.clientbound.ClientboundPacketType_1_20_5;
 import com.github.retrooper.packetevents.protocol.packettype.clientbound.ClientboundPacketType_1_21;
 import com.github.retrooper.packetevents.protocol.packettype.clientbound.ClientboundPacketType_1_21_2;
+import com.github.retrooper.packetevents.protocol.packettype.clientbound.ClientboundPacketType_1_21_5;
 import com.github.retrooper.packetevents.protocol.packettype.clientbound.ClientboundPacketType_1_7_10;
 import com.github.retrooper.packetevents.protocol.packettype.clientbound.ClientboundPacketType_1_8;
 import com.github.retrooper.packetevents.protocol.packettype.clientbound.ClientboundPacketType_1_9;
@@ -67,6 +68,7 @@ import com.github.retrooper.packetevents.protocol.packettype.serverbound.Serverb
 import com.github.retrooper.packetevents.protocol.packettype.serverbound.ServerboundPacketType_1_20_5;
 import com.github.retrooper.packetevents.protocol.packettype.serverbound.ServerboundPacketType_1_21_2;
 import com.github.retrooper.packetevents.protocol.packettype.serverbound.ServerboundPacketType_1_21_4;
+import com.github.retrooper.packetevents.protocol.packettype.serverbound.ServerboundPacketType_1_21_5;
 import com.github.retrooper.packetevents.protocol.packettype.serverbound.ServerboundPacketType_1_7_10;
 import com.github.retrooper.packetevents.protocol.packettype.serverbound.ServerboundPacketType_1_8;
 import com.github.retrooper.packetevents.protocol.packettype.serverbound.ServerboundPacketType_1_9;
@@ -108,7 +110,8 @@ public final class PacketType {
             ClientVersion.V_1_20_3,
             ClientVersion.V_1_20_5,
             ClientVersion.V_1_21,
-            ClientVersion.V_1_21_2);
+            ClientVersion.V_1_21_2,
+            ClientVersion.V_1_21_5);
 
     //TODO UPDATE Update packet type mappings (serverbound pt. 1)
     private static final VersionMapper SERVERBOUND_PLAY_VERSION_MAPPER = new VersionMapper(
@@ -131,7 +134,8 @@ public final class PacketType {
             ClientVersion.V_1_20_3,
             ClientVersion.V_1_20_5,
             ClientVersion.V_1_21_2,
-            ClientVersion.V_1_21_4);
+            ClientVersion.V_1_21_4,
+            ClientVersion.V_1_21_5);
 
     // TODO UPDATE Update packet type mappings (config clientbound pt. 1)
     private static final VersionMapper CLIENTBOUND_CONFIG_VERSION_MAPPER = new VersionMapper(
@@ -730,6 +734,15 @@ public final class PacketType {
              * Added with 1.21.4
              */
             PLAYER_LOADED,
+
+            /**
+             * Added with 1.21.5
+             */
+            SET_TEST_BLOCK,
+            /**
+             * Added with 1.21.5
+             */
+            TEST_INSTANCE_BLOCK_ACTION,
             ;
 
             private static int INDEX = 0;
@@ -786,6 +799,7 @@ public final class PacketType {
                 loadPacketIds(ServerboundPacketType_1_20_5.values());
                 loadPacketIds(ServerboundPacketType_1_21_2.values());
                 loadPacketIds(ServerboundPacketType_1_21_4.values());
+                loadPacketIds(ServerboundPacketType_1_21_5.values());
                 //TODO UPDATE Update packet type mappings (serverbound pt. 2)
             }
 
@@ -831,6 +845,10 @@ public final class PacketType {
             // Still existing packets
             WINDOW_CONFIRMATION,
             SPAWN_ENTITY,
+            /**
+             * Removed with 1.21.5
+             */
+            @ApiStatus.Obsolete
             SPAWN_EXPERIENCE_ORB,
             ENTITY_ANIMATION,
             STATISTICS,
@@ -980,6 +998,11 @@ public final class PacketType {
             RECIPE_BOOK_ADD,
             RECIPE_BOOK_REMOVE,
             RECIPE_BOOK_SETTINGS,
+
+            /**
+             * Added with 1.21.5
+             */
+            TEST_INSTANCE_BLOCK_STATUS,
             ;
 
             private static int INDEX = 0;
@@ -1052,6 +1075,7 @@ public final class PacketType {
                 loadPacketIds(ClientboundPacketType_1_20_5.values());
                 loadPacketIds(ClientboundPacketType_1_21.values());
                 loadPacketIds(ClientboundPacketType_1_21_2.values());
+                loadPacketIds(ClientboundPacketType_1_21_5.values());
                 //TODO UPDATE Update packet type mappings (clientbound pt. 2)
             }
         }

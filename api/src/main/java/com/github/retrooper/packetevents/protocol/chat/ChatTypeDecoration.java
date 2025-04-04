@@ -90,7 +90,7 @@ public class ChatTypeDecoration {
         }
         NBTCompound styleTag = compound.getCompoundTagOrNull("style");
         Style style = styleTag == null ? empty() :
-                AdventureSerializer.getNBTSerializer().deserializeStyle(styleTag);
+                AdventureSerializer.serializer(version).nbt().deserializeStyle(styleTag);
         return new ChatTypeDecoration(translationKey, params, style);
     }
 
@@ -104,8 +104,8 @@ public class ChatTypeDecoration {
         compound.setTag("translation_key", new NBTString(decoration.translationKey));
         compound.setTag("parameters", paramsTag);
         if (!decoration.style.isEmpty()) {
-            compound.setTag("style", AdventureSerializer.getNBTSerializer()
-                    .serializeStyle(decoration.style));
+            compound.setTag("style", AdventureSerializer.serializer(version)
+                    .nbt().serializeStyle(decoration.style));
         }
         return compound;
     }

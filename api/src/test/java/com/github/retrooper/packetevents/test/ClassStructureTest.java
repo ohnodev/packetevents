@@ -21,7 +21,10 @@ package com.github.retrooper.packetevents.test;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.test.base.BaseDummyAPITest;
+import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import io.github.classgraph.ClassGraph;
@@ -42,10 +45,12 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ClassStructureTest extends BaseDummyAPITest {
 
@@ -162,7 +167,38 @@ public class ClassStructureTest extends BaseDummyAPITest {
                     // this also ensures registries are able to load without errors
                     return (VersionedRegistry<?>) meth.loadClassAndGetMethod().invoke(null);
                 }))
-                .forEach(registry -> Assertions.assertFalse(registry.isMappingDataLoaded(),
+                .forEach(registry -> Assertions.assertFalse(
+                        registry.getTypesBuilder().isMappingDataLoaded(),
                         () -> "Mapping data for registry " + registry.getRegistryKey() + " is still loaded"));
+    }
+
+    @Test
+    @DisplayName("Ensure mapping constants are all valid")
+    public void ensureMappingConstantsValid() {
+        SCAN_RESULT.getAllClasses().stream()
+                .flatMap(clazz -> clazz.getMethodInfo("getRegistry").stream())
+                .filter(meth -> meth.isPublic() && meth.isStatic())
+                .map(meth -> Assertions.assertDoesNotThrow(() ->
+                        (VersionedRegistry<?>) meth.loadClassAndGetMethod().invoke(null)))
+                .forEach(registry -> {
+                    // temporarily load mappings again to validate each entry has a matching constant
+                    TypesBuilder typesBuilder = registry.getTypesBuilder();
+                    typesBuilder.load();
+
+                    Map<ClientVersion, Map<String, Integer>> entries = typesBuilder.getEntries();
+                    assert entries != null; // ensured above
+                    String invalidEntries = entries.values().stream()
+                            .flatMap(map -> map.keySet().stream())
+                            .filter(name -> !name.startsWith("__missing_"))
+                            .map(ResourceLocation::normString)
+                            .distinct()
+                            .filter(name -> registry.getByName(name) == null)
+                            .collect(Collectors.joining(","));
+                    typesBuilder.unloadFileMappings();
+
+                    if (!invalidEntries.isEmpty()) {
+                        fail("Found invalid entries in registry " + registry.getRegistryKey() + ": " + invalidEntries);
+                    }
+                });
     }
 }

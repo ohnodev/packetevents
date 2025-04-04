@@ -35,6 +35,10 @@ public class StaticWolfVariant extends AbstractMappedEntity implements WolfVaria
     private final ResourceLocation angryTexture;
     private final MappedEntitySet<Biome> biomes;
 
+    /**
+     * The biome set has been removed with 1.21.5
+     */
+    @ApiStatus.Obsolete
     public StaticWolfVariant(
             ResourceLocation wildTexture,
             ResourceLocation tameTexture,
@@ -42,6 +46,15 @@ public class StaticWolfVariant extends AbstractMappedEntity implements WolfVaria
             MappedEntitySet<Biome> biomes
     ) {
         this(null, wildTexture, tameTexture, angryTexture, biomes);
+    }
+
+    public StaticWolfVariant(
+            ResourceLocation angryTexture,
+            ResourceLocation tameTexture,
+            ResourceLocation wildTexture
+    ) {
+        this(null, angryTexture, tameTexture,
+                wildTexture, MappedEntitySet.createEmpty());
     }
 
     @ApiStatus.Internal

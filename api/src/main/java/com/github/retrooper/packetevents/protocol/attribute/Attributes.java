@@ -49,7 +49,7 @@ public final class Attributes {
         if (normedName.startsWith(ResourceLocation.VANILLA_NAMESPACE + ":generic.")
                 || normedName.startsWith(ResourceLocation.VANILLA_NAMESPACE + ":player.")
                 || normedName.startsWith(ResourceLocation.VANILLA_NAMESPACE + ":zombie.")) {
-            normedName = normedName.substring(name.indexOf('.') + 1);
+            normedName = normedName.substring(normedName.indexOf('.') + 1);
         }
         return REGISTRY.getByName(normedName);
     }

@@ -536,6 +536,8 @@ public final class ItemTypes {
     public static final ItemType QUARTZ_STAIRS = builder("quartz_stairs").setMaxAmount(64).setPlacedType(StateTypes.QUARTZ_STAIRS).build();
     public static final ItemType RAIL = builder("rail").setMaxAmount(64).setPlacedType(StateTypes.RAIL).build();
     public static final ItemType WHITE_BANNER = builder("white_banner").setMaxAmount(16).setPlacedType(StateTypes.WHITE_BANNER).setAttributes(ItemAttribute.FUEL).build();
+    @ApiStatus.Obsolete
+    public static final ItemType WHITE_WALL_BANNER = builder("white_wall_banner").setMaxAmount(16).setPlacedType(StateTypes.WHITE_WALL_BANNER).setAttributes(ItemAttribute.FUEL).build();
     public static final ItemType MOSS_BLOCK = builder("moss_block").setMaxAmount(64).setPlacedType(StateTypes.MOSS_BLOCK).build();
     public static final ItemType BLUE_STAINED_GLASS = builder("blue_stained_glass").setMaxAmount(64).setPlacedType(StateTypes.BLUE_STAINED_GLASS).build();
     public static final ItemType GREEN_TERRACOTTA = builder("green_terracotta").setMaxAmount(64).setPlacedType(StateTypes.GREEN_TERRACOTTA).build();
@@ -1461,6 +1463,19 @@ public final class ItemTypes {
     public static final ItemType CHISELED_RESIN_BRICKS = builder("chiseled_resin_bricks").setMaxAmount(64).setPlacedType(StateTypes.CHISELED_RESIN_BRICKS).build();
     public static final ItemType RESIN_BRICK = builder("resin_brick").setMaxAmount(64).build();
 
+    // 1.21.5 items
+    public static final ItemType BUSH = builder("bush").setMaxAmount(64).setPlacedType(StateTypes.BUSH).build();
+    public static final ItemType FIREFLY_BUSH = builder("firefly_bush").setMaxAmount(64).setPlacedType(StateTypes.FIREFLY_BUSH).build();
+    public static final ItemType SHORT_DRY_GRASS = builder("short_dry_grass").setMaxAmount(64).setPlacedType(StateTypes.SHORT_DRY_GRASS).setAttributes(ItemAttribute.FUEL).build();
+    public static final ItemType TALL_DRY_GRASS = builder("tall_dry_grass").setMaxAmount(64).setPlacedType(StateTypes.TALL_DRY_GRASS).setAttributes(ItemAttribute.FUEL).build();
+    public static final ItemType WILDFLOWERS = builder("wildflowers").setMaxAmount(64).setPlacedType(StateTypes.WILDFLOWERS).build();
+    public static final ItemType LEAF_LITTER = builder("leaf_litter").setMaxAmount(64).setPlacedType(StateTypes.LEAF_LITTER).setAttributes(ItemAttribute.FUEL).build();
+    public static final ItemType CACTUS_FLOWER = builder("cactus_flower").setMaxAmount(64).setPlacedType(StateTypes.CACTUS_FLOWER).build();
+    public static final ItemType TEST_BLOCK = builder("test_block").setMaxAmount(64).setPlacedType(StateTypes.TEST_BLOCK).build();
+    public static final ItemType TEST_INSTANCE_BLOCK = builder("test_instance_block").setMaxAmount(64).setPlacedType(StateTypes.TEST_INSTANCE_BLOCK).build();
+    public static final ItemType BLUE_EGG = builder("blue_egg").setMaxAmount(16).build();
+    public static final ItemType BROWN_EGG = builder("brown_egg").setMaxAmount(16).build();
+
     /**
      * @deprecated Burning furnace shows up as a missing texture, removed in 1.9
      */
@@ -1517,7 +1532,6 @@ public final class ItemTypes {
         if (base != null) {
             components.setAll(base);
         }
-        // TODO release buffer helper
         // allocate a buffer once and use it for parsing everything
         Object byteBuf = UnpooledByteBufAllocationHelper.buffer();
         PacketWrapper<?> wrapper = PacketWrapper.createUniversalPacketWrapper(byteBuf, version.toServerVersion());
@@ -1530,20 +1544,30 @@ public final class ItemTypes {
 
             // reset to start of buffer
             ByteBufHelper.resetReaderIndex(byteBuf);
+            ByteBufHelper.resetWriterIndex(byteBuf);
 
             // empty values are serialized as a single byte (smaller than an empty byte array),
             // so just parse byte array tag values
             if (entry.getValue() instanceof NBTByteArray) {
-                byte[] bytes = ((NBTByteArray) entry.getValue()).getValue();
                 // write bytes at beginning of buffer
-                ByteBufHelper.resetWriterIndex(byteBuf);
+                byte[] bytes = ((NBTByteArray) entry.getValue()).getValue();
                 ByteBufHelper.writeBytes(byteBuf, bytes);
             }
 
             // read from shared buffer
             Object compValue = compType.read(wrapper);
             components.set((ComponentType<Object>) compType, compValue);
+
+            // ensure the entire component value has been read
+            int wi = ByteBufHelper.writerIndex(byteBuf);
+            int ri = ByteBufHelper.readerIndex(byteBuf);
+            if (wi != ri) {
+                throw new RuntimeException("Expected reader index (" + ri + ") to match writer index ("
+                        + wi + ") after reading component value for type " + compType.getName() + " in version " + version);
+            }
         }
+
+        ByteBufHelper.release(byteBuf);
         return components;
     }
 
@@ -1579,7 +1603,7 @@ public final class ItemTypes {
         // all versions where base components were changed TODO UPDATE
         ClientVersion[] versions = new ClientVersion[]{
                 ClientVersion.V_1_20_5, ClientVersion.V_1_21, ClientVersion.V_1_21_2,
-                ClientVersion.V_1_21_4,
+                ClientVersion.V_1_21_4, ClientVersion.V_1_21_5,
         };
         for (ClientVersion version : versions) {
             parseAllComponents(version);

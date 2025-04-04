@@ -28,6 +28,7 @@ import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.VersionMapper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@ApiStatus.Internal
 public class TypesBuilder {
     private final String mapPath;
     private Map<ClientVersion, Map<String, Integer>> entries = new HashMap<>();
@@ -58,6 +60,9 @@ public class TypesBuilder {
     }
 
     public void load() {
+        if (this.entries == null) {
+            this.entries = new HashMap<>();
+        }
         try (final SequentialNBTReader.Compound rootCompound = MappingHelper.decompress("mappings/" + this.mapPath)) {
             rootCompound.skipOne(); // skip version tag for now
             SequentialNBTReader.Compound compound = (SequentialNBTReader.Compound) rootCompound.next().getValue();
@@ -142,7 +147,6 @@ public class TypesBuilder {
         }
     }
 
-    @ApiStatus.Internal
     public @Nullable VersionedRegistry<?> getRegistry() {
         return this.registry;
     }
@@ -159,11 +163,11 @@ public class TypesBuilder {
         return versionMapper.getIndex(rawVersion);
     }
 
-    boolean isMappingDataLoaded() {
+    @VisibleForTesting
+    public boolean isMappingDataLoaded() {
         return this.entries != null;
     }
 
-    @ApiStatus.Internal
     public void unloadFileMappings() {
         entries.clear();
         entries = null;
@@ -184,5 +188,9 @@ public class TypesBuilder {
             index++;
         }
         return new TypesBuilderData(this, name, ids);
+    }
+
+    public @Nullable Map<ClientVersion, Map<String, Integer>> getEntries() {
+        return this.entries;
     }
 }

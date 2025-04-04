@@ -71,7 +71,7 @@ public class WrapperPlayServerScoreboardObjective extends PacketWrapper<WrapperP
             }
         } else {
             if (serverVersion.isOlderThan(ServerVersion.V_1_13)) {
-                displayName = AdventureSerializer.fromLegacyFormat(readString(32));
+                displayName = this.getSerializers().fromLegacy(this.readString(32));
                 renderType = RenderType.getByName(readString());
             } else {
                 displayName = readComponent();
@@ -93,7 +93,8 @@ public class WrapperPlayServerScoreboardObjective extends PacketWrapper<WrapperP
         writeByte((byte) mode.ordinal());
         if (this.mode == ObjectiveMode.CREATE || this.mode == ObjectiveMode.UPDATE) {
             if (serverVersion.isOlderThan(ServerVersion.V_1_13)) {
-                writeString(LegacyFormat.trimLegacyFormat(AdventureSerializer.asVanilla(displayName), 32));
+                String legacyText = this.getSerializers().asLegacy(this.displayName);
+                writeString(LegacyFormat.trimLegacyFormat(legacyText, 32));
                 if (renderType != null) {
                     writeString(renderType.name().toLowerCase());
                 } else {

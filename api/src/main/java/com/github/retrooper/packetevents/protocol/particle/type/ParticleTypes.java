@@ -82,6 +82,19 @@ public final class ParticleTypes {
     public static final ParticleType<ParticleBlockStateData> BLOCK = define("block",
             ParticleBlockStateData::read, ParticleBlockStateData::write,
             ParticleBlockStateData::decode, ParticleBlockStateData::encode);
+    /**
+     * Removed with 1.18
+     */
+    @ApiStatus.Obsolete
+    public static final ParticleType<ParticleData> BARRIER = define("barrier");
+    /**
+     * Removed with 1.18
+     */
+    @ApiStatus.Obsolete
+    public static final ParticleType<ParticleData> LIGHT = define("light");
+    /**
+     * Added with 1.18
+     */
     public static final ParticleType<ParticleBlockStateData> BLOCK_MARKER = define("block_marker",
             ParticleBlockStateData::read, ParticleBlockStateData::write,
             ParticleBlockStateData::decode, ParticleBlockStateData::encode);
@@ -231,8 +244,21 @@ public final class ParticleTypes {
             ParticleBlockStateData::read, ParticleBlockStateData::write,
             ParticleBlockStateData::decode, ParticleBlockStateData::encode);
 
-    // added with 1.21.4
+    /**
+     * Added with 1.21.4
+     */
     public static final ParticleType<ParticleData> PALE_OAK_LEAVES = define("pale_oak_leaves");
+
+    /**
+     * Added with 1.21.5
+     */
+    public static final ParticleType<ParticleColorData> TINTED_LEAVES = define("tinted_leaves",
+            ParticleColorData::read, ParticleColorData::write,
+            ParticleColorData::decode, ParticleColorData::encode);
+    /**
+     * Added with 1.21.5
+     */
+    public static final ParticleType<ParticleData> FIREFLY = define("firefly");
 
     /**
      * Returns an immutable view of the particle types.

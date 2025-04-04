@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.util.adventure;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTByte;
 import com.github.retrooper.packetevents.protocol.nbt.NBTByteArray;
@@ -33,6 +34,7 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTNumber;
 import com.github.retrooper.packetevents.protocol.nbt.NBTShort;
 import com.github.retrooper.packetevents.protocol.nbt.NBTString;
 import com.github.retrooper.packetevents.protocol.nbt.NBTType;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.util.UniqueIdUtil;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.api.BinaryTagHolder;
@@ -76,10 +78,17 @@ import static com.github.retrooper.packetevents.util.adventure.AdventureIndexUti
 
 public class AdventureNBTSerializer implements ComponentSerializer<Component, Component, NBT> {
 
+    private final ClientVersion version;
     private final boolean downsampleColor;
 
-    public AdventureNBTSerializer(boolean downsampleColor) {
+    public AdventureNBTSerializer(ClientVersion version, boolean downsampleColor) {
+        this.version = version;
         this.downsampleColor = downsampleColor;
+    }
+
+    @Deprecated
+    public AdventureNBTSerializer(boolean downsampleColor) {
+        this(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(), downsampleColor);
     }
 
     @Override
@@ -342,33 +351,60 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
         }
         reader.useUTF("insertion", style::insertion);
 
-        NBTReader clickEvent = reader.child("clickEvent");
+        boolean modernEvents = this.version.isNewerThanOrEquals(ClientVersion.V_1_21_5);
+        NBTReader clickEvent = reader.child(modernEvents ? "click_event" : "clickEvent");
         if (clickEvent != null) {
-            style.clickEvent(ClickEvent.clickEvent(
-                    clickEvent.readUTF("action", ClickEvent.Action.NAMES::value),
-                    clickEvent.readUTF("value", Function.identity())
-            ));
+            ClickEvent.Action action = clickEvent.readUTF("action", ClickEvent.Action.NAMES::value);
+            String value;
+            if (!modernEvents) {
+                value = clickEvent.readUTF("value", Function.identity());
+            } else {
+                switch (action) {
+                    case OPEN_URL:
+                        value = clickEvent.readUTF("url", Function.identity());
+                        break;
+                    case OPEN_FILE:
+                        value = clickEvent.readUTF("path", Function.identity());
+                        break;
+                    case RUN_COMMAND:
+                    case SUGGEST_COMMAND:
+                        value = clickEvent.readUTF("command", Function.identity());
+                        break;
+                    case CHANGE_PAGE:
+                        value = clickEvent.readNumber("page", String::valueOf);
+                        break;
+                    case COPY_TO_CLIPBOARD:
+                    default:
+                        value = clickEvent.readUTF("value", Function.identity());
+                        break;
+                }
+            }
+            style.clickEvent(ClickEvent.clickEvent(action, value));
         }
 
-        NBTReader hoverEvent = reader.child("hoverEvent");
+        NBTReader hoverEvent = reader.child(modernEvents ? "hover_event" : "hoverEvent");
         if (hoverEvent != null) {
             HoverEvent.Action action = hoverEvent.readUTF("action", HoverEvent.Action.NAMES::value);
-            if (action.equals(HoverEvent.Action.SHOW_TEXT)) {
-                style.hoverEvent(HoverEvent.showText(hoverEvent.read("contents", this::deserialize)));
-            } else if (action.equals(HoverEvent.Action.SHOW_ITEM)) {
-                if (hoverEvent.type("contents") == NBTType.STRING) {
-                    style.hoverEvent(HoverEvent.showItem(hoverEvent.readUTF("contents", Key::key), 1));
-                } else {
-                    NBTReader child = hoverEvent.child("contents");
-                    Key itemId = child.readUTF("id", Key::key);
-                    Integer count = child.readNumber("count", Number::intValue);
+            switch (action.toString()) {
+                case "show_text":
+                    style.hoverEvent(HoverEvent.showText(hoverEvent.read(modernEvents ? "value" : "contents", this::deserialize)));
+                    break;
+                case "show_item":
+                    if (!modernEvents && hoverEvent.type("contents") == NBTType.STRING) {
+                        style.hoverEvent(HoverEvent.showItem(hoverEvent.readUTF("contents", Key::key), 1));
+                        break;
+                    }
+
+                    NBTReader item = modernEvents ? hoverEvent : hoverEvent.child("contents");
+                    Key itemId = item.readUTF("id", Key::key);
+                    Integer count = item.readNumber("count", Number::intValue);
                     int nonNullCount = count == null ? 1 : count;
 
-                    BinaryTagHolder tag = child.readUTF("tag", BinaryTagHolder::binaryTagHolder);
+                    BinaryTagHolder tag = item.readUTF("tag", BinaryTagHolder::binaryTagHolder);
                     if (tag != null || !BackwardCompatUtil.IS_4_17_0_OR_NEWER) {
                         style.hoverEvent(HoverEvent.showItem(itemId, nonNullCount, tag));
                     } else {
-                        Map<Key, DataComponentValue> components = child.readCompound("components", nbt -> {
+                        Map<Key, DataComponentValue> components = item.readCompound("components", nbt -> {
                             Map<Key, DataComponentValue> map = new HashMap<>(nbt.size());
                             for (Map.Entry<String, NBT> entry : nbt.getTags().entrySet()) {
                                 if (entry.getKey().startsWith("!")) { // removed component
@@ -384,14 +420,14 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
                         style.hoverEvent(HoverEvent.showItem(itemId, nonNullCount,
                                 components == null ? Collections.emptyMap() : components));
                     }
-                }
-            } else if (action.equals(HoverEvent.Action.SHOW_ENTITY)) {
-                NBTReader child = hoverEvent.child("contents");
-                style.hoverEvent(HoverEvent.showEntity(
-                        child.readUTF("type", Key::key),
-                        child.readIntArray("id", UniqueIdUtil::fromIntArray),
-                        child.read("name", this::deserialize)
-                ));
+                    break;
+                case "show_entity":
+                    NBTReader entity = modernEvents ? hoverEvent : hoverEvent.child("contents");
+                    style.hoverEvent(HoverEvent.showEntity(
+                            entity.readUTF(modernEvents ? "id" : "type", Key::key),
+                            entity.readIntArray(modernEvents ? "uuid" : "id", UniqueIdUtil::fromIntArray),
+                            entity.read("name", this::deserialize)));
+                    break;
             }
         }
 
@@ -426,33 +462,59 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
 
         ClickEvent clickEvent = style.clickEvent();
         if (clickEvent != null) {
-            NBTWriter child = writer.child("clickEvent");
+            boolean modern = this.version.isNewerThanOrEquals(ClientVersion.V_1_21_5);
+            NBTWriter child = writer.child(modern ? "click_event" : "clickEvent");
             child.writeUTF("action", clickEvent.action().toString());
-            child.writeUTF("value", clickEvent.value());
+            if (!modern) {
+                child.writeUTF("value", clickEvent.value());
+            } else {
+                switch (clickEvent.action()) {
+                    case OPEN_URL:
+                        child.writeUTF("url", clickEvent.value());
+                        break;
+                    case OPEN_FILE:
+                        child.writeUTF("path", clickEvent.value());
+                        break;
+                    case RUN_COMMAND:
+                    case SUGGEST_COMMAND:
+                        child.writeUTF("command", clickEvent.value());
+                        break;
+                    case CHANGE_PAGE:
+                        child.writeInt("page", Integer.parseInt(clickEvent.value()));
+                        break;
+                    case COPY_TO_CLIPBOARD:
+                    default:
+                        child.writeUTF("value", clickEvent.value());
+                        break;
+                }
+            }
         }
 
         HoverEvent<?> hoverEvent = style.hoverEvent();
         if (hoverEvent != null) {
-            NBTWriter child = writer.child("hoverEvent");
+            boolean modern = this.version.isNewerThanOrEquals(ClientVersion.V_1_21_5);
+            NBTWriter child = writer.child(modern ? "hover_event" : "hoverEvent");
             child.writeUTF("action", hoverEvent.action().toString());
             switch (hoverEvent.action().toString()) {
-                case "show_text": {
-                    child.write("contents", this.serialize((Component) hoverEvent.value()));
+                case "show_text":
+                    child.write(modern ? "value" : "contents", this.serialize((Component) hoverEvent.value()));
                     break;
-                }
-                case "show_item": {
+                case "show_item":
                     HoverEvent.ShowItem item = (HoverEvent.ShowItem) hoverEvent.value();
                     Key itemId = item.item();
                     int count = item.count();
                     BinaryTagHolder nbt = item.nbt();
                     boolean emptyComps = !BackwardCompatUtil.IS_4_17_0_OR_NEWER || item.dataComponents().isEmpty();
 
-                    if (count == 1 && nbt == null && emptyComps) {
+                    // "modern" item stacks are no longer allowed to be inlined
+                    if (!modern && count == 1 && nbt == null && emptyComps) {
                         child.writeUTF("contents", itemId.asString());
                     } else {
-                        NBTWriter itemNBT = child.child("contents");
+                        NBTWriter itemNBT = modern ? child : child.child("contents");
                         itemNBT.writeUTF("id", itemId.asString());
-                        itemNBT.writeInt("count", count);
+                        if (!modern || count != 1) {
+                            itemNBT.writeInt("count", count);
+                        }
                         if (nbt != null) {
                             itemNBT.writeUTF("tag", nbt.string());
                         }
@@ -473,16 +535,15 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
                         }
                     }
                     break;
-                }
-                case "show_entity": {
+                case "show_entity":
                     HoverEvent.ShowEntity showEntity = (HoverEvent.ShowEntity) hoverEvent.value();
-                    NBTWriter entity = child.child("contents");
-                    entity.writeUTF("type", showEntity.type().asString());
-                    entity.writeIntArray("id", UniqueIdUtil.toIntArray(showEntity.id()));
-                    if (showEntity.name() != null) entity.write("name", this.serialize(showEntity.name()));
+                    NBTWriter entity = modern ? child : child.child("contents");
+                    entity.writeUTF(modern ? "id" : "type", showEntity.type().asString());
+                    entity.writeIntArray(modern ? "uuid" : "id", UniqueIdUtil.toIntArray(showEntity.id()));
+                    if (showEntity.name() != null) {
+                        entity.write("name", this.serialize(showEntity.name()));
+                    }
                     break;
-                }
-
             }
         }
 

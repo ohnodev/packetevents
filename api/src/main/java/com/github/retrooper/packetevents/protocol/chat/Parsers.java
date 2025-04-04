@@ -148,8 +148,8 @@ public final class Parsers {
     public static final Parser STYLE = define("style", null, null);
     public static final Parser MESSAGE = define("message", null, null);
     public static final Parser NBT_COMPOUND_TAG = define("nbt_compound_tag", null, null);
-    @Deprecated
-    public static final Parser NBT = NBT_COMPOUND_TAG;
+    @ApiStatus.Obsolete
+    public static final Parser NBT = define("nbt", null, null);
     public static final Parser NBT_TAG = define("nbt_tag", null, null);
     public static final Parser NBT_PATH = define("nbt_path", null, null);
     public static final Parser OBJECTIVE = define("objective", null, null);
@@ -209,6 +209,14 @@ public final class Parsers {
     public static final Parser LOOT_PREDICATE = define("loot_predicate", null, null);
     public static final Parser LOOT_MODIFIER = define("loot_modifier", null, null);
     public static final Parser UUID = define("uuid", null, null);
+
+    /**
+     * Added with 1.21.5
+     */
+    public static final Parser RESOURCE_SELECTOR = define("resource_selector",
+            wrapper -> Collections.singletonList(wrapper.readIdentifier()),
+            (wrapper, value) -> wrapper.writeIdentifier((ResourceLocation) value.get(0))
+    );
 
     static {
         REGISTRY.unloadMappings();

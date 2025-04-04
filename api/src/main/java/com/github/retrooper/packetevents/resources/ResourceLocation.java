@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.resources;
 
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +47,14 @@ public class ResourceLocation {
         }
         this.namespace = array[0];
         this.key = array[1];
+    }
+
+    public static ResourceLocation read(PacketWrapper<?> wrapper) {
+        return wrapper.readIdentifier();
+    }
+
+    public static void write(PacketWrapper<?> wrapper, ResourceLocation resourceLocation) {
+        wrapper.writeIdentifier(resourceLocation);
     }
 
     @Contract("null -> null; !null -> !null")

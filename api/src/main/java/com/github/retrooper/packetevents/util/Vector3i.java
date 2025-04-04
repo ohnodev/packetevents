@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.util;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 
 import java.util.Objects;
 
@@ -124,6 +125,19 @@ public class Vector3i {
         } else {
             z = 0;
         }
+    }
+
+    public static Vector3i read(PacketWrapper<?> wrapper) {
+        int x = wrapper.readVarInt();
+        int y = wrapper.readVarInt();
+        int z = wrapper.readVarInt();
+        return new Vector3i(x, y, z);
+    }
+
+    public static void write(PacketWrapper<?> wrapper, Vector3i vector) {
+        wrapper.writeVarInt(vector.x);
+        wrapper.writeVarInt(vector.y);
+        wrapper.writeVarInt(vector.z);
     }
 
     public long getSerializedPosition(ServerVersion serverVersion) {

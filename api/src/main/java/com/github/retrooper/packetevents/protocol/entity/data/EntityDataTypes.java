@@ -20,15 +20,23 @@ package com.github.retrooper.packetevents.protocol.entity.data;
 
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatVariant;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenVariant;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowVariant;
+import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariant;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigVariant;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
 import com.github.retrooper.packetevents.protocol.entity.villager.VillagerData;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariant;
 import com.github.retrooper.packetevents.protocol.item.ItemStack;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import com.github.retrooper.packetevents.protocol.world.WorldBlockPosition;
+import com.github.retrooper.packetevents.protocol.world.painting.PaintingVariant;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.Quaternion4f;
 import com.github.retrooper.packetevents.util.Vector3f;
@@ -72,10 +80,16 @@ public final class EntityDataTypes {
 
     public static final EntityDataType<String> STRING = define("string", PacketWrapper::readString, PacketWrapper::writeString);
 
+    /**
+     * @deprecated use {@link #ADV_COMPONENT} instead
+     */
     @Deprecated
     public static final EntityDataType<String> COMPONENT = define("component", PacketWrapper::readComponentJSON, PacketWrapper::writeComponentJSON);
     public static final EntityDataType<Component> ADV_COMPONENT = define("component", PacketWrapper::readComponent, PacketWrapper::writeComponent);
 
+    /**
+     * @deprecated use {@link #OPTIONAL_ADV_COMPONENT} instead
+     */
     @Deprecated
     public static final EntityDataType<Optional<String>> OPTIONAL_COMPONENT = define("optional_component", readOptionalComponentJSONDeserializer(), writeOptionalComponentJSONSerializer());
     public static final EntityDataType<Optional<Component>> OPTIONAL_ADV_COMPONENT = define("optional_component", readOptionalComponentDeserializer(), writeOptionalComponentSerializer());
@@ -155,9 +169,23 @@ public final class EntityDataTypes {
         return EntityPose.getById(wrapper.getServerVersion().toClientVersion(), id);
     }, (PacketWrapper<?> wrapper, EntityPose value) -> wrapper.writeVarInt(value.getId(wrapper.getServerVersion().toClientVersion())));
 
-    public static final EntityDataType<Integer> CAT_VARIANT = define("cat_variant_type", readIntDeserializer(), writeIntSerializer());
+    /**
+     * @deprecated use {@link #TYPED_CAT_VARIANT} instead
+     */
+    @Deprecated
+    public static final EntityDataType<Integer> CAT_VARIANT =
+            define("cat_variant_type", readIntDeserializer(), writeIntSerializer());
+    public static final EntityDataType<CatVariant> TYPED_CAT_VARIANT =
+            define("cat_variant_type", CatVariant::read, CatVariant::write);
 
-    public static final EntityDataType<Integer> FROG_VARIANT = define("frog_variant_type", readIntDeserializer(), writeIntSerializer());
+    /**
+     * @deprecated use {@link #TYPED_FROG_VARIANT} instead
+     */
+    @Deprecated
+    public static final EntityDataType<Integer> FROG_VARIANT =
+            define("frog_variant_type", readIntDeserializer(), writeIntSerializer());
+    public static final EntityDataType<FrogVariant> TYPED_FROG_VARIANT =
+            define("frog_variant_type", FrogVariant::read, FrogVariant::write);
 
     public static final EntityDataType<Optional<WorldBlockPosition>> OPTIONAL_GLOBAL_POSITION = define("optional_global_position",
             (PacketWrapper<?> wrapper) -> Optional.ofNullable(wrapper.readOptional(w -> new WorldBlockPosition(new ResourceLocation(w.readString(32767)), w.readBlockPosition()))),
@@ -166,7 +194,14 @@ public final class EntityDataTypes {
                 w.writeBlockPosition(globalPos.getBlockPosition());
             }));
 
-    public static final EntityDataType<Integer> PAINTING_VARIANT_TYPE = define("painting_variant_type", readIntDeserializer(), writeIntSerializer());
+    /**
+     * @deprecated use {@link #PAINTING_VARIANT} instead
+     */
+    @Deprecated
+    public static final EntityDataType<Integer> PAINTING_VARIANT_TYPE =
+            define("painting_variant_type", readIntDeserializer(), writeIntSerializer());
+    public static final EntityDataType<PaintingVariant> PAINTING_VARIANT =
+            define("painting_variant_type", PaintingVariant::read, PaintingVariant::write);
 
     public static final EntityDataType<SnifferState> SNIFFER_STATE = define("sniffer_state", (PacketWrapper<?> wrapper) -> {
         int id = wrapper.readVarInt();
@@ -190,19 +225,53 @@ public final class EntityDataTypes {
                 wrapper.writeFloat(value.getW());
             });
 
-    // Added in 1.20.5
+    /**
+     * Added with 1.20.5
+     */
     public static final EntityDataType<ArmadilloState> ARMADILLO_STATE = define("armadillo_state",
             (PacketWrapper<?> wrapper) -> ArmadilloState.values()[wrapper.readVarInt()],
             (PacketWrapper<?> wrapper, ArmadilloState value) -> wrapper.writeVarInt(value.ordinal())
     );
-
+    /**
+     * Added with 1.20.5
+     */
     public static final EntityDataType<List<Particle<?>>> PARTICLES = define("particles",
             wrapper -> wrapper.readList(Particle::read),
             (wrapper, particles) -> wrapper.writeList(particles, Particle::write)
     );
-
+    /**
+     * Added with 1.20.5
+     *
+     * @deprecated use {@link #TYPED_WOLF_VARIANT} instead
+     */
+    @Deprecated
     public static final EntityDataType<Integer> WOLF_VARIANT =
             define("wolf_variant_type", readIntDeserializer(), writeIntSerializer());
+    /**
+     * Added with 1.20.5
+     */
+    public static final EntityDataType<WolfVariant> TYPED_WOLF_VARIANT =
+            define("wolf_variant_type", WolfVariant::read, WolfVariant::write);
+    /**
+     * Added with 1.21.5
+     */
+    public static final EntityDataType<CowVariant> COW_VARIANT =
+            define("cow_variant_type", CowVariant::read, CowVariant::write);
+    /**
+     * Added with 1.21.5
+     */
+    public static final EntityDataType<WolfSoundVariant> WOLF_SOUND_VARIANT =
+            define("wolf_sound_variant_type", WolfSoundVariant::read, WolfSoundVariant::write);
+    /**
+     * Added with 1.21.5
+     */
+    public static final EntityDataType<PigVariant> PIG_VARIANT =
+            define("pig_variant_type", PigVariant::read, PigVariant::write);
+    /**
+     * Added with 1.21.5
+     */
+    public static final EntityDataType<ChickenVariant> CHICKEN_VARIANT =
+            define("chicken_variant_type", ChickenVariant::read, ChickenVariant::write);
 
     private EntityDataTypes() {
     }

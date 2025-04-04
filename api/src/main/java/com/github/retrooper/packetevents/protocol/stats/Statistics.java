@@ -67,7 +67,7 @@ public class Statistics {
                         @Override
                         public Component display() {
                             if (cachedDisplay == null) {
-                                cachedDisplay = AdventureSerializer.parseComponent(value);
+                                cachedDisplay = AdventureSerializer.serializer().fromJson(value);
                             }
                             return cachedDisplay;
                         }
