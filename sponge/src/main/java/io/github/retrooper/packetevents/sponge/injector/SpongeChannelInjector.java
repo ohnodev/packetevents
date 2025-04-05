@@ -40,6 +40,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.github.retrooper.packetevents.PacketEvents.DECODER_NAME;
+import static com.github.retrooper.packetevents.PacketEvents.ENCODER_NAME;
+
 public class SpongeChannelInjector implements ChannelInjector {
     //Channels that process connecting clients.
     public final Set<Channel> injectedConnectionChannels = new HashSet<>();
@@ -196,6 +199,17 @@ public class SpongeChannelInjector implements ChannelInjector {
         if (decoder != null) {
             decoder.user = user;
         }
+    }
+
+    @Override
+    public boolean isPlayerSet(Object ch) {
+        if (ch == null) return false;
+        Channel channel = (Channel) ch;
+        PacketEventsEncoder encoder = getEncoder(channel);
+        if (encoder.player != null) return true;
+
+        PacketEventsDecoder decoder = getDecoder(channel);
+        return decoder.player != null;
     }
 
     @Override

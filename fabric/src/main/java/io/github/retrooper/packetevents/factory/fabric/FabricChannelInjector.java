@@ -18,6 +18,7 @@
 
 package io.github.retrooper.packetevents.factory.fabric;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.injector.ChannelInjector;
 import com.github.retrooper.packetevents.manager.protocol.ProtocolManager;
 import com.github.retrooper.packetevents.protocol.PacketSide;
@@ -50,6 +51,17 @@ public class FabricChannelInjector implements ChannelInjector {
     @Override
     public void uninject() {
         // NO-OP
+    }
+
+    @Override
+    public boolean isPlayerSet(Object ch) {
+        if (ch == null) return false;
+        Channel channel = (Channel) ch;
+        PacketEncoder encoder = (PacketEncoder) channel.pipeline().get(ENCODER_NAME);
+        if (encoder.player != null) return true;
+
+        PacketDecoder decoder = (PacketDecoder) channel.pipeline().get(DECODER_NAME);
+        return decoder.player != null;
     }
 
     @Override
