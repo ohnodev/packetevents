@@ -200,6 +200,10 @@ public final class EntityTypes {
     public static final EntityType EGG = define("egg", PROJECTILE_ABSTRACT);
     public static final EntityType ENDER_PEARL = define("ender_pearl", PROJECTILE_ABSTRACT);
     public static final EntityType EXPERIENCE_BOTTLE = define("experience_bottle", PROJECTILE_ABSTRACT);
+    /**
+     * <strong>WARNING:</strong> Does not exist itself anymore since 1.21.5, this has
+     * been split into {@link #SPLASH_POTION} and {@link #LINGERING_POTION}
+     */
     public static final EntityType POTION = define("potion", PROJECTILE_ABSTRACT);
     public static final EntityType TADPOLE = define("tadpole", ABSTRACT_FISHES);
     @Deprecated // Exists only in 1.9 and 1.10
@@ -282,6 +286,15 @@ public final class EntityTypes {
     public static final EntityType PALE_OAK_CHEST_BOAT = define("pale_oak_chest_boat", CHEST_BOAT);
     public static final EntityType SPRUCE_BOAT = define("spruce_boat", BOAT);
     public static final EntityType SPRUCE_CHEST_BOAT = define("spruce_chest_boat", CHEST_BOAT);
+
+    /**
+     * Added with 1.21.5
+     */
+    public static final EntityType SPLASH_POTION = define("splash_potion", POTION);
+    /**
+     * Added with 1.21.5
+     */
+    public static final EntityType LINGERING_POTION = define("lingering_potion", POTION);
 
     /**
      * Returns an immutable view of the entity types.
