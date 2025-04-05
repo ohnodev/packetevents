@@ -19,6 +19,7 @@
 package com.github.retrooper.packetevents.protocol.world.chunk.reader;
 
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
+import com.github.retrooper.packetevents.netty.buffer.UnpooledByteBufAllocationHelper;
 import com.github.retrooper.packetevents.protocol.stream.NetStreamInput;
 import com.github.retrooper.packetevents.protocol.world.Dimension;
 import com.github.retrooper.packetevents.protocol.world.chunk.BaseChunk;
@@ -37,7 +38,8 @@ public interface ChunkReader {
     ) {
         // backwards compat
         DimensionType dimensionType = dimension.asDimensionType(null, null);
-        PacketWrapper<?> wrapper = PacketWrapper.createUniversalPacketWrapper(data);
+        PacketWrapper<?> wrapper = PacketWrapper.createUniversalPacketWrapper(
+                UnpooledByteBufAllocationHelper.wrappedBuffer(data));
         try {
             return this.read(dimensionType, chunkMask, secondaryChunkMask, fullChunk,
                     hasBlockLight, hasSkyLight, chunkSize, data.length, wrapper);
