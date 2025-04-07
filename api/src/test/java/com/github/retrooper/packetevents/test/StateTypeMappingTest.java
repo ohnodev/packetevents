@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,28 +42,15 @@ public class StateTypeMappingTest extends BaseDummyAPITest {
         return cachedStateValues;
     }
 
-    private static Collection<StateType> computeNonObsoleteStateTypes() {
-        ArrayList<StateType> filteredList = new ArrayList<>(StateTypes.values());
-        Field[] fields = StateTypes.class.getDeclaredFields();
-
-        for (Field field : fields) {
-            if (Modifier.isPublic(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    field.getType().equals(StateType.class)) { // Ensure it's the correct type
-
-                StateType value;
-                try {
-                    value = (StateType) field.get(null);
-                    Assertions.assertNotEquals(null, value);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-                if (field.isAnnotationPresent(RuntimeObsolete.class)) {
-                    filteredList.remove(value);
-                }
+    private Collection<StateType> computeNonObsoleteStateTypes() {
+        // Case 0: Ignore obsolete entries
+        return StateTypes.values().stream().filter(e -> {
+            try {
+                return StateTypes.class.getField(e.getName().toUpperCase(Locale.ROOT)).getAnnotation(RuntimeObsolete.class) == null;
+            } catch (NoSuchFieldException ex) {
+                throw new RuntimeException(ex);
             }
-        }
-        return filteredList;
+        }).collect(Collectors.toList());
     }
 
     @ParameterizedTest
