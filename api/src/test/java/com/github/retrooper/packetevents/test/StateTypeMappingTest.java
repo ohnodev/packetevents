@@ -1,5 +1,6 @@
 package com.github.retrooper.packetevents.test;
 
+import com.github.retrooper.packetevents.annotations.RuntimeObsolete;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
@@ -8,17 +9,19 @@ import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.test.base.BaseDummyAPITest;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Locale;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import org.bukkit.Material;
@@ -40,15 +43,28 @@ public class StateTypeMappingTest extends BaseDummyAPITest {
         return cachedStateValues;
     }
 
-    private Collection<StateType> computeNonObsoleteStateTypes() {
-        Collection<StateType> all = StateTypes.values();
-        List<StateType> filtered = new ArrayList<>(all);
-        // Case 0: Ignore obsolete entries (temporary workaround to GRASS_PATH rename/fix)
-        Set<StateType> EXEMPT_STATE_TYPES = new HashSet<>(Arrays.asList(
-                StateTypes.GRASS_PATH
-        ));
-        filtered.removeAll(EXEMPT_STATE_TYPES);
-        return filtered;
+    private static Collection<StateType> computeNonObsoleteStateTypes() {
+        ArrayList<StateType> filteredList = new ArrayList<>(StateTypes.values());
+        Field[] fields = StateTypes.class.getDeclaredFields();
+
+        for (Field field : fields) {
+            if (Modifier.isPublic(field.getModifiers()) &&
+                    Modifier.isStatic(field.getModifiers()) &&
+                    field.getType().equals(StateType.class)) { // Ensure it's the correct type
+
+                StateType value;
+                try {
+                    value = (StateType) field.get(null);
+                    Assertions.assertNotEquals(null, value);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+                if (field.isAnnotationPresent(RuntimeObsolete.class)) {
+                    filteredList.remove(value);
+                }
+            }
+        }
+        return filteredList;
     }
 
     @ParameterizedTest
