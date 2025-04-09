@@ -22,6 +22,7 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.IRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -31,6 +32,7 @@ import java.util.Objects;
  * reference is present, or just a name of one.
  */
 // TODO find a better name for this class
+@ApiStatus.Experimental
 public final class MaybeMappedEntity<T extends MappedEntity> {
 
     private final @Nullable T entity;
@@ -87,6 +89,14 @@ public final class MaybeMappedEntity<T extends MappedEntity> {
         }
     }
 
+    public T getValueOrThrow() {
+        T value = this.getValue();
+        if (value == null) {
+            throw new IllegalStateException("Can't resolve entity by name " + this.name);
+        }
+        return value;
+    }
+
     public @Nullable T getValue() {
         if (this.entity != null) {
             return this.entity;
@@ -97,13 +107,13 @@ public final class MaybeMappedEntity<T extends MappedEntity> {
         }
     }
 
-    public @Nullable ResourceLocation getName() {
+    public ResourceLocation getName() {
         if (this.name != null) {
             return this.name;
         } else if (this.entity != null) {
             return this.entity.getName();
         } else {
-            return null; // should never occur
+            throw new AssertionError();
         }
     }
 

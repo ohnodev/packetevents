@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.protocol.component.builtin.item;
 
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.item.instrument.Instrument;
 import com.github.retrooper.packetevents.protocol.item.instrument.Instruments;
 import com.github.retrooper.packetevents.protocol.mapper.MaybeMappedEntity;
@@ -34,12 +35,21 @@ public class ItemInstrument {
     }
 
     public static ItemInstrument read(PacketWrapper<?> wrapper) {
-        MaybeMappedEntity<Instrument> instrument = MaybeMappedEntity.read(wrapper, Instruments.getRegistry(), Instrument::read);
+        MaybeMappedEntity<Instrument> instrument;
+        if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_21_5)) {
+            instrument = MaybeMappedEntity.read(wrapper, Instruments.getRegistry(), Instrument::read);
+        } else {
+            instrument = new MaybeMappedEntity<>(Instrument.read(wrapper));
+        }
         return new ItemInstrument(instrument);
     }
 
     public static void write(PacketWrapper<?> wrapper, ItemInstrument instrument) {
-        MaybeMappedEntity.write(wrapper, instrument.instrument, Instrument::write);
+        if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_21_5)) {
+            MaybeMappedEntity.write(wrapper, instrument.instrument, Instrument::write);
+        } else {
+            Instrument.write(wrapper, instrument.instrument.getValueOrThrow());
+        }
     }
 
     public MaybeMappedEntity<Instrument> getInstrument() {

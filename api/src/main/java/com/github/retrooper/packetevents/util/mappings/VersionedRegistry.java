@@ -55,8 +55,9 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
 
     @ApiStatus.Internal
     public <Z extends T> Z define(String name, Function<TypesBuilderData, Z> builder) {
-        Z instance = builder.apply(this.typesBuilder.define(name));
-        MappingHelper.registerMapping(this.typesBuilder, this.typeMap, this.typeIdMap, instance);
+        TypesBuilderData typeData = this.typesBuilder.define(name);
+        Z instance = builder.apply(typeData);
+        MappingHelper.registerMapping(this.typesBuilder, this.typeMap, this.typeIdMap, typeData, instance);
         return instance;
     }
 
