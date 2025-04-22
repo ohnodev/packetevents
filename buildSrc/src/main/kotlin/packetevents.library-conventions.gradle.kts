@@ -126,26 +126,20 @@ publishing {
                         email = "retrooperdev@gmail.com"
                     }
                 }
-
-                scm {
-                    connection = "scm:git:https://github.com/retrooper/packetevents.git"
-                    developerConnection = "scm:git:https://github.com/retrooper/packetevents.git"
-                    url = "https://github.com/retrooper/packetevents/tree/2.0"
-                }
             }
         }
     }
 
     repositories {
         maven {
-            val snapshotUrl = "https://repo.codemc.io/repository/maven-snapshots/"
-            val releaseUrl = "https://repo.codemc.io/repository/maven-releases/"
+            val snapshotUrl = System.getenv("MAVEN_SNAPSHOT_URL") ?: return@maven
+            val releaseUrl = System.getenv("MAVEN_RELEASE_URL") ?: return@maven
 
             // Check which URL should be used
             url = uri(if ((version as String).endsWith("SNAPSHOT")) snapshotUrl else releaseUrl)
 
-            val mavenUsername = System.getenv("retrooper_username") ?: return@maven
-            val mavenPassword = System.getenv("retrooper_password") ?: return@maven
+            val mavenUsername = System.getenv("MAVEN_USERNAME") ?: return@maven
+            val mavenPassword = System.getenv("MAVEN_PASSWORD") ?: return@maven
 
             credentials {
                 username = mavenUsername
