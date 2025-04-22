@@ -190,7 +190,7 @@ public class ItemStack {
     }
 
     public ItemType getType() {
-        return cachedIsEmpty ? ItemTypes.AIR : type;
+        return type;
     }
 
     public int getAmount() {
