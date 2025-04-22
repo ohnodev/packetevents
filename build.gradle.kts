@@ -67,6 +67,14 @@ tasks {
 
 allprojects {
     tasks {
+        // compileJava
+        withType<JavaCompile> {
+            options.isFork = true
+        }
+        // compileTestJava
+        withType<Test> {
+            maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
+        }
         withType<Jar> {
             archiveVersion = rootProject.ext["versionNoHash"] as String
         }
