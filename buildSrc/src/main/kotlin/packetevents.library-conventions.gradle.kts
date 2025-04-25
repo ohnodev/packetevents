@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import groovy.util.Node
+import java.util.*
 
 plugins {
     `java-library`
@@ -16,6 +17,17 @@ repositories {
 }
 
 val isShadow = project.pluginManager.hasPlugin("com.gradleup.shadow")
+
+val envProperties = Properties()
+val envFile = File(".env")
+if (envFile.exists()) envFile.reader(Charsets.UTF_8).use { reader ->
+    envProperties.load(reader)
+}
+
+fun getEnvVar(name: String): String? {
+    return System.getenv(name) ?: envProperties.getProperty(name)
+}
+
 
 dependencies {
     compileOnly("org.jetbrains:annotations:23.0.0")
@@ -132,14 +144,14 @@ publishing {
 
     repositories {
         maven {
-            val snapshotUrl = System.getenv("MAVEN_SNAPSHOT_URL") ?: return@maven
-            val releaseUrl = System.getenv("MAVEN_RELEASE_URL") ?: return@maven
+            val snapshotUrl = getEnvVar("MAVEN_SNAPSHOT_URL") ?: return@maven
+            val releaseUrl = getEnvVar("MAVEN_RELEASE_URL") ?: return@maven
 
             // Check which URL should be used
             url = uri(if ((version as String).endsWith("SNAPSHOT")) snapshotUrl else releaseUrl)
 
-            val mavenUsername = System.getenv("MAVEN_USERNAME") ?: return@maven
-            val mavenPassword = System.getenv("MAVEN_PASSWORD") ?: return@maven
+            val mavenUsername = getEnvVar("MAVEN_USERNAME") ?: return@maven
+            val mavenPassword = getEnvVar("MAVEN_PASSWORD") ?: return@maven
 
             credentials {
                 username = mavenUsername
