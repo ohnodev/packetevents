@@ -79,7 +79,16 @@ publishing {
         create<MavenPublication>("shadow") {
             groupId = project.group as String
             artifactId = "packetevents-" + project.name
-            version = rootProject.ext["versionNoHash"] as String
+            // ③ decide which version to publish
+            //    by default: keep the hash; if you want to strip the hash -> run with
+            //    -Ppublish.stripHash=true
+            val stripHash = rootProject.findProperty("publish.stripHash")
+                ?.toString()
+                ?.toBooleanStrictOrNull() ?: false
+            version = if (stripHash)
+                rootProject.extra["versionNoHash"] as String   // 2.8.0-SNAPSHOT
+            else
+                rootProject.version.toString()                 // 2.8.0+abc123-SNAPSHOT
 
             if (isShadow) {
                 artifact(project.tasks.withType<ShadowJar>().getByName("shadowJar").archiveFile)

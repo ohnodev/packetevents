@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 val fullVersion = "2.8.0"
 val snapshot = true
 
-group = "ac.grim.packetevents"
+group = "com.github.retrooper"
 description = rootProject.name
 
 fun getVersionMeta(includeHash: Boolean): String {
@@ -17,13 +17,13 @@ fun getVersionMeta(includeHash: Boolean): String {
             .start()
             .apply { waitFor() }
             .inputStream.use { stdout.writeBytes(it.readAllBytes()) }
-        commitHash = "+${stdout.toString().trim()}-SNAPSHOT"
+        commitHash = "+${stdout.toString().trim()}"
     }
-    return commitHash
+    return "$commitHash-SNAPSHOT"
 }
 
 version = "$fullVersion${getVersionMeta(true)}"
-ext["versionNoHash"] = version
+ext["versionNoHash"] = "$fullVersion${getVersionMeta(false)}"
 
 tasks {
     wrapper {
