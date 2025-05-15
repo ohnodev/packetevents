@@ -80,7 +80,7 @@ public final class ItemStackSerialization {
      * Removed with 1.20.5
      */
     private static void writeLegacy(PacketWrapper<?> wrapper, ItemStack stack) {
-        if (wrapper.getServerVersion().isOlderThan(ServerVersion.V_1_13_2)) {
+        if (wrapper.getServerVersion().isOlderThanOrEquals(ServerVersion.V_1_12_2)) {
             int typeId = stack.isEmpty() ? -1 : stack.getType().getId(wrapper.getServerVersion().toClientVersion());
             wrapper.writeShort(typeId);
             if (typeId != -1) {
