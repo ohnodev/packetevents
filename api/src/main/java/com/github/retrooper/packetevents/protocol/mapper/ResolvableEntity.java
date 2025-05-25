@@ -16,15 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.retrooper.packetevents.protocol.entity.tropicalfish;
+package com.github.retrooper.packetevents.protocol.mapper;
 
-import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.util.mappings.IRegistryHolder;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
-public interface TropicalFishPattern extends MappedEntity {
-    enum Base {
-        SMALL,
-        LARGE;
-    }
+/**
+ * Used internally for loading additional data
+ * after registry entries have already been added.
+ */
+@ApiStatus.Internal
+@NullMarked
+public interface ResolvableEntity {
 
-    Base getBase();
+    void doResolve(IRegistryHolder registryHolder, ClientVersion version);
 }
