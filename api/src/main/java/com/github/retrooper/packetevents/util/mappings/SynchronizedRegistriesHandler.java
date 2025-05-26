@@ -50,6 +50,7 @@ import com.github.retrooper.packetevents.protocol.item.trimpattern.TrimPatterns;
 import com.github.retrooper.packetevents.protocol.mapper.CopyableEntity;
 import com.github.retrooper.packetevents.protocol.mapper.DeepComparableEntity;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.protocol.mapper.ResolvableEntity;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTList;
@@ -140,6 +141,13 @@ public final class SynchronizedRegistriesHandler {
                     registryData.createFromElements(elements, version));
         }
         user.putRegistry(syncedRegistry);
+        // do some resolving stuff for registry entries which may
+        // reference the same registry they are in
+        for (MappedEntity entry : syncedRegistry.getEntries()) {
+            if (entry instanceof ResolvableEntity) {
+                ((ResolvableEntity) entry).doResolve(user, version);
+            }
+        }
     }
 
     public static void handleLegacyRegistries(
