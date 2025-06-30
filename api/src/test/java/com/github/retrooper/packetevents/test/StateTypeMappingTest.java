@@ -1,5 +1,6 @@
 package com.github.retrooper.packetevents.test;
 
+import com.github.retrooper.packetevents.annotations.RuntimeObsolete;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
@@ -12,13 +13,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Locale;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import org.bukkit.Material;
@@ -41,14 +40,14 @@ public class StateTypeMappingTest extends BaseDummyAPITest {
     }
 
     private Collection<StateType> computeNonObsoleteStateTypes() {
-        Collection<StateType> all = StateTypes.values();
-        List<StateType> filtered = new ArrayList<>(all);
-        // Case 0: Ignore obsolete entries (temporary workaround to GRASS_PATH rename/fix)
-        Set<StateType> EXEMPT_STATE_TYPES = new HashSet<>(Arrays.asList(
-                StateTypes.GRASS_PATH
-        ));
-        filtered.removeAll(EXEMPT_STATE_TYPES);
-        return filtered;
+        // Case 0: Ignore obsolete entries
+        return StateTypes.values().stream().filter(e -> {
+            try {
+                return StateTypes.class.getField(e.getName().toUpperCase(Locale.ROOT)).getAnnotation(RuntimeObsolete.class) == null;
+            } catch (NoSuchFieldException ex) {
+                throw new RuntimeException(ex);
+            }
+        }).collect(Collectors.toList());
     }
 
     @ParameterizedTest

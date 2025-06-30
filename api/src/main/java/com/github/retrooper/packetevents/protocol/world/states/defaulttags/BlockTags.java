@@ -377,6 +377,12 @@ public class BlockTags {
     @VisibleForTesting @ApiStatus.Internal
     public static final BlockTags V_1_21_5 = bind("V_1_21_5");
 
+    /**
+     * Unofficial tag for all blocks added in 1.21.6
+     */
+    @VisibleForTesting @ApiStatus.Internal
+    public static final BlockTags V_1_21_6 = bind("V_1_21_6");
+
     static {
         BlockTags.WOOL.add(StateTypes.WHITE_WOOL, StateTypes.ORANGE_WOOL, StateTypes.MAGENTA_WOOL, StateTypes.LIGHT_BLUE_WOOL, StateTypes.YELLOW_WOOL, StateTypes.LIME_WOOL, StateTypes.PINK_WOOL, StateTypes.GRAY_WOOL, StateTypes.LIGHT_GRAY_WOOL, StateTypes.CYAN_WOOL, StateTypes.PURPLE_WOOL, StateTypes.BLUE_WOOL, StateTypes.BROWN_WOOL, StateTypes.GREEN_WOOL, StateTypes.RED_WOOL, StateTypes.BLACK_WOOL);
         BlockTags.PLANKS.add(StateTypes.OAK_PLANKS, StateTypes.SPRUCE_PLANKS, StateTypes.BIRCH_PLANKS, StateTypes.JUNGLE_PLANKS, StateTypes.ACACIA_PLANKS, StateTypes.DARK_OAK_PLANKS, StateTypes.PALE_OAK_PLANKS, StateTypes.CRIMSON_PLANKS, StateTypes.WARPED_PLANKS, StateTypes.MANGROVE_PLANKS, StateTypes.BAMBOO_PLANKS, StateTypes.CHERRY_PLANKS);
@@ -585,6 +591,7 @@ public class BlockTags {
         BlockTags.V_1_21_2.add(StateTypes.PALE_OAK_WOOD, StateTypes.PALE_OAK_PLANKS, StateTypes.PALE_OAK_SAPLING, StateTypes.PALE_OAK_LOG, StateTypes.STRIPPED_PALE_OAK_LOG, StateTypes.STRIPPED_PALE_OAK_WOOD, StateTypes.PALE_OAK_LEAVES, StateTypes.CREAKING_HEART, StateTypes.PALE_OAK_SIGN, StateTypes.PALE_OAK_WALL_SIGN, StateTypes.PALE_OAK_HANGING_SIGN, StateTypes.PALE_OAK_WALL_HANGING_SIGN, StateTypes.PALE_OAK_PRESSURE_PLATE, StateTypes.PALE_OAK_TRAPDOOR, StateTypes.POTTED_PALE_OAK_SAPLING, StateTypes.PALE_OAK_BUTTON, StateTypes.PALE_OAK_STAIRS, StateTypes.PALE_OAK_SLAB, StateTypes.PALE_OAK_FENCE_GATE, StateTypes.PALE_OAK_FENCE, StateTypes.PALE_OAK_DOOR, StateTypes.PALE_MOSS_BLOCK, StateTypes.PALE_MOSS_CARPET, StateTypes.PALE_HANGING_MOSS);
         BlockTags.V_1_21_4.add(StateTypes.RESIN_CLUMP, StateTypes.RESIN_BLOCK, StateTypes.RESIN_BRICKS, StateTypes.RESIN_BRICK_STAIRS, StateTypes.RESIN_BRICK_SLAB, StateTypes.RESIN_BRICK_WALL, StateTypes.CHISELED_RESIN_BRICKS, StateTypes.OPEN_EYEBLOSSOM, StateTypes.CLOSED_EYEBLOSSOM, StateTypes.POTTED_OPEN_EYEBLOSSOM, StateTypes.POTTED_CLOSED_EYEBLOSSOM);
         BlockTags.V_1_21_5.add(StateTypes.BUSH, StateTypes.FIREFLY_BUSH, StateTypes.SHORT_DRY_GRASS, StateTypes.TALL_DRY_GRASS, StateTypes.WILDFLOWERS, StateTypes.LEAF_LITTER, StateTypes.CACTUS_FLOWER, StateTypes.TEST_BLOCK, StateTypes.TEST_INSTANCE_BLOCK);
+        BlockTags.V_1_21_6.add(StateTypes.DRIED_GHAST);
     }
 
     String name;
