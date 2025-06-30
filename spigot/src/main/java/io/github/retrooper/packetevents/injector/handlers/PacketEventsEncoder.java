@@ -112,16 +112,16 @@ public class PacketEventsEncoder extends ChannelOutboundHandlerAdapter {
             boolean needsRecompression = !this.handledCompression && this.handleCompression(ctx, (ByteBuf) msg);
             this.handleClientBoundPacket(ctx.channel(), this.user, this.player, (ByteBuf) msg, this.promise, preVia);
 
+            // We still call preVia listeners if ViaVersion is not available
+            if (!preVia && PacketEvents.getAPI().getSettings().isPreViaInjection() && !ViaVersionUtil.isAvailable())
+                handleClientBoundPacket(ctx.channel(), user, player, (ByteBuf) msg, this.promise, !preVia);
+
             // check if the packet got cancelled
             if (!((ByteBuf) msg).isReadable()) {
                 ReferenceCountUtil.release(msg);
                 promise.trySuccess(); // TODO how to properly handle this?
                 return; // abort handling
             }
-
-            // We still call preVia listeners if ViaVersion is not available
-            if (!preVia && PacketEvents.getAPI().getSettings().isPreViaInjection() && !ViaVersionUtil.isAvailable())
-                handleClientBoundPacket(ctx.channel(), user, player, (ByteBuf) msg, this.promise, !preVia);
 
             if (needsRecompression) {
                 this.compress(ctx, (ByteBuf) msg);
