@@ -70,7 +70,6 @@ jobs:
           path: sponge/build/libs
 
       - name: Publish with Gradle
-        if: ${{ github.ref == 'refs/heads/grim/2.0' }}
         run: ./gradlew publish
         env:
           MAVEN_SNAPSHOT_URL: ${{ secrets.MAVEN_SNAPSHOT_URL }}

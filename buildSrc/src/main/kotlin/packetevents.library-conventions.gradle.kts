@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import groovy.util.Node
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 plugins {
@@ -28,6 +29,26 @@ fun getEnvVar(name: String): String? {
     return System.getenv(name) ?: envProperties.getProperty(name)
 }
 
+fun getCurrentGitBranchName(): String {
+    val stdout = ByteArrayOutputStream()
+    project.exec {
+        commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+        standardOutput = stdout
+        errorOutput = stdout // Capture errors too, though unlikely for this command
+    }
+    val result = stdout.toString().trim()
+    return result
+}
+
+fun getShortCommitHash(): String {
+    val stdout = ByteArrayOutputStream()
+    project.exec {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+        standardOutput = stdout
+    }
+    val result = stdout.toString().trim()
+    return result
+}
 
 dependencies {
     compileOnly("org.jetbrains:annotations:23.0.0")
@@ -79,16 +100,45 @@ publishing {
         create<MavenPublication>("shadow") {
             groupId = project.group as String
             artifactId = "packetevents-" + project.name
-            // ③ decide which version to publish
-            //    by default: keep the hash; if you want to strip the hash -> run with
-            //    -Ppublish.stripHash=true
+
             val stripHash = rootProject.findProperty("publish.stripHash")
                 ?.toString()
                 ?.toBooleanStrictOrNull() ?: false
-            version = if (stripHash)
-                rootProject.extra["versionNoHash"] as String   // 2.8.0-SNAPSHOT
-            else
-                rootProject.version.toString()                 // 2.8.0+abc123-SNAPSHOT
+
+            val mainBranchName = rootProject.findProperty("publish.mainBranchName")
+                ?.toString() ?: "grim/2.0" // Your main branch name
+
+            val currentBranch = getCurrentGitBranchName()
+            val isMainBranch = currentBranch == mainBranchName
+
+            val includeBranchName = rootProject.findProperty("publish.includeBranchName")
+                ?.toString()
+                ?.toBooleanStrictOrNull() ?: !isMainBranch
+
+            version = if (stripHash) {
+                rootProject.extra["versionNoHash"] as String
+            } else {
+                val baseVersionNumber = (rootProject.extra["versionNoHash"] as String).removeSuffix("-SNAPSHOT")
+                val shortCommit = getShortCommitHash()
+
+                // Build the branch suffix conditionally
+                val branchSuffix = if (includeBranchName) {
+                    val sanitizedBranch = currentBranch
+                        .replace("/", "_") // Slashes become underscores
+                        .replace(Regex("[^a-zA-Z0-9_.-]+"), "_") // Other invalid chars become underscores
+                        .replace(Regex("_{2,}"), "_") // Collapse multiple underscores
+                        .replace(Regex("^[._-]+|[._-]+$"), "") // Remove leading/trailing underscores/dots/hyphens
+                    sanitizedBranch.takeIf { it.isNotBlank() }?.let { "-$it" } // Only add if not blank
+                } else {
+                    null // No branch suffix
+                }
+
+                // Commit suffix is always added if available
+                val commitSuffix = shortCommit.let { "+$it" } ?: ""
+
+                // Combine all parts into the final version string
+                "$baseVersionNumber${branchSuffix.orEmpty()}${commitSuffix}-SNAPSHOT"
+            }
 
             if (isShadow) {
                 artifact(project.tasks.withType<ShadowJar>().getByName("shadowJar").archiveFile)
