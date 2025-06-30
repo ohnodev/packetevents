@@ -12,7 +12,7 @@
   "environment": "*",
   "entrypoints": {
     "peMainChainLoad": [
-      "io.github.retrooper.packetevents.mc1215.Fabric1212ChainLoadEntrypoint"
+      "io.github.retrooper.packetevents.mc1216.Fabric1212ChainLoadEntrypoint"
     ]
   },
   "accessWidener": "packetevents.accesswidener",

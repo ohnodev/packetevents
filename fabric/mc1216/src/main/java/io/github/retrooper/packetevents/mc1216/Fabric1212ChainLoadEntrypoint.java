@@ -1,11 +1,11 @@
-package io.github.retrooper.packetevents.mc1215;
+package io.github.retrooper.packetevents.mc1216;
 
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import io.github.retrooper.packetevents.util.LazyHolder;
 import io.github.retrooper.packetevents.loader.ChainLoadData;
 import io.github.retrooper.packetevents.loader.ChainLoadEntryPoint;
 import io.github.retrooper.packetevents.manager.registry.FabricRegistryManager;
-import io.github.retrooper.packetevents.mc1215.manager.registry.Fabric1212ItemRegistry;
+import io.github.retrooper.packetevents.mc1216.manager.registry.Fabric1212ItemRegistry;
 
 public class Fabric1212ChainLoadEntrypoint implements ChainLoadEntryPoint {
 
@@ -18,6 +18,6 @@ public class Fabric1212ChainLoadEntrypoint implements ChainLoadEntryPoint {
 
     @Override
     public ServerVersion getNativeVersion() {
-        return ServerVersion.V_1_21_5;
+        return ServerVersion.V_1_21_6;
     }
 }
