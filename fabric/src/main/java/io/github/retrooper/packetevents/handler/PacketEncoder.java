@@ -35,6 +35,7 @@ import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDisconnect;
 import io.github.retrooper.packetevents.factory.fabric.FabricPacketEventsAPI;
 import io.github.retrooper.packetevents.util.FabricCustomPipelineUtil;
+import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -76,10 +77,12 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
     private boolean handledCompression;
     private final boolean isPre1_20_5 = PacketEvents.getAPI().getServerManager().getVersion().isOlderThan(
         ServerVersion.V_1_20_5);
+    private final boolean preViaVersion;
 
-    public PacketEncoder(PacketSide side, User user) {
+    public PacketEncoder(PacketSide side, User user, boolean preViaVersion) {
         this.side = side;
         this.user = user;
+        this.preViaVersion = preViaVersion;
     }
 
     public void read(ChannelHandlerContext originalCtx, ByteBuf buffer, ChannelPromise promise) {
@@ -141,9 +144,12 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
     }
 
     private @Nullable ProtocolPacketEvent handlePacket(ChannelHandlerContext ctx, ByteBuf buffer, ChannelPromise promise) throws Exception {
+        if (!preViaVersion && PacketEvents.getAPI().getSettings().isPreViaInjection() && !ViaVersionUtil.isAvailable(user))
+            PacketEventsImplHelper.handlePacket(ctx.channel(), user, player, buffer, preViaVersion, this.side);
+
         // Process the packet using PacketEventsImplHelper (similar to Spigot)
         ProtocolPacketEvent protocolPacketEvent = PacketEventsImplHelper.handlePacket(
-            ctx.channel(), this.user, this.player, buffer, true, this.side
+            ctx.channel(), this.user, this.player, buffer, !preViaVersion, this.side
         );
 
         // Execute post-send tasks (required for cross-platform support)

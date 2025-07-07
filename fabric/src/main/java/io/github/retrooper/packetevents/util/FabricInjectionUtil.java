@@ -15,6 +15,7 @@ import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
 import io.github.retrooper.packetevents.factory.fabric.FabricPacketEventsAPI;
 import io.github.retrooper.packetevents.handler.PacketDecoder;
 import io.github.retrooper.packetevents.handler.PacketEncoder;
+import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
@@ -51,9 +52,13 @@ public class FabricInjectionUtil {
         }
 
         String decoderName = channel.pipeline().names().contains("inbound_config") ? "inbound_config" : "decoder";
-        channel.pipeline().addBefore(decoderName, PacketEvents.DECODER_NAME, new PacketDecoder(pipelineSide, user));
+        channel.pipeline().addBefore(decoderName, PacketEvents.DECODER_NAME, new PacketDecoder(pipelineSide, user, false));
         String encoderName = channel.pipeline().names().contains("outbound_config") ? "outbound_config" : "encoder";
-        channel.pipeline().addBefore(encoderName, PacketEvents.ENCODER_NAME, new PacketEncoder(pipelineSide, user));
+        channel.pipeline().addBefore(encoderName, PacketEvents.ENCODER_NAME, new PacketEncoder(pipelineSide, user, false));
+        if (PacketEvents.getAPI().getSettings().isPreViaInjection() && ViaVersionUtil.isAvailable(user)) {
+            channel.pipeline().addBefore(VIA_DECODER_NAME, "pre-" + PacketEvents.DECODER_NAME, new PacketDecoder(pipelineSide, user, true));
+            channel.pipeline().addBefore(VIA_ENCODER_NAME, "pre-" + PacketEvents.ENCODER_NAME, new PacketEncoder(pipelineSide, user, true));
+        }
         channel.closeFuture().addListener((ChannelFutureListener) future ->
             PacketEventsImplHelper.handleDisconnection(user.getChannel(), user.getUUID()));
     }
@@ -66,6 +71,7 @@ public class FabricInjectionUtil {
     }
 
     // Shared method to reorder handlers after ViaVersion
+    // Note that we do not need to reorder pre-via listeners as via-version orders itself in front of the vanilla encoder/decoders
     public static void reorderHandlers(ChannelHandlerContext ctx, PacketSide side) {
         ChannelPipeline pipeline = ctx.pipeline();
 
