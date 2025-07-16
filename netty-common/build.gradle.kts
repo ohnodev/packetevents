@@ -1,8 +1,9 @@
 plugins {
+    packetevents.`shadow-conventions`
     packetevents.`library-conventions`
 }
 
 dependencies {
     compileOnly(libs.netty)
-    implementation(project(":api", "shadow"))
+    apiAndPublish(project(":api"))
 }
