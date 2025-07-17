@@ -146,10 +146,11 @@ publishing {
             }
 
             if (isShadow) {
-                artifact(project.tasks.withType<ShadowJar>().getByName("shadowJarPublish").archiveFile)
+                artifact(project.tasks.withType<ShadowJar>().getByName("shadowJar").archiveFile)
 
                 val allDependencies = project.provider {
-                    apiAndPublish.allDependencies.filter { it is ProjectDependency || it !is SelfResolvingDependency }
+                    project.configurations.getByName("shadow").allDependencies
+                        .filter { it is ProjectDependency || it !is SelfResolvingDependency }
                 }
 
                 pom {
@@ -233,4 +234,10 @@ publishing {
 // So that SNAPSHOT is always the latest SNAPSHOT
 configurations.all {
     resolutionStrategy.cacheDynamicVersionsFor(0, TimeUnit.SECONDS)
+}
+
+val taskNames = gradle.startParameter.taskNames
+if (taskNames.any { it.contains("build") }
+    && taskNames.any { it.contains("publish") }) {
+    throw IllegalStateException("Cannot build and publish at the same time.")
 }

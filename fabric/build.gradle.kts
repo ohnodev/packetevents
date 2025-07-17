@@ -21,12 +21,12 @@ val loader_version: String by project
 
 dependencies {
     api(libs.bundles.adventure)
-    api(project(":api"))
+    api(project(":api", "shadow"))
     api(project(":netty-common"))
     modApi("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-fabric:0.6.4")
 
     include(libs.bundles.adventure)
-    include(project(":api"))
+    include(project(":api", "shadow"))
     include(project(":netty-common"))
     include("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-fabric:0.6.4")
 
