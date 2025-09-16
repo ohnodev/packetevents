@@ -22,13 +22,12 @@ ext["branchName"] = when {
     ext["includeBranchName"] == false ||
     ext["gitBranch"].toString().isBlank() ||
             ext["gitBranch"].toString().contentEquals(ext["mainBranchName"].toString()) -> ""
-    else -> "-${ext["gitBranch"]}"
+    else -> "${ext["gitBranch"]}"
 }
 ext["versionMeta"] = if (ext["snapshot"] == true) "-SNAPSHOT" else ""
 ext["versionMetaWithHash"] = "+${ext["commitHash"]}${ext["versionMeta"]}"
 ext["artifactVersion"] = buildString {
     append(ext["fullVersion"])
-    append(ext["branchName"])
     append(ext[if (ext["snapshot"] == true) "versionMetaWithHash" else "versionMeta"])
 }
 
