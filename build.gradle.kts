@@ -4,17 +4,41 @@ plugins {
 
 // properties are all set as string, convert to boolean
 ext["snapshot"] = ext["snapshot"].toString().toBooleanStrict()
-
+ext["includeBranchName"] = ext["includeBranchName"].toString().toBooleanStrict()
+ext["mainBranchName"] = ext["mainBranchName"].toString()
 ext["commitHash"] = providers.exec {
     commandLine("git", "rev-parse", "--short", "HEAD")
 }.standardOutput.asText.map { it.trim() }.getOrElse("unknown")
+ext["gitBranch"] = providers.exec {
+    commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+}.standardOutput.asText.map {
+    it.trim()
+        .replace(Regex("[^a-zA-Z0-9_.-]+"), "_") // Other invalid chars become underscores
+        .replace(Regex("_{2,}"), "_") // Collapse multiple underscores
+        .replace(Regex("^[ ._-]+|[ ._-]+$"), "") // Remove leading/trailing underscores/dots/hyphens
+        .replace(Regex("^heads_"), "")
+}.getOrElse("")
+ext["branchName"] = when {
+    ext["includeBranchName"] == false ||
+    ext["gitBranch"].toString().isBlank() ||
+            ext["gitBranch"].toString().contentEquals(ext["mainBranchName"].toString()) -> ""
+    else -> "-${ext["gitBranch"]}"
+}
 ext["versionMeta"] = if (ext["snapshot"] == true) "-SNAPSHOT" else ""
 ext["versionMetaWithHash"] = "+${ext["commitHash"]}${ext["versionMeta"]}"
-ext["versionNoHash"] = "${ext["fullVersion"]}${ext["versionMeta"]}"
+ext["artifactVersion"] = buildString {
+    append(ext["fullVersion"])
+    append(ext["branchName"])
+    append(ext[if (ext["snapshot"] == true) "versionMetaWithHash" else "versionMeta"])
+}
+
 
 group = "com.github.retrooper"
 description = rootProject.name
-version = "${ext["fullVersion"]}${ext[if (ext["snapshot"] == true) "versionMetaWithHash" else "versionMeta"]}"
+version = buildString {
+    append(ext["fullVersion"])
+    append(ext[if (ext["snapshot"] == true) "versionMetaWithHash" else "versionMeta"])
+}
 
 tasks {
     wrapper {
@@ -32,7 +56,8 @@ tasks {
     }
 
     register("printVersion") {
-        println(project.version)
+        println("Project Version: " + project.version)
+        println("Artifact Version: " + project.ext["artifactVersion"])
     }
 
     defaultTasks("build")
@@ -42,7 +67,7 @@ allprojects {
     tasks {
         withType<Jar> {
             archiveBaseName = "${rootProject.name}-${project.name}"
-            archiveVersion = rootProject.ext["versionNoHash"] as String
+            archiveVersion = rootProject.ext["artifactVersion"] as String
         }
     }
 }

@@ -69,12 +69,12 @@ allprojects {
         remapJar {
             destinationDirectory = rootProject.layout.buildDirectory.dir("libs")
             archiveBaseName = "${rootProject.name}-fabric${if (project.name != "fabric") "-${project.name}" else ""}"
-            archiveVersion = rootProject.ext["versionNoHash"] as String
+            archiveVersion = rootProject.ext["artifactVersion"] as String
         }
 
         remapSourcesJar {
             archiveBaseName = "${rootProject.name}-fabric${if (project.name != "fabric") "-${project.name}" else ""}"
-            archiveVersion = rootProject.ext["versionNoHash"] as String
+            archiveVersion = rootProject.ext["artifactVersion"] as String
         }
     }
 

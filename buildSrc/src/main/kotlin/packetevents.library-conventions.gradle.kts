@@ -105,45 +105,7 @@ publishing {
         create<MavenPublication>("shadow") {
             groupId = project.group as String
             artifactId = "packetevents-" + project.name
-
-            val stripHash = rootProject.findProperty("publish.stripHash")
-                ?.toString()
-                ?.toBooleanStrictOrNull() ?: false
-
-            val mainBranchName = rootProject.findProperty("publish.mainBranchName")
-                ?.toString() ?: "grim/2.0" // Your main branch name
-
-            val currentBranch = getCurrentGitBranchName()
-            val isMainBranch = currentBranch == mainBranchName
-
-            val includeBranchName = rootProject.findProperty("publish.includeBranchName")
-                ?.toString()
-                ?.toBooleanStrictOrNull() ?: !isMainBranch
-
-            version = if (stripHash) {
-                rootProject.extra["versionNoHash"] as String
-            } else {
-                val baseVersionNumber = (rootProject.extra["versionNoHash"] as String).removeSuffix("-SNAPSHOT")
-                val shortCommit = getShortCommitHash()
-
-                // Build the branch suffix conditionally
-                val branchSuffix = if (includeBranchName) {
-                    val sanitizedBranch = currentBranch
-                        .replace("/", "_") // Slashes become underscores
-                        .replace(Regex("[^a-zA-Z0-9_.-]+"), "_") // Other invalid chars become underscores
-                        .replace(Regex("_{2,}"), "_") // Collapse multiple underscores
-                        .replace(Regex("^[._-]+|[._-]+$"), "") // Remove leading/trailing underscores/dots/hyphens
-                    sanitizedBranch.takeIf { it.isNotBlank() }?.let { "-$it" } // Only add if not blank
-                } else {
-                    null // No branch suffix
-                }
-
-                // Commit suffix is always added if available
-                val commitSuffix = shortCommit.let { "+$it" } ?: ""
-
-                // Combine all parts into the final version string
-                "$baseVersionNumber${branchSuffix.orEmpty()}${commitSuffix}-SNAPSHOT"
-            }
+            version = rootProject.ext["artifactVersion"] as String
 
             if (isShadow) {
                 artifact(project.tasks.withType<ShadowJar>().getByName("shadowJar").archiveFile)
@@ -172,7 +134,7 @@ publishing {
                             val dependencyNode = dependenciesNode.appendNode("dependency")
                             dependencyNode.appendNode("groupId", it.group)
                             dependencyNode.appendNode("artifactId", "packetevents-" + it.name)
-                            dependencyNode.appendNode("version", rootProject.ext["versionNoHash"])
+                            dependencyNode.appendNode("version", rootProject.ext["artifactVersion"])
                             dependencyNode.appendNode("scope", "compile")
                         }
                     }
