@@ -45,24 +45,26 @@ configure<ModPublishExtension> {
         val fancyPlatform = platform.replaceFirstChar { it.titlecaseChar() }
 
         // setup per-platform modrinth publishing
-        modrinth {
-            accessToken = providers.environmentVariable("MODRINTH_API_TOKEN")
-            var versionBob = "${rootProject.ext["fullVersion"]}+${platform}"
-            if (rootProject.ext["snapshot"] == true) {
-                // e.g. "0.0.0+platform.abcdefg"
-                version = "${versionBob}.${rootProject.ext["commitHash"]}"
-            } else {
-                // e.g. "0.0.0+platform"
-                version = versionBob
+        providers.environmentVariable("MODRINTH_API_TOKEN").orNull?.let {
+            modrinth {
+                accessToken = it
+                var versionBob = "${rootProject.ext["fullVersion"]}+${platform}"
+                version = if (rootProject.ext["snapshot"] == true) {
+                    // e.g. "0.0.0+platform.abcdefg"
+                    "${versionBob}.${rootProject.ext["commitHash"]}"
+                } else {
+                    // e.g. "0.0.0+platform"
+                    versionBob
+                }
+                displayName = "${rootProject.ext["publishing.display_name"]} ${rootProject.version} ${fancyPlatform}"
+                projectId = property("publishing.modrinth.project").toString()
+                minecraftVersionRange {
+                    start = property("publishing.modrinth.version.start").toString()
+                    end = property("publishing.modrinth.version.end").toString()
+                }
+                val loadersStr = property("publishing.modrinth.loaders").toString()
+                modLoaders.addAll(loadersStr.split(","))
             }
-            displayName = "${rootProject.ext["publishing.display_name"]} ${rootProject.version} ${fancyPlatform}"
-            projectId = property("publishing.modrinth.project").toString()
-            minecraftVersionRange {
-                start = property("publishing.modrinth.version.start").toString()
-                end = property("publishing.modrinth.version.end").toString()
-            }
-            val loadersStr = property("publishing.modrinth.loaders").toString()
-            modLoaders.addAll(loadersStr.split(","))
         }
     }
 }
