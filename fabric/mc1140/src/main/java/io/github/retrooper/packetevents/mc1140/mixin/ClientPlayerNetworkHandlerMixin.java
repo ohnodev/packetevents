@@ -57,6 +57,7 @@ public abstract class ClientPlayerNetworkHandlerMixin {
     )
     private void postLoginPlayerConstruct(CallbackInfo ci) {
         FabricPacketEventsAPI.getClientAPI().getInjector().setPlayer(this.connection.channel, MinecraftClient.getInstance().player);
+        this.connection.channel.config().setAutoRead(true);
     }
 
     /**

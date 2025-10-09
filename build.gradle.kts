@@ -40,11 +40,6 @@ version = buildString {
 }
 
 tasks {
-    wrapper {
-        gradleVersion = "8.14.3"
-        distributionType = Wrapper.DistributionType.ALL
-    }
-
     val taskSubModules: (String) -> Array<Task> = { task ->
         subprojects.filterNot { it.path == ":patch" }.map { it.tasks[task] }.toTypedArray()
     }

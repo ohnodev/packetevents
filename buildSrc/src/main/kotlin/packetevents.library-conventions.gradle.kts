@@ -112,7 +112,7 @@ publishing {
 
                 val allDependencies = project.provider {
                     project.configurations.getByName("shadow").allDependencies
-                        .filter { it is ProjectDependency || it !is SelfResolvingDependency }
+                        .filter { it is ProjectDependency || it !is FileCollectionDependency }
                 }
 
                 pom {
