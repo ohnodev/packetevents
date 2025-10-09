@@ -48,6 +48,18 @@ public abstract class ClientPlayerNetworkHandlerMixin {
      */
     @Inject(
             method = "onGameJoin",
+            at = @At(value = "HEAD")
+    )
+    private void preLoginPlayerThreadSwitch(CallbackInfo ci) {
+        // pause reading until LocalPlayer instance has been constructed (see method below)
+        this.connection.channel.config().setAutoRead(false);
+    }
+
+    /**
+     * @reason Associate connection instance with player instance
+     */
+    @Inject(
+            method = "onGameJoin",
             at = @At(
                     value = "FIELD",
                     opcode = Opcodes.PUTFIELD,

@@ -37,6 +37,18 @@ public abstract class ClientPlayerNetworkHandlerMixin {
 
     @Shadow public abstract ClientConnection getConnection();
 
+    /**
+     * @reason Associate connection instance with player instance
+     */
+    @Inject(
+            method = "onGameJoin",
+            at = @At(value = "HEAD")
+    )
+    private void preLoginPlayerThreadSwitch(CallbackInfo ci) {
+        // pause reading until LocalPlayer instance has been constructed (see method below)
+        this.getConnection().channel.config().setAutoRead(false);
+    }
+
     /*
      * @reason Associate connection instance with player instance
      */
@@ -51,6 +63,7 @@ public abstract class ClientPlayerNetworkHandlerMixin {
     )
     private void postLoginPlayerConstruct(CallbackInfo ci) {
         FabricPacketEventsAPI.getClientAPI().getInjector().setPlayer(this.getConnection().channel, MinecraftClient.getInstance().player);
+        this.getConnection().channel.config().setAutoRead(true);
     }
 
     /**

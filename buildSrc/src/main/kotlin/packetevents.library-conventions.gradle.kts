@@ -35,23 +35,16 @@ fun getEnvVar(name: String): String? {
 }
 
 fun getCurrentGitBranchName(): String {
-    val stdout = ByteArrayOutputStream()
-    project.exec {
+    val result = project.providers.exec {
         commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
-        standardOutput = stdout
-        errorOutput = stdout // Capture errors too, though unlikely for this command
-    }
-    val result = stdout.toString().trim()
+    }.standardOutput.asText.get()
     return result
 }
 
 fun getShortCommitHash(): String {
-    val stdout = ByteArrayOutputStream()
-    project.exec {
+    val result = project.providers.exec {
         commandLine("git", "rev-parse", "--short", "HEAD")
-        standardOutput = stdout
-    }
-    val result = stdout.toString().trim()
+    }.standardOutput.asText.get()
     return result
 }
 
