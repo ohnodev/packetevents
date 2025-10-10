@@ -37,13 +37,7 @@ public class StateTypeMappingTest extends BaseDummyAPITest {
     // TODO: Remove this exemption set when MockBukkit correctly handles BlockData for doors and double-high plants.
     // This set contains materials that MockBukkit incorrectly identifies as 'air'.
     private static final Set<String> MOCKBUKKIT_EXEMPTIONS = new HashSet<>(Arrays.asList(
-            "BAMBOO_DOOR", "DARK_OAK_DOOR", "WAXED_EXPOSED_COPPER_DOOR", "ACACIA_DOOR",
-            "OAK_DOOR", "IRON_DOOR", "WEATHERED_COPPER_DOOR", "LILAC", "PITCHER_PLANT",
-            "CRIMSON_DOOR", "LARGE_FERN", "PALE_OAK_DOOR", "COPPER_DOOR", "JUNGLE_DOOR",
-            "SPRUCE_DOOR", "WAXED_COPPER_DOOR", "SUNFLOWER", "BIRCH_DOOR", "PEONY",
-            "MANGROVE_DOOR", "WAXED_WEATHERED_COPPER_DOOR", "ROSE_BUSH",
-            "WAXED_OXIDIZED_COPPER_DOOR", "CHERRY_DOOR", "TALL_SEAGRASS", "WARPED_DOOR",
-            "OXIDIZED_COPPER_DOOR", "EXPOSED_COPPER_DOOR", "TALL_GRASS"
+            "VOID_AIR", "CAVE_AIR", "SOUL_FIRE"
     ));
 
     private Collection<StateType> cachedStateValues = null;
