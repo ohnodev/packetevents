@@ -44,4 +44,9 @@ public class VelocityChannelInitializer extends ChannelInitializer<Channel> {
 
         ServerConnectionInitializer.initChannel(channel, ConnectionState.HANDSHAKING);
     }
+
+    public ChannelInitializer<Channel> getWrappedInitializer() {
+        return wrappedInitializer;
+    }
+
 }
