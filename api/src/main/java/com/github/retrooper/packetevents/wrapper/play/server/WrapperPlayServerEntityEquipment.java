@@ -45,11 +45,17 @@ public class WrapperPlayServerEntityEquipment extends PacketWrapper<WrapperPlayS
 
     @Override
     public void read() {
-        if (serverVersion == ServerVersion.V_1_7_10) {
+        if (this.serverVersion.isOlderThanOrEquals(ServerVersion.V_1_7_10)) {
             entityId = readInt();
         } else {
             entityId = readVarInt();
         }
+        readEquipment();
+    }
+
+    // allow this to be overridden by a subclass
+    // this could be used to save performance if you don't need to read the equipment
+    protected void readEquipment() {
         equipment = new ArrayList<>();
         if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_16)) {
             byte value;
@@ -72,15 +78,16 @@ public class WrapperPlayServerEntityEquipment extends PacketWrapper<WrapperPlayS
 
     @Override
     public void write() {
-        if (serverVersion == ServerVersion.V_1_7_10) {
+        if (this.serverVersion.isOlderThanOrEquals(ServerVersion.V_1_7_10)) {
             writeInt(entityId);
         } else {
             writeVarInt(entityId);
         }
         if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_16)) {
-            for (int i = 0; i < this.equipment.size(); i++) {
+            int size = this.equipment.size();
+            for (int i = 0; i < size; i++) {
                 Equipment equipment = this.equipment.get(i);
-                boolean last = i == (this.equipment.size() - 1);
+                boolean last = i == (size - 1);
                 writeByte(last ? equipment.getSlot().getId(serverVersion) : (equipment.getSlot().getId(serverVersion) | Byte.MIN_VALUE));
                 writeItemStack(equipment.getItem());
             }

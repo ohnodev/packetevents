@@ -26,8 +26,10 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -62,7 +64,7 @@ public class WrapperPlayClientClickWindow extends PacketWrapper<WrapperPlayClien
     /**
      * Added with 1.21.5
      */
-    private @Nullable Optional<HashedStack> carriedHashedStack;
+    private @Nullable HashedStack carriedHashedStack;
 
     public WrapperPlayClientClickWindow(PacketReceiveEvent event) {
         super(event);
@@ -100,28 +102,31 @@ public class WrapperPlayClientClickWindow extends PacketWrapper<WrapperPlayClien
         this.button = button;
         this.windowClickType = windowClickType;
         this.hashedSlots = hashedSlots;
-        this.carriedHashedStack = carriedHashedStack;
+        this.carriedHashedStack = carriedHashedStack != null
+                ? carriedHashedStack.orElse(null) : null;
     }
 
     @Override
     public void read() {
-        boolean v1_17 = this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_17);
         this.windowID = this.readContainerId();
         this.stateID = this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_17_1) ? this.readVarInt() : null;
         this.slot = this.readShort();
         this.button = this.readByte();
-        this.actionNumber = v1_17 ? null : (int) this.readShort();
+        this.actionNumber = this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_17) ? null : (int) this.readShort();
         this.windowClickType = WindowClickType.getById(this.readVarInt());
+        readSlots();
+    }
 
+    protected void readSlots() {
         if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_5)) {
             this.hashedSlots = this.readMap(
                     ew -> Math.toIntExact(ew.readShort()),
-                    HashedStack::read,
+                    HashedStack::readOptional,
                     MAX_SLOT_COUNT
             );
             this.carriedHashedStack = HashedStack.read(this);
         } else {
-            if (v1_17) {
+            if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_17)) {
                 this.slots = this.readMap(
                         packetWrapper -> Math.toIntExact(packetWrapper.readShort()),
                         PacketWrapper::readItemStack
@@ -160,7 +165,7 @@ public class WrapperPlayClientClickWindow extends PacketWrapper<WrapperPlayClien
         this.writeVarInt(this.windowClickType.ordinal());
         if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_5)) {
             this.writeMap(this.hashedSlots != null ? this.hashedSlots : Collections.emptyMap(),
-                    PacketWrapper::writeShort, HashedStack::write);
+                    PacketWrapper::writeShort, HashedStack::writeOptional);
             HashedStack.write(this, this.carriedHashedStack);
         } else {
             if (v1_17) {
@@ -236,21 +241,49 @@ public class WrapperPlayClientClickWindow extends PacketWrapper<WrapperPlayClien
     /**
      * Added with 1.17, not actually optional; Removed with 1.21.5, replaced with {@link #getHashedSlots()}
      */
+    @ApiStatus.Obsolete
     public Optional<Map<Integer, ItemStack>> getSlots() {
-        return Optional.ofNullable(this.slots);
+        if (this.slots != null) {
+            return Optional.of(this.slots);
+        } else if (this.hashedSlots != null) {
+            Map<Integer, ItemStack> ret = new HashMap<>(this.hashedSlots.size());
+            for (Map.Entry<Integer, Optional<HashedStack>> entry : this.hashedSlots.entrySet()) {
+                HashedStack stack = entry.getValue().orElse(null);
+                ret.put(entry.getKey(), stack != null ? stack.asItemStack() : ItemStack.EMPTY);
+            }
+            return Optional.of(ret);
+        }
+        return Optional.empty();
     }
 
     /**
      * Added with 1.17, not actually optional; Removed with 1.21.5, replaced with {@link #setHashedSlots(Map)}
      */
+    @ApiStatus.Obsolete
+    public void setSlots(Map<Integer, ItemStack> slots) {
+        this.setSlots(Optional.ofNullable(slots));
+    }
+
+    /**
+     * Added with 1.17, not actually optional; Removed with 1.21.5, replaced with {@link #setHashedSlots(Map)}
+     */
+    @ApiStatus.Obsolete
     public void setSlots(Optional<Map<Integer, ItemStack>> slots) {
         this.slots = slots.orElse(null);
+        if (this.slots != null) {
+            this.hashedSlots = new HashMap<>(this.slots.size());
+            for (Map.Entry<Integer, ItemStack> entry : this.slots.entrySet()) {
+                this.hashedSlots.put(entry.getKey(), HashedStack.toOptionalFromItemStack(entry.getValue()));
+            }
+        } else {
+            this.hashedSlots = null;
+        }
     }
 
     /**
      * Added with 1.21.5
      */
-    public Map<Integer, Optional<HashedStack>> getHashedSlots() {
+    public @UnknownNullability Map<Integer, Optional<HashedStack>> getHashedSlots() {
         return this.hashedSlots;
     }
 
@@ -264,18 +297,20 @@ public class WrapperPlayClientClickWindow extends PacketWrapper<WrapperPlayClien
     /**
      * Removed with 1.21.5, replaced with {@link #getCarriedHashedStack()}
      */
+    @ApiStatus.Obsolete
     public ItemStack getCarriedItemStack() {
-        if (this.carriedItemStack == null && this.carriedHashedStack != null) {
-            return this.carriedHashedStack
-                    .map(HashedStack::asItemStack)
-                    .orElse(ItemStack.EMPTY);
+        if (this.carriedItemStack != null) {
+            return this.carriedItemStack;
+        } else if (this.carriedHashedStack != null) {
+            return this.carriedHashedStack.asItemStack();
         }
-        return this.carriedItemStack;
+        return ItemStack.EMPTY;
     }
 
     /**
-     * Removed with 1.21.5, replaced with {@link #setCarriedHashedStack(Optional)}
+     * Removed with 1.21.5, replaced with {@link #setCarriedHashedStack(HashedStack)}
      */
+    @ApiStatus.Obsolete
     public void setCarriedItemStack(ItemStack carriedItemStack) {
         this.carriedItemStack = carriedItemStack;
         this.carriedHashedStack = HashedStack.fromItemStack(carriedItemStack);
@@ -285,14 +320,21 @@ public class WrapperPlayClientClickWindow extends PacketWrapper<WrapperPlayClien
      * Added with 1.21.5
      */
     public Optional<HashedStack> getCarriedHashedStack() {
-        return this.carriedHashedStack;
+        return Optional.ofNullable(this.carriedHashedStack);
+    }
+
+    /**
+     * Added with 1.21.5
+     */
+    public void setCarriedHashedStack(@Nullable HashedStack carriedHashedStack) {
+        this.carriedHashedStack = carriedHashedStack;
     }
 
     /**
      * Added with 1.21.5
      */
     public void setCarriedHashedStack(Optional<HashedStack> carriedHashedStack) {
-        this.carriedHashedStack = carriedHashedStack;
+        this.carriedHashedStack = carriedHashedStack.orElse(null);
     }
 
     public enum WindowClickType {

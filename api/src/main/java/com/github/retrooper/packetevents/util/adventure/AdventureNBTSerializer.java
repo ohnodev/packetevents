@@ -19,12 +19,14 @@
 package com.github.retrooper.packetevents.util.adventure;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTByte;
 import com.github.retrooper.packetevents.protocol.nbt.NBTByteArray;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTDouble;
+import com.github.retrooper.packetevents.protocol.nbt.NBTEnd;
 import com.github.retrooper.packetevents.protocol.nbt.NBTFloat;
 import com.github.retrooper.packetevents.protocol.nbt.NBTInt;
 import com.github.retrooper.packetevents.protocol.nbt.NBTIntArray;
@@ -47,6 +49,7 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.EntityNBTComponent;
 import net.kyori.adventure.text.KeybindComponent;
 import net.kyori.adventure.text.NBTComponent;
+import net.kyori.adventure.text.ObjectComponent;
 import net.kyori.adventure.text.ScoreComponent;
 import net.kyori.adventure.text.SelectorComponent;
 import net.kyori.adventure.text.StorageNBTComponent;
@@ -61,6 +64,9 @@ import net.kyori.adventure.text.format.ShadowColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.object.ObjectContents;
+import net.kyori.adventure.text.object.PlayerHeadObjectContents;
+import net.kyori.adventure.text.object.SpriteObjectContents;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import net.kyori.adventure.text.serializer.gson.BackwardCompatUtil;
 import org.jetbrains.annotations.Contract;
@@ -225,6 +231,8 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
         Key nbtStorage = reader.readUTF("storage", Key::key);
         List<Component> extra = reader.readList("extra", tag -> this.deserializeComponentList(tag, wrapper));
         Component separator = reader.read("separator", tag -> this.deserialize(tag, wrapper));
+        NBT player = reader.read("player", Function.identity());
+        String sprite = reader.readUTF("sprite", Function.identity());
         Style style = this.deserializeStyle(compound, wrapper);
 
         // build component from read values
@@ -267,6 +275,28 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
                         .storage(nbtStorage);
             } else {
                 throw new IllegalStateException("Illegal nbt component, block/entity/storage is missing");
+            }
+        } else if (player != null) {
+            if (BackwardCompatUtil.IS_4_25_0_OR_NEWER) {
+                ItemProfile profile = ItemProfile.decode(player, wrapper);
+                PlayerHeadObjectContents playerHead = ObjectContents.playerHead()
+                        .id(profile.getId()).name(profile.getName())
+                        .profileProperties(profile.getAdventureProperties())
+                        .hat(Optional.ofNullable(reader.readBoolean("hat", Function.identity())).orElse(true))
+                        .build();
+                builder = Component.object().contents(playerHead);
+            } else {
+                builder = Component.text();
+            }
+        } else if (sprite != null) {
+            if (BackwardCompatUtil.IS_4_25_0_OR_NEWER) {
+                Key spriteKey = Key.key(sprite);
+                Key atlasKey = reader.readUTF("atlas", atlas -> Key.key(atlas));
+                builder = Component.object().contents(atlasKey != null
+                        ? ObjectContents.sprite(atlasKey, spriteKey)
+                        : ObjectContents.sprite(spriteKey));
+            } else {
+                builder = Component.text();
             }
         } else {
             throw new IllegalStateException("Illegal nbt component, component type could not be determined");
@@ -373,6 +403,38 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
                 Key storage = ((StorageNBTComponent) component).storage();
                 writer.writeUTF("storage", storage.asString());
             }
+        } else if (component instanceof ObjectComponent) {
+            if (BackwardCompatUtil.IS_4_25_0_OR_NEWER && this.version.isNewerThanOrEquals(ClientVersion.V_1_21_9)) {
+                // object contents
+                ObjectContents objectContents = ((ObjectComponent) component).contents();
+                if (objectContents instanceof PlayerHeadObjectContents) {
+                    // player head object
+                    PlayerHeadObjectContents playerHead = ((PlayerHeadObjectContents) objectContents);
+
+                    // player head profile
+                    ItemProfile profile = ItemProfile.fromAdventure(playerHead);
+                    writer.write("player", ItemProfile.encode(wrapper, profile));
+
+                    // player head hat
+                    if (playerHead.hat() != PlayerHeadObjectContents.DEFAULT_HAT) {
+                        writer.writeBoolean("hat", playerHead.hat());
+                    }
+                } else if (objectContents instanceof SpriteObjectContents) {
+                    // sprite object
+                    SpriteObjectContents spriteObjectContents = ((SpriteObjectContents) objectContents);
+
+                    // atlas
+                    if (!spriteObjectContents.atlas().equals(SpriteObjectContents.DEFAULT_ATLAS)) {
+                        writer.writeUTF("atlas", spriteObjectContents.atlas().toString());
+                    }
+
+                    // sprite
+                    writer.writeUTF("sprite", spriteObjectContents.sprite().toString());
+                }
+            } else {
+                // skip
+                writer.writeUTF("text", "");
+            }
         }
 
         if (component.hasStyling()) {
@@ -452,7 +514,7 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
                     case CUSTOM:
                         Key key = clickEvent.readUTF("id", Key::key);
                         NBT payload = clickEvent.read("payload", Function.identity());
-                        value = ClickEvent.custom(key, "0b"); // TODO snbt serialization
+                        value = ClickEvent.custom(key, new NbtTagHolder(payload != null ? payload : NBTEnd.INSTANCE));
                         break;
                     default:
                         throw new UnsupportedOperationException("Unsupported clickevent: " + action);
@@ -476,6 +538,7 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
                     }
 
                     NBTReader item = modernEvents ? hoverEvent : hoverEvent.child("contents");
+                    if (item == null) break;
                     Key itemId = item.readUTF("id", Key::key);
                     Integer count = item.readNumber("count", Number::intValue);
                     int nonNullCount = count == null ? 1 : count;
@@ -503,10 +566,12 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
                     break;
                 case "show_entity":
                     NBTReader entity = modernEvents ? hoverEvent : hoverEvent.child("contents");
-                    style.hoverEvent(HoverEvent.showEntity(
-                            entity.readUTF(modernEvents ? "id" : "type", Key::key),
-                            entity.readIntArray(modernEvents ? "uuid" : "id", UniqueIdUtil::fromIntArray),
-                            entity.read("name", name -> this.deserialize(name, wrapper))));
+                    if (entity != null) {
+                        style.hoverEvent(HoverEvent.showEntity(
+                                entity.readUTF(modernEvents ? "id" : "type", Key::key),
+                                entity.readIntArray(modernEvents ? "uuid" : "id", UniqueIdUtil::fromIntArray),
+                                entity.read("name", name -> this.deserialize(name, wrapper))));
+                    }
                     break;
             }
         }
@@ -579,9 +644,23 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
                         child.write("dialog", Dialog.encode(wrapper, dialog));
                         break;
                     case CUSTOM:
-                        child.writeUTF("id", ((ClickEvent.Payload.Custom) clickEvent.payload()).key().asString());
-                        // TODO snbt deserialization
-                        // child.write("payload", ((ClickEvent.Payload.Custom) clickEvent.payload()).data());
+                        ClickEvent.Payload.Custom customPayload = (ClickEvent.Payload.Custom) clickEvent.payload();
+                        child.writeUTF("id", customPayload.key().asString());
+                        BinaryTagHolder nbtHolder = customPayload.nbt();
+                        if (nbtHolder instanceof NbtTagHolder) {
+                            NBT payloadTag = ((NbtTagHolder) nbtHolder).getTag();
+                            // nbt end tag means there is no payload
+                            if (!(payloadTag instanceof NBTEnd)) {
+                                child.write("payload", payloadTag);
+                            }
+                        } else {
+                            String nbtString = nbtHolder.string();
+                            // as adventure doesn't want to make the nbt payload nullable (though it actually is),
+                            // we use an empty nbt string to mark a null payload
+                            if (!nbtString.isEmpty()) {
+                                child.write("payload", AdventureNbtUtil.fromString(nbtString));
+                            }
+                        }
                         break;
                     default:
                         throw new UnsupportedOperationException("Unsupported clickevent: " + clickEvent);
@@ -637,10 +716,12 @@ public class AdventureNBTSerializer implements ComponentSerializer<Component, Co
                 case "show_entity":
                     HoverEvent.ShowEntity showEntity = (HoverEvent.ShowEntity) hoverEvent.value();
                     NBTWriter entity = modern ? child : child.child("contents");
-                    entity.writeUTF(modern ? "id" : "type", showEntity.type().asString());
-                    entity.writeIntArray(modern ? "uuid" : "id", UniqueIdUtil.toIntArray(showEntity.id()));
-                    if (showEntity.name() != null) {
-                        entity.write("name", this.serialize(showEntity.name(), wrapper));
+                    if (entity != null) {
+                        entity.writeUTF(modern ? "id" : "type", showEntity.type().asString());
+                        entity.writeIntArray(modern ? "uuid" : "id", UniqueIdUtil.toIntArray(showEntity.id()));
+                        if (showEntity.name() != null) {
+                            entity.write("name", this.serialize(showEntity.name(), wrapper));
+                        }
                     }
                     break;
             }

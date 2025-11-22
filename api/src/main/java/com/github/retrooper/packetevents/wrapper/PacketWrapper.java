@@ -51,15 +51,8 @@ import com.github.retrooper.packetevents.manager.server.VersionComparison;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.netty.channel.ChannelHelper;
 import com.github.retrooper.packetevents.protocol.PacketSide;
-import com.github.retrooper.packetevents.protocol.chat.ChatType;
-import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
-import com.github.retrooper.packetevents.protocol.chat.LastSeenMessages;
-import com.github.retrooper.packetevents.protocol.chat.MessageSignature;
-import com.github.retrooper.packetevents.protocol.chat.Node;
-import com.github.retrooper.packetevents.protocol.chat.Parsers;
+import com.github.retrooper.packetevents.protocol.chat.*;
 import com.github.retrooper.packetevents.protocol.chat.Parsers.Parser;
-import com.github.retrooper.packetevents.protocol.chat.RemoteChatSession;
-import com.github.retrooper.packetevents.protocol.chat.SignedCommandArgument;
 import com.github.retrooper.packetevents.protocol.chat.filter.FilterMask;
 import com.github.retrooper.packetevents.protocol.chat.filter.FilterMaskType;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
@@ -90,11 +83,7 @@ import com.github.retrooper.packetevents.protocol.recipe.data.MerchantOffer;
 import com.github.retrooper.packetevents.protocol.world.Dimension;
 import com.github.retrooper.packetevents.protocol.world.WorldBlockPosition;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
-import com.github.retrooper.packetevents.util.Either;
-import com.github.retrooper.packetevents.util.KnownPack;
-import com.github.retrooper.packetevents.util.MathUtil;
-import com.github.retrooper.packetevents.util.StringUtil;
-import com.github.retrooper.packetevents.util.Vector3i;
+import com.github.retrooper.packetevents.util.*;
 import com.github.retrooper.packetevents.util.adventure.AdventureSerializer;
 import com.github.retrooper.packetevents.util.crypto.MinecraftEncryptionUtil;
 import com.github.retrooper.packetevents.util.crypto.SaltSignature;
@@ -113,16 +102,7 @@ import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -386,6 +366,10 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
 
     public void writeInt(int value) {
         ByteBufHelper.writeInt(buffer, value);
+    }
+
+    public long readUnsignedInt() {
+        return ByteBufHelper.readUnsignedInt(buffer);
     }
 
     public int readMedium() {
@@ -663,6 +647,10 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
 
     public void writeShort(int value) {
         ByteBufHelper.writeShort(buffer, value);
+    }
+
+    public void writeShortLE(int value) {
+        ByteBufHelper.writeShortLE(buffer, value);
     }
 
     public int readVarShort() {
@@ -1362,6 +1350,18 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
 
     public <K, C extends Collection<K>> C readCollection(IntFunction<C> function, Reader<K> reader) {
         int size = this.readVarInt();
+        return _readCollection(function, reader, size);
+    }
+
+    public <K, C extends Collection<K>> C readCollection(IntFunction<C> function, Reader<K> reader, int maxSize) {
+        int size = this.readVarInt();
+        if (size > maxSize) {
+            throw new RuntimeException(size + " elements exceeded max size of: " + maxSize);
+        }
+        return _readCollection(function, reader, size);
+    }
+
+    private <K, C extends Collection<K>> C _readCollection(IntFunction<C> function, Reader<K> reader, int size) {
         Collection<K> collection = function.apply(size);
         for (int i = 0; i < size; ++i) {
             collection.add(reader.apply(this));
@@ -1380,9 +1380,28 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         return this.readCollection(ArrayList::new, reader);
     }
 
+    public <K> List<K> readList(Reader<K> reader, int maxSize) {
+        return this.readCollection(ArrayList::new, reader, maxSize);
+    }
+
     public <K> void writeList(List<K> list, Writer<K> writer) {
         writeVarInt(list.size());
         for (K key : list) {
+            writer.accept(this, key);
+        }
+    }
+
+    public <K> Set<K> readSet(Reader<K> reader) {
+        return this.readCollection(HashSet::new, reader);
+    }
+
+    public <K> Set<K> readSet(Reader<K> reader, int maxSize) {
+        return this.readCollection(HashSet::new, reader, maxSize);
+    }
+
+    public <K> void writeSet(Set<K> set, Writer<K> writer) {
+        this.writeVarInt(set.size());
+        for (K key : set) {
             writer.accept(this, key);
         }
     }

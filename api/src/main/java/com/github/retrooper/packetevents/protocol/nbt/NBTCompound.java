@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class NBTCompound extends NBT {
 
@@ -43,6 +44,10 @@ public class NBTCompound extends NBT {
 
     public boolean isEmpty() {
         return tags.isEmpty();
+    }
+
+    public boolean contains(String key) {
+        return this.tags.containsKey(key);
     }
 
     public Set<String> getTagNames() {
@@ -241,6 +246,12 @@ public class NBTCompound extends NBT {
         return tag != null ? decoder.decode(tag, wrapper) : def;
     }
 
+    @Contract("_, _, !null, _ -> !null")
+    public <T> @Nullable T getOrSupply(String key, NbtDecoder<T> decoder, Supplier<@Nullable T> def, PacketWrapper<?> wrapper) {
+        NBT tag = this.getTagOrNull(key);
+        return tag != null ? decoder.decode(tag, wrapper) : def.get();
+    }
+
     public <T> @Nullable T getOrNull(String key, NbtDecoder<T> decoder, PacketWrapper<?> wrapper) {
         return this.getOr(key, decoder, null, wrapper);
     }
@@ -284,7 +295,7 @@ public class NBTCompound extends NBT {
         if (list == null) {
             throw new IllegalStateException(MessageFormat.format("NBT {0} does not exist", key));
         }
-        return null;
+        return list;
     }
 
     public <T> void set(String key, T value, NbtEncoder<T> encoder, PacketWrapper<?> wrapper) {
@@ -297,10 +308,11 @@ public class NBTCompound extends NBT {
         } else {
             // determine list type using first value in list
             NBT firstVal = encoder.encode(wrapper, value.get(0));
-            NBTList<?> list = new NBTList<>(firstVal.getType(), value.size());
+            int size = value.size();
+            NBTList<?> list = new NBTList<>(firstVal.getType(), size);
             list.addTagUnsafe(firstVal);
             // add remaining list entries
-            for (int i = 1; i < value.size(); i++) {
+            for (int i = 1; i < size; i++) {
                 list.addTagUnsafe(encoder.encode(wrapper, value.get(i)));
             }
             this.setTag(key, list);
