@@ -481,6 +481,47 @@ public final class ComponentTypes {
             ShulkerColorComponent::read, ShulkerColorComponent::write);
 
     /**
+     * @versions 1.21.11+
+     */
+    public static final ComponentType<UseEffectsComponent> USE_EFFECTS = define("use_effects",
+            UseEffectsComponent::read, UseEffectsComponent::write);
+    /**
+     * @versions 1.21.11+
+     */
+    public static final ComponentType<MinimumAttackCharge> MINIMUM_ATTACK_CHARGE = define("minimum_attack_charge",
+            MinimumAttackCharge::read, MinimumAttackCharge::write);
+    /**
+     * @versions 1.21.11+
+     */
+    public static final ComponentType<DamageTypeComponent> DAMAGE_TYPE = define("damage_type",
+            DamageTypeComponent::read, DamageTypeComponent::write);
+    /**
+     * @versions 1.21.11+
+     */
+    public static final ComponentType<AttackRangeComponent> ATTACK_RANGE = define("attack_range",
+            AttackRangeComponent::read, AttackRangeComponent::write);
+    /**
+     * @versions 1.21.11+
+     */
+    public static final ComponentType<PiercingWeaponComponent> PIERCING_WEAPON = define("piercing_weapon",
+            PiercingWeaponComponent::read, PiercingWeaponComponent::write);
+    /**
+     * @versions 1.21.11+
+     */
+    public static final ComponentType<KineticWeaponComponent> KINETIC_WEAPON = define("kinetic_weapon",
+            KineticWeaponComponent::read, KineticWeaponComponent::write);
+    /**
+     * @versions 1.21.11+
+     */
+    public static final ComponentType<SwingAnimationComponent> SWING_ANIMATION = define("swing_animation",
+            SwingAnimationComponent::read, SwingAnimationComponent::write);
+    /**
+     * @versions 1.21.11+
+     */
+    public static final ComponentType<ZombieNautilusVariant> ZOMBIE_NAUTILUS_VARIANT = define("zombie_nautilus/variant",
+            ZombieNautilusVariant::read, ZombieNautilusVariant::write);
+
+    /**
      * Returns an immutable view of the component types.
      *
      * @return Component Types

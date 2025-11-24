@@ -37,6 +37,7 @@ import com.github.retrooper.packetevents.protocol.item.ItemStack;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.protocol.player.HumanoidArm;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import com.github.retrooper.packetevents.protocol.world.WorldBlockPosition;
 import com.github.retrooper.packetevents.protocol.world.painting.PaintingVariant;
@@ -295,6 +296,12 @@ public final class EntityDataTypes {
      */
     public static final EntityDataType<ItemProfile> RESOLVABLE_PROFILE =
             define("resolvable_profile", ItemProfile::read, ItemProfile::write);
+    // TODO zombie nautilus variant
+    /**
+     * @versions 1.21.11+
+     */
+    public static final EntityDataType<HumanoidArm> HUMANOID_ARM =
+            define("humanoid_arm", HumanoidArm::read, HumanoidArm::write);
 
     private EntityDataTypes() {
     }
