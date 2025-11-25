@@ -1,5 +1,7 @@
 package com.github.retrooper.packetevents.protocol.entity.nautilus;
 
+import com.github.retrooper.packetevents.protocol.mapper.CopyableEntity;
+import com.github.retrooper.packetevents.protocol.mapper.DeepComparableEntity;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
@@ -17,7 +19,7 @@ import org.jspecify.annotations.NullMarked;
  * @versions 1.21.11+
  */
 @NullMarked
-public interface ZombieNautilusVariant extends MappedEntity {
+public interface ZombieNautilusVariant extends MappedEntity, CopyableEntity<ZombieNautilusVariant>, DeepComparableEntity {
 
     ModelType getModelType();
 
