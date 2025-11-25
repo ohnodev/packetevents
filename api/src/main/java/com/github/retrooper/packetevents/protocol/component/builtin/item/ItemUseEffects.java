@@ -13,9 +13,9 @@ public class ItemUseEffects {
 
     private boolean canSprint;
     private boolean interactVibrations;
-    private boolean speedMultiplier;
+    private float speedMultiplier;
 
-    public ItemUseEffects(boolean canSprint, boolean interactVibrations, boolean speedMultiplier) {
+    public ItemUseEffects(boolean canSprint, boolean interactVibrations, float speedMultiplier) {
         this.canSprint = canSprint;
         this.interactVibrations = interactVibrations;
         this.speedMultiplier = speedMultiplier;
@@ -24,14 +24,14 @@ public class ItemUseEffects {
     public static ItemUseEffects read(PacketWrapper<?> wrapper) {
         boolean canSprint = wrapper.readBoolean();
         boolean interactVibrations = wrapper.readBoolean();
-        boolean speedMultiplier = wrapper.readBoolean();
+        float speedMultiplier = wrapper.readFloat();
         return new ItemUseEffects(canSprint, interactVibrations, speedMultiplier);
     }
 
     public static void write(PacketWrapper<?> wrapper, ItemUseEffects component) {
         wrapper.writeBoolean(component.canSprint);
         wrapper.writeBoolean(component.interactVibrations);
-        wrapper.writeBoolean(component.speedMultiplier);
+        wrapper.writeFloat(component.speedMultiplier);
     }
 
     public boolean isCanSprint() {
@@ -50,11 +50,11 @@ public class ItemUseEffects {
         this.interactVibrations = interactVibrations;
     }
 
-    public boolean isSpeedMultiplier() {
+    public float getSpeedMultiplier() {
         return this.speedMultiplier;
     }
 
-    public void setSpeedMultiplier(boolean speedMultiplier) {
+    public void setSpeedMultiplier(float speedMultiplier) {
         this.speedMultiplier = speedMultiplier;
     }
 
@@ -64,7 +64,7 @@ public class ItemUseEffects {
         ItemUseEffects that = (ItemUseEffects) obj;
         if (this.canSprint != that.canSprint) return false;
         if (this.interactVibrations != that.interactVibrations) return false;
-        return this.speedMultiplier == that.speedMultiplier;
+        return Float.compare(that.speedMultiplier, this.speedMultiplier) == 0;
     }
 
     @Override

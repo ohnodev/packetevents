@@ -167,6 +167,7 @@ public final class SynchronizedRegistriesHandler {
         for (NBT tag : registryData.getTags().values()) {
             //On 1.16 they send an NBTList for dimension.
             if (tag instanceof NBTList) {
+                @SuppressWarnings("unchecked")
                 NBTList<NBTCompound> list = (NBTList<NBTCompound>) tag;
                 handleRegistry(user, wrapper, DimensionTypes.getRegistry().getRegistryKey(),
                         RegistryElement.convertNbt(list), cacheKey);

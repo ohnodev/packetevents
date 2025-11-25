@@ -28,7 +28,7 @@ public final class ZombieNautilusVariants {
         return REGISTRY;
     }
 
-    public static final ZombieNautilusVariant NORMAL = define("normal", ModelType.NORMAL, "zombie_nautilus");
+    public static final ZombieNautilusVariant TEMPERATE = define("temperate", ModelType.NORMAL, "zombie_nautilus");
     public static final ZombieNautilusVariant WARM = define("warm", ModelType.WARM, "zombie_nautilus_coral");
 
     static {
