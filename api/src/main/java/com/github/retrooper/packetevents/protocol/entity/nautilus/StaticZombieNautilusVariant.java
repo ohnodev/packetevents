@@ -7,6 +7,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * @versions 1.21.11+
+ */
 @NullMarked
 public class StaticZombieNautilusVariant extends AbstractMappedEntity implements ZombieNautilusVariant {
 

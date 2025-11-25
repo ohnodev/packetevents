@@ -13,6 +13,9 @@ import net.kyori.adventure.util.Index;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
+/**
+ * @versions 1.21.11+
+ */
 @NullMarked
 public interface ZombieNautilusVariant extends MappedEntity {
 

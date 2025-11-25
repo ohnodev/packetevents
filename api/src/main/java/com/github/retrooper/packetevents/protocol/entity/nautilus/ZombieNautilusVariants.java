@@ -6,6 +6,9 @@ import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
+/**
+ * @versions 1.21.11+
+ */
 @NullMarked
 public final class ZombieNautilusVariants {
 
