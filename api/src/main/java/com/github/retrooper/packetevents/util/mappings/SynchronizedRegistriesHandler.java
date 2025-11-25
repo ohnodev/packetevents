@@ -31,6 +31,8 @@ import com.github.retrooper.packetevents.protocol.entity.cow.CowVariant;
 import com.github.retrooper.packetevents.protocol.entity.cow.CowVariants;
 import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariant;
 import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariants;
+import com.github.retrooper.packetevents.protocol.entity.nautilus.ZombieNautilusVariant;
+import com.github.retrooper.packetevents.protocol.entity.nautilus.ZombieNautilusVariants;
 import com.github.retrooper.packetevents.protocol.entity.pig.PigVariant;
 import com.github.retrooper.packetevents.protocol.entity.pig.PigVariants;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
@@ -100,6 +102,7 @@ public final class SynchronizedRegistriesHandler {
                 new RegistryEntry<>(CatVariants.getRegistry(), CatVariant::decode),
                 new RegistryEntry<>(CowVariants.getRegistry(), CowVariant::decode),
                 new RegistryEntry<>(ChickenVariants.getRegistry(), ChickenVariant::decode),
+                new RegistryEntry<>(ZombieNautilusVariants.getRegistry(), ZombieNautilusVariant::decode),
                 new RegistryEntry<>(PaintingVariants.getRegistry(), PaintingVariant::decode),
                 new RegistryEntry<>(DimensionTypes.getRegistry(), DimensionType::decode),
                 new RegistryEntry<>(DamageTypes.getRegistry(), DamageType::decode),

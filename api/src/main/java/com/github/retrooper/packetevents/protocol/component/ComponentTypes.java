@@ -518,8 +518,8 @@ public final class ComponentTypes {
     /**
      * @versions 1.21.11+
      */
-    public static final ComponentType<ZombieNautilusVariant> ZOMBIE_NAUTILUS_VARIANT = define("zombie_nautilus/variant",
-            ZombieNautilusVariant::read, ZombieNautilusVariant::write);
+    public static final ComponentType<ZombieNautilusVariantComponent> ZOMBIE_NAUTILUS_VARIANT = define("zombie_nautilus/variant",
+            ZombieNautilusVariantComponent::read, ZombieNautilusVariantComponent::write);
 
     /**
      * Returns an immutable view of the component types.
