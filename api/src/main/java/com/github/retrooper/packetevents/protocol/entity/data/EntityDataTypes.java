@@ -27,6 +27,7 @@ import com.github.retrooper.packetevents.protocol.entity.cow.CowVariant;
 import com.github.retrooper.packetevents.protocol.entity.data.struct.CopperGolemState;
 import com.github.retrooper.packetevents.protocol.entity.data.struct.WeatheringCopperState;
 import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariant;
+import com.github.retrooper.packetevents.protocol.entity.nautilus.ZombieNautilusVariant;
 import com.github.retrooper.packetevents.protocol.entity.pig.PigVariant;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
@@ -296,7 +297,11 @@ public final class EntityDataTypes {
      */
     public static final EntityDataType<ItemProfile> RESOLVABLE_PROFILE =
             define("resolvable_profile", ItemProfile::read, ItemProfile::write);
-    // TODO zombie nautilus variant
+    /**
+     * @versions 1.21.11+
+     */
+    public static final EntityDataType<ZombieNautilusVariant> ZOMBIE_NAUTILUS_VARIANT =
+            define("zombie_nautilus_variant", ZombieNautilusVariant::read, ZombieNautilusVariant::write);
     /**
      * @versions 1.21.11+
      */
