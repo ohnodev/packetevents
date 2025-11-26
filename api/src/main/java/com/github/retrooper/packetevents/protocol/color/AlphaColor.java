@@ -31,6 +31,8 @@ import org.jetbrains.annotations.Range;
 public final class AlphaColor extends Color {
 
     public static final AlphaColor WHITE = new AlphaColor(0xFFFFFFFF);
+    public static final AlphaColor BLACK = new AlphaColor(0xFF000000);
+    public static final AlphaColor TRANSPARENT = new AlphaColor(0x00000000);
 
     private final int alpha;
 

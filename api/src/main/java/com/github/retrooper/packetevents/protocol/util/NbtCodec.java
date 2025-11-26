@@ -29,6 +29,20 @@ import java.util.function.Function;
 @NullMarked
 public interface NbtCodec<T> extends NbtEncoder<T>, NbtDecoder<T> {
 
+    static <T> NbtCodec<T> codec(NbtEncoder<T> encoder, NbtDecoder<T> decoder) {
+        return new NbtCodec<T>() {
+            @Override
+            public T decode(NBT nbt, PacketWrapper<?> wrapper) {
+                return decoder.decode(nbt, wrapper);
+            }
+
+            @Override
+            public NBT encode(PacketWrapper<?> wrapper, T value) {
+                return encoder.encode(wrapper, value);
+            }
+        };
+    }
+
     default <Z> NbtCodec<Z> apply(Function<T, Z> forward, Function<Z, T> back) {
         return new NbtCodec<Z>() {
             @Override

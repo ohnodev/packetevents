@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Range;
 public class Color implements RGBLike {
 
     public static final Color WHITE = new Color(0xFFFFFFFF);
+    public static final Color BLACK = new Color(0xFF000000);
 
     protected static final int BIT_MASK = 0xFF;
 
