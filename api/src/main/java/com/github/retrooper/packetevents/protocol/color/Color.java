@@ -31,6 +31,8 @@ import net.kyori.adventure.util.RGBLike;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
+import java.util.Objects;
+
 public class Color implements RGBLike {
 
     public static final Color WHITE = new Color(0xFFFFFFFF);
@@ -139,5 +141,18 @@ public class Color implements RGBLike {
     @Override
     public @Range(from = 0L, to = 255L) int blue() {
         return blue;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Color) {
+            return this.asRGB() == ((Color) obj).asRGB();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.asRGB());
     }
 }

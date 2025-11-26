@@ -20,14 +20,23 @@ package com.github.retrooper.packetevents.protocol.world.attributes;
 
 import com.github.retrooper.packetevents.protocol.color.AlphaColor;
 import com.github.retrooper.packetevents.protocol.color.Color;
+import com.github.retrooper.packetevents.protocol.particle.Particle;
+import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
+import com.github.retrooper.packetevents.protocol.world.biome.BiomeEffects.ParticleSettings;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import net.kyori.adventure.util.TriState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
 
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * @version 1.21.11+
+ */
 @NullMarked
 public final class EnvironmentAttributes {
 
@@ -67,15 +76,15 @@ public final class EnvironmentAttributes {
     public static EnvironmentAttribute<Float> VISUAL_SUN_ANGLE = define("visual/sun_angle", NbtCodecs.FLOAT, 0f);
     public static EnvironmentAttribute<Float> VISUAL_MOON_ANGLE = define("visual/moon_angle", NbtCodecs.FLOAT, 0f);
     public static EnvironmentAttribute<Float> VISUAL_STAR_ANGLE = define("visual/star_angle", NbtCodecs.FLOAT, 0f);
-    public static EnvironmentAttribute<?> VISUAL_MOON_PHASE = define("visual/moon_phase"); // TODO
+    public static EnvironmentAttribute<MoonPhase> VISUAL_MOON_PHASE = define("visual/moon_phase", MoonPhase.CODEC, MoonPhase.FULL_MOON);
     public static EnvironmentAttribute<Float> VISUAL_STAR_BRIGHTNESS = define("visual/star_brightness", NbtCodecs.FLOAT, 0f);
     public static EnvironmentAttribute<Color> VISUAL_SKY_LIGHT_COLOR = define("visual/sky_light_color", NbtCodecs.RGB_COLOR, Color.WHITE);
     public static EnvironmentAttribute<Float> VISUAL_SKY_LIGHT_FACTOR = define("visual/sky_light_factor", NbtCodecs.FLOAT, 1f);
-    public static EnvironmentAttribute<?> VISUAL_DEFAULT_DRIPSTONE_PARTICLE = define("visual/default_dripstone_particle"); // TODO
-    public static EnvironmentAttribute<?> VISUAL_AMBIENT_PARTICLES = define("visual/ambient_particles"); // TODO
-    public static EnvironmentAttribute<?> AUDIO_BACKGROUND_MUSIC = define("audio/background_music"); // TODO
+    public static EnvironmentAttribute<Particle<?>> VISUAL_DEFAULT_DRIPSTONE_PARTICLE = define("visual/default_dripstone_particle", Particle.CODEC, new Particle<>(ParticleTypes.DRIPPING_DRIPSTONE_WATER));
+    public static EnvironmentAttribute<List<ParticleSettings>> VISUAL_AMBIENT_PARTICLES = define("visual/ambient_particles", ParticleSettings.CODEC.applyList(), Collections.emptyList());
+    public static EnvironmentAttribute<BackgroundMusic> AUDIO_BACKGROUND_MUSIC = define("audio/background_music", BackgroundMusic.CODEC, BackgroundMusic.EMPTY);
     public static EnvironmentAttribute<Float> AUDIO_MUSIC_VOLUME = define("audio/music_volume", NbtCodecs.FLOAT, 1f);
-    public static EnvironmentAttribute<?> AUDIO_AMBIENT_SOUNDS = define("audio/ambient_sounds"); // TODO
+    public static EnvironmentAttribute<AmbientSounds> AUDIO_AMBIENT_SOUNDS = define("audio/ambient_sounds", AmbientSounds.CODEC, AmbientSounds.EMPTY);
     public static EnvironmentAttribute<Boolean> AUDIO_FIREFLY_BUSH_SOUNDS = define("audio/firefly_bush_sounds", NbtCodecs.BOOLEAN, false);
     public static EnvironmentAttribute<Float> GAMEPLAY_SKY_LIGHT_LEVEL = define("gameplay/sky_light_level", NbtCodecs.FLOAT, 15f);
     public static EnvironmentAttribute<Boolean> GAMEPLAY_CAN_START_RAID = defineUnsynced("gameplay/can_start_raid");

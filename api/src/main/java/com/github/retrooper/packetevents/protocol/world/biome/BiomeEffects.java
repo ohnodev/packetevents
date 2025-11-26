@@ -29,8 +29,13 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTString;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.sound.Sound;
+import com.github.retrooper.packetevents.protocol.util.CodecNameable;
+import com.github.retrooper.packetevents.protocol.util.NbtCodec;
+import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
 import com.github.retrooper.packetevents.util.RandomWeightedList;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import net.kyori.adventure.util.Index;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +44,7 @@ import java.util.OptionalInt;
 
 import static com.github.retrooper.packetevents.util.adventure.AdventureIndexUtil.indexValueOrThrow;
 
+@NullMarked
 public class BiomeEffects {
 
     private static final float FALLBACK_MUSIC_VOLUME = 1f;
@@ -254,12 +260,13 @@ public class BiomeEffects {
         return Objects.hash(this.fogColor, this.waterColor, this.waterFogColor, this.skyColor, this.foliageColor, this.grassColor, this.grassColorModifier, this.particle, this.ambientSound, this.moodSound, this.additionsSound, this.music);
     }
 
-    public enum GrassColorModifier {
+    public enum GrassColorModifier implements CodecNameable {
 
         NONE("none"),
         DARK_FOREST("dark_forest"),
         SWAMP("swamp");
 
+        public static final NbtCodec<GrassColorModifier> CODEC = NbtCodecs.forEnum(values());
         public static final Index<String, GrassColorModifier> ID_INDEX = Index.create(
                 GrassColorModifier.class, GrassColorModifier::getId);
 
@@ -272,9 +279,32 @@ public class BiomeEffects {
         public String getId() {
             return this.id;
         }
+
+        @Override
+        public String getCodecName() {
+            return this.id;
+        }
     }
 
     public static final class ParticleSettings {
+
+        public static final NbtCodec<ParticleSettings> CODEC = new NbtCodec<ParticleSettings>() {
+            @Override
+            public ParticleSettings decode(NBT nbt, PacketWrapper<?> wrapper) {
+                NBTCompound compound = (NBTCompound) nbt;
+                Particle<?> particle = Particle.CODEC.decode(compound.getTagOrThrow("options"), wrapper);
+                float probability = compound.getNumberTagOrThrow("probability").getAsFloat();
+                return new ParticleSettings(particle, probability);
+            }
+
+            @Override
+            public NBT encode(PacketWrapper<?> wrapper, ParticleSettings value) {
+                NBTCompound compound = new NBTCompound();
+                compound.set("options", value.particle, Particle.CODEC, wrapper);
+                compound.setTag("probability", new NBTFloat(value.probability));
+                return compound;
+            }
+        };
 
         private final Particle<?> particle;
         private final float probability;
@@ -284,6 +314,7 @@ public class BiomeEffects {
             this.probability = probability;
         }
 
+        @Deprecated
         public static ParticleSettings decode(NBT nbt, ClientVersion version) {
             NBTCompound compound = (NBTCompound) nbt;
             Particle<?> particle = Particle.decode(compound.getTagOrNull("options"), version);
@@ -291,6 +322,7 @@ public class BiomeEffects {
             return new ParticleSettings(particle, probability);
         }
 
+        @Deprecated
         public static NBT encode(ParticleSettings settings, ClientVersion version) {
             NBTCompound compound = new NBTCompound();
             compound.setTag("options", Particle.encode(settings.particle, version));
@@ -305,9 +337,44 @@ public class BiomeEffects {
         public float getProbability() {
             return this.probability;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof ParticleSettings)) return false;
+            ParticleSettings that = (ParticleSettings) obj;
+            if (Float.compare(that.probability, this.probability) != 0) return false;
+            return this.particle.equals(that.particle);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.particle, this.probability);
+        }
     }
 
     public static final class MoodSettings {
+
+        public static final NbtCodec<MoodSettings> CODEC = new NbtCodec<MoodSettings>() {
+            @Override
+            public MoodSettings decode(NBT nbt, PacketWrapper<?> wrapper) {
+                NBTCompound compound = (NBTCompound) nbt;
+                Sound sound = compound.getOrThrow("sound", Sound.CODEC, wrapper);
+                int tickDelay = compound.getOrThrow("tick_delay", NbtCodecs.INT, wrapper);
+                int blockSearchExtent = compound.getOrThrow("block_search_extent", NbtCodecs.INT, wrapper);
+                double soundOffset = compound.getOrThrow("offset", NbtCodecs.DOUBLE, wrapper);
+                return new MoodSettings(sound, tickDelay, blockSearchExtent, soundOffset);
+            }
+
+            @Override
+            public NBT encode(PacketWrapper<?> wrapper, MoodSettings value) {
+                NBTCompound compound = new NBTCompound();
+                compound.set("sound", value.sound, Sound.CODEC, wrapper);
+                compound.set("tick_delay", value.tickDelay, NbtCodecs.INT, wrapper);
+                compound.set("block_search_extent", value.blockSearchExtent, NbtCodecs.INT, wrapper);
+                compound.set("offset", value.soundOffset, NbtCodecs.DOUBLE, wrapper);
+                return compound;
+            }
+        };
 
         private final Sound sound;
         private final int tickDelay;
@@ -321,6 +388,7 @@ public class BiomeEffects {
             this.soundOffset = soundOffset;
         }
 
+        @Deprecated
         public static MoodSettings decode(NBT nbt, ClientVersion version) {
             NBTCompound compound = (NBTCompound) nbt;
             Sound sound = Sound.decode(compound.getTagOrThrow("sound"), version);
@@ -330,6 +398,7 @@ public class BiomeEffects {
             return new MoodSettings(sound, tickDelay, blockSearchExtent, soundOffset);
         }
 
+        @Deprecated
         public static NBT encode(MoodSettings settings, ClientVersion version) {
             NBTCompound compound = new NBTCompound();
             compound.setTag("sound", Sound.encode(settings.sound, version));
@@ -374,6 +443,25 @@ public class BiomeEffects {
 
     public static final class AdditionsSettings {
 
+        public static final NbtCodec<AdditionsSettings> CODEC = new NbtCodec<AdditionsSettings>() {
+            @Override
+            public AdditionsSettings decode(NBT nbt, PacketWrapper<?> wrapper) {
+                NBTCompound compound = (NBTCompound) nbt;
+                Sound sound = compound.getOrThrow("sound", Sound.CODEC, wrapper);
+                double tickChance = compound.getOrThrow("tick_chance", NbtCodecs.DOUBLE, wrapper);
+                return new AdditionsSettings(sound, tickChance);
+            }
+
+            @Override
+            public NBT encode(PacketWrapper<?> wrapper, AdditionsSettings value) {
+                NBTCompound compound = new NBTCompound();
+                compound.set("sound", value.sound, Sound.CODEC, wrapper);
+                compound.set("tick_chance", value.tickChance, NbtCodecs.DOUBLE, wrapper);
+                return compound;
+            }
+        };
+        public static final NbtCodec<List<AdditionsSettings>> LIST_CODEC = CODEC.applyList();
+
         private final Sound sound;
         private final double tickChance;
 
@@ -382,6 +470,7 @@ public class BiomeEffects {
             this.tickChance = tickChance;
         }
 
+        @Deprecated
         public static AdditionsSettings decode(NBT nbt, ClientVersion version) {
             NBTCompound compound = (NBTCompound) nbt;
             Sound sound = Sound.decode(compound.getTagOrThrow("sound"), version);
@@ -389,6 +478,7 @@ public class BiomeEffects {
             return new AdditionsSettings(sound, tickChance);
         }
 
+        @Deprecated
         public static NBT encode(AdditionsSettings settings, ClientVersion version) {
             NBTCompound compound = new NBTCompound();
             compound.setTag("sound", Sound.encode(settings.sound, version));
@@ -421,6 +511,28 @@ public class BiomeEffects {
 
     public static final class MusicSettings {
 
+        public static final NbtCodec<MusicSettings> CODEC = new NbtCodec<MusicSettings>() {
+            @Override
+            public MusicSettings decode(NBT nbt, PacketWrapper<?> wrapper) {
+                NBTCompound compound = (NBTCompound) nbt;
+                Sound sound = compound.getOrThrow("sound", Sound.CODEC, wrapper);
+                int minDelay = compound.getNumberTagOrThrow("min_delay").getAsInt();
+                int maxDelay = compound.getNumberTagOrThrow("max_delay").getAsInt();
+                boolean replaceMusic = compound.getBoolean("replace_current_music");
+                return new MusicSettings(sound, minDelay, maxDelay, replaceMusic);
+            }
+
+            @Override
+            public NBT encode(PacketWrapper<?> wrapper, MusicSettings value) {
+                NBTCompound compound = new NBTCompound();
+                compound.set("sound", value.sound, Sound.CODEC, wrapper);
+                compound.setTag("min_delay", new NBTInt(value.minDelay));
+                compound.setTag("max_delay", new NBTInt(value.maxDelay));
+                compound.setTag("replace_current_music", new NBTByte(value.replaceMusic));
+                return compound;
+            }
+        };
+
         private final Sound sound;
         private final int minDelay;
         private final int maxDelay;
@@ -433,6 +545,7 @@ public class BiomeEffects {
             this.replaceMusic = replaceMusic;
         }
 
+        @Deprecated
         public static MusicSettings decode(NBT nbt, ClientVersion version) {
             NBTCompound compound = (NBTCompound) nbt;
             Sound sound = Sound.decode(compound.getTagOrThrow("sound"), version);
@@ -442,6 +555,7 @@ public class BiomeEffects {
             return new MusicSettings(sound, minDelay, maxDelay, replaceMusic);
         }
 
+        @Deprecated
         public static NBT encode(MusicSettings settings, ClientVersion version) {
             NBTCompound compound = new NBTCompound();
             compound.setTag("sound", Sound.encode(settings.sound, version));

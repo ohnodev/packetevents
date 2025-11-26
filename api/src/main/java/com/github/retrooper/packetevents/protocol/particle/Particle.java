@@ -26,9 +26,40 @@ import com.github.retrooper.packetevents.protocol.particle.data.ParticleData;
 import com.github.retrooper.packetevents.protocol.particle.type.ParticleType;
 import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jspecify.annotations.NullMarked;
 
+import java.util.Objects;
+
+@NullMarked
 public class Particle<T extends ParticleData> {
+
+    public static final NbtCodec<Particle<?>> CODEC = new NbtCodec<Particle<?>>() {
+        @Override
+        public Particle<?> decode(NBT nbt, PacketWrapper<?> wrapper) {
+            ClientVersion version = wrapper.getServerVersion().toClientVersion();
+            NBTCompound compound = (NBTCompound) nbt;
+            NBT typeTag = compound.getTagOrThrow("type");
+            ParticleType<?> type = typeTag instanceof NBTNumber
+                    ? ParticleTypes.getById(version, ((NBTNumber) typeTag).getAsInt())
+                    : ParticleTypes.getByName(((NBTString) typeTag).getValue());
+            @SuppressWarnings("unchecked")
+            ParticleType<? super ParticleData> genericType = (ParticleType<? super ParticleData>) type;
+            ParticleData data = type.decodeData(compound, version);
+            return new Particle<>(genericType, data);
+        }
+
+        @Override
+        public NBT encode(PacketWrapper<?> wrapper, Particle<?> value) {
+            NBTCompound compound = new NBTCompound();
+            @SuppressWarnings("unchecked")
+            ParticleType<? super ParticleData> type = (ParticleType<? super ParticleData>) value.type;
+            compound.setTag("type", new NBTString(type.getName().toString()));
+            type.encodeData(value.getData(), wrapper.getServerVersion().toClientVersion(), compound);
+            return compound;
+        }
+    };
 
     private ParticleType<T> type;
     private T data;
@@ -53,6 +84,7 @@ public class Particle<T extends ParticleData> {
         particle.getType().writeData(wrapper, particle.data);
     }
 
+    @Deprecated
     @SuppressWarnings("unchecked")
     public static Particle<?> decode(NBT nbt, ClientVersion version) {
         NBTCompound compound = (NBTCompound) nbt;
@@ -64,6 +96,7 @@ public class Particle<T extends ParticleData> {
         return new Particle<>((ParticleType<? super ParticleData>) type, data);
     }
 
+    @Deprecated
     public static <T extends ParticleData> NBT encode(Particle<T> particle, ClientVersion version) {
         NBTCompound compound = new NBTCompound();
         compound.setTag("type", new NBTString(particle.type.getName().toString()));
@@ -85,6 +118,19 @@ public class Particle<T extends ParticleData> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Particle)) return false;
+        Particle<?> particle = (Particle<?>) obj;
+        if (!this.type.equals(particle.type)) return false;
+        return this.data.equals(particle.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.type, this.data);
     }
 
     @Override
