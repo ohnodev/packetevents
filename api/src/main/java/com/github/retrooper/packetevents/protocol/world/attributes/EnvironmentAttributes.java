@@ -62,7 +62,7 @@ public final class EnvironmentAttributes {
                 new StaticEnvironmentAttribute<>(data, codec, defaultValue));
     }
 
-    public static EnvironmentAttribute<Integer> VISUAL_FOG_COLOR = define("visual/fog_color", NbtCodecs.INT, 0);
+    public static EnvironmentAttribute<Color> VISUAL_FOG_COLOR = define("visual/fog_color", NbtCodecs.RGB_COLOR, Color.BLACK);
     public static EnvironmentAttribute<Float> VISUAL_FOG_START_DISTANCE = define("visual/fog_start_distance", NbtCodecs.FLOAT, 0f);
     public static EnvironmentAttribute<Float> VISUAL_FOG_END_DISTANCE = define("visual/fog_end_distance", NbtCodecs.FLOAT, 1024f);
     public static EnvironmentAttribute<Float> VISUAL_SKY_FOG_END_DISTANCE = define("visual/sky_fog_end_distance", NbtCodecs.FLOAT, 512f);

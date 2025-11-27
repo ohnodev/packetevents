@@ -22,10 +22,14 @@ import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.world.biome.BiomeEffects.MusicSettings;
+import com.github.retrooper.packetevents.util.RandomWeightedList;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -74,6 +78,21 @@ public class BackgroundMusic {
         this.defaultMusic = defaultMusic;
         this.creativeMusic = creativeMusic;
         this.underwaterMusic = underwaterMusic;
+    }
+
+    @ApiStatus.Internal
+    public RandomWeightedList<MusicSettings> asList() {
+        List<RandomWeightedList.Entry<MusicSettings>> list = new ArrayList<>(3);
+        if (this.defaultMusic != null) {
+            list.add(new RandomWeightedList.Entry<>(this.defaultMusic, 0));
+        }
+        if (this.creativeMusic != null) {
+            list.add(new RandomWeightedList.Entry<>(this.creativeMusic, 0));
+        }
+        if (this.underwaterMusic != null) {
+            list.add(new RandomWeightedList.Entry<>(this.underwaterMusic, 0));
+        }
+        return new RandomWeightedList<>(list);
     }
 
     public @Nullable MusicSettings getDefaultMusic() {

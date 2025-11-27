@@ -48,7 +48,6 @@ public interface Biome extends MappedEntity, CopyableEntity<Biome>, DeepComparab
             float temperature = compound.getNumberTagOrThrow("temperature").getAsFloat();
             TemperatureModifier temperatureModifier = compound.getOr("temperature_modifier", TemperatureModifier.CODEC, TemperatureModifier.NONE, wrapper);
             float downfall = compound.getNumberTagOrThrow("downfall").getAsFloat();
-            BiomeEffects effects = compound.getOrThrow("effects", BiomeEffects.CODEC, wrapper);
 
             boolean precipitation;
             Category category = null;
@@ -74,6 +73,7 @@ public interface Biome extends MappedEntity, CopyableEntity<Biome>, DeepComparab
                 attributes = EnvironmentAttributeMap.EMPTY;
             }
 
+            BiomeEffects effects = compound.getOrThrow("effects", BiomeEffects.codecWithAttributes(attributes), wrapper);
             return new StaticBiome(null, precipitation, temperature, temperatureModifier,
                     downfall, category, depth, scale, effects, attributes);
         }

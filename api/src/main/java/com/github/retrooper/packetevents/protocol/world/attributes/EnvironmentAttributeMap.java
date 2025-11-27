@@ -28,6 +28,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -80,6 +81,11 @@ public class EnvironmentAttributeMap {
 
     public EnvironmentAttributeMap copyMutable() {
         return new EnvironmentAttributeMap(new HashMap<>(this.entries));
+    }
+
+    public <T> T getValue(EnvironmentAttribute<T> attribute) {
+        // TODO does this map even work like this?
+        return attribute.getDefaultValue();
     }
 
     public <T> @Nullable Entry get(EnvironmentAttribute<T> attribute) {
