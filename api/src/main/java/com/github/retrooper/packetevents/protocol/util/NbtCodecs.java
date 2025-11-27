@@ -20,6 +20,7 @@ package com.github.retrooper.packetevents.protocol.util;
 
 import com.github.retrooper.packetevents.protocol.color.AlphaColor;
 import com.github.retrooper.packetevents.protocol.color.Color;
+import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTByte;
 import com.github.retrooper.packetevents.protocol.nbt.NBTByteArray;
@@ -34,9 +35,11 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTLongArray;
 import com.github.retrooper.packetevents.protocol.nbt.NBTNumber;
 import com.github.retrooper.packetevents.protocol.nbt.NBTString;
 import com.github.retrooper.packetevents.protocol.nbt.NBTType;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.UniqueIdUtil;
+import com.github.retrooper.packetevents.util.mappings.IRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
-import net.kyori.adventure.util.ARGBLike;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
@@ -323,6 +326,28 @@ public final class NbtCodecs {
             @Override
             public NBT encode(PacketWrapper<?> wrapper, T value) {
                 return new NBTString(value.getCodecName());
+            }
+        };
+    }
+
+    public static <T extends MappedEntity> NbtCodec<T> forRegistry(IRegistry<T> registry) {
+        return new NbtCodec<T>() {
+            @Override
+            public T decode(NBT nbt, PacketWrapper<?> wrapper) {
+                IRegistry<T> replacedRegistry = wrapper.replaceRegistry(registry);
+                if (nbt instanceof NBTNumber) {
+                    ClientVersion version = wrapper.getServerVersion().toClientVersion();
+                    int id = ((NBTNumber) nbt).getAsInt();
+                    return replacedRegistry.getByIdOrThrow(version, id);
+                } else if (nbt instanceof NBTString) {
+                    return replacedRegistry.getByNameOrThrow(((NBTString) nbt).getValue());
+                }
+                throw new IllegalStateException("Can't decode " + nbt + " for " + registry);
+            }
+
+            @Override
+            public NBT encode(PacketWrapper<?> wrapper, T value) {
+                return ResourceLocation.CODEC.encode(wrapper, value.getName());
             }
         };
     }

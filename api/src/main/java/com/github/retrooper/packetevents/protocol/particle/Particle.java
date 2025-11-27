@@ -40,10 +40,7 @@ public class Particle<T extends ParticleData> {
         public Particle<?> decode(NBT nbt, PacketWrapper<?> wrapper) {
             ClientVersion version = wrapper.getServerVersion().toClientVersion();
             NBTCompound compound = (NBTCompound) nbt;
-            NBT typeTag = compound.getTagOrThrow("type");
-            ParticleType<?> type = typeTag instanceof NBTNumber
-                    ? ParticleTypes.getById(version, ((NBTNumber) typeTag).getAsInt())
-                    : ParticleTypes.getByName(((NBTString) typeTag).getValue());
+            ParticleType<?> type = compound.getOrThrow("type", ParticleTypes.CODEC, wrapper);
             @SuppressWarnings("unchecked")
             ParticleType<? super ParticleData> genericType = (ParticleType<? super ParticleData>) type;
             ParticleData data = type.decodeData(compound, version);

@@ -42,6 +42,7 @@ public final class EnvironmentAttributes {
 
     private static final VersionedRegistry<EnvironmentAttribute<?>> REGISTRY =
             new VersionedRegistry<>("environment_attribute");
+    public static final NbtCodec<EnvironmentAttribute<?>> CODEC = NbtCodecs.forRegistry(REGISTRY);
 
     private EnvironmentAttributes() {
     }
@@ -87,24 +88,84 @@ public final class EnvironmentAttributes {
     public static EnvironmentAttribute<AmbientSounds> AUDIO_AMBIENT_SOUNDS = define("audio/ambient_sounds", AmbientSounds.CODEC, AmbientSounds.EMPTY);
     public static EnvironmentAttribute<Boolean> AUDIO_FIREFLY_BUSH_SOUNDS = define("audio/firefly_bush_sounds", NbtCodecs.BOOLEAN, false);
     public static EnvironmentAttribute<Float> GAMEPLAY_SKY_LIGHT_LEVEL = define("gameplay/sky_light_level", NbtCodecs.FLOAT, 15f);
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_CAN_START_RAID = defineUnsynced("gameplay/can_start_raid");
     public static EnvironmentAttribute<Boolean> GAMEPLAY_WATER_EVAPORATES = define("gameplay/water_evaporates", NbtCodecs.BOOLEAN, false);
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<?> GAMEPLAY_BED_RULE = defineUnsynced("gameplay/bed_rule");
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_RESPAWN_ANCHOR_WORKS = defineUnsynced("gameplay/respawn_anchor_works");
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_NETHER_PORTAL_SPAWNS_PIGLIN = defineUnsynced("gameplay/nether_portal_spawns_piglin");
     public static EnvironmentAttribute<Boolean> GAMEPLAY_FAST_LAVA = define("gameplay/fast_lava", NbtCodecs.BOOLEAN, false);
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_INCREASED_FIRE_BURNOUT = defineUnsynced("gameplay/increased_fire_burnout");
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<TriState> GAMEPLAY_EYEBLOSSOM_OPEN = defineUnsynced("gameplay/eyeblossom_open");
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Float> GAMEPLAY_TURTLE_EGG_HATCH_CHANCE = defineUnsynced("gameplay/turtle_egg_hatch_chance");
     public static EnvironmentAttribute<Boolean> GAMEPLAY_PIGLINS_ZOMBIFY = define("gameplay/piglins_zombify", NbtCodecs.BOOLEAN, true);
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_SNOW_GOLEM_MELTS = defineUnsynced("gameplay/snow_golem_melts");
     public static EnvironmentAttribute<Boolean> GAMEPLAY_CREAKING_ACTIVE = define("gameplay/creaking_active", NbtCodecs.BOOLEAN, false);
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Float> GAMEPLAY_SURFACE_SLIME_SPAWN_CHANCE = defineUnsynced("gameplay/surface_slime_spawn_chance");
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Float> GAMEPLAY_CAT_WAKING_UP_GIFT_CHANCE = defineUnsynced("gameplay/cat_waking_up_gift_chance");
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_BEES_STAY_IN_HIVE = defineUnsynced("gameplay/bees_stay_in_hive");
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_MONSTERS_BURN = defineUnsynced("gameplay/monsters_burn");
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_CAN_PILLAGER_PATROL_SPAWN = defineUnsynced("gameplay/can_pillager_patrol_spawn");
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<?> GAMEPLAY_VILLAGER_ACTIVITY = defineUnsynced("gameplay/villager_activity");
+    /**
+     * Not synced via network, not usable via packetevents.
+     */
+    @ApiStatus.Obsolete
     public static EnvironmentAttribute<?> GAMEPLAY_BABY_VILLAGER_ACTIVITY = defineUnsynced("gameplay/baby_villager_activity");
 
     static {
