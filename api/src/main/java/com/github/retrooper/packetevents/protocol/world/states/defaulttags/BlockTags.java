@@ -372,6 +372,10 @@ public class BlockTags {
      * @versions 1.21.9+
      */
     public static final BlockTags INCORRECT_FOR_COPPER_TOOL = bind("incorrect_for_copper_tool");
+    /**
+     * @versions 1.21.11+
+     */
+    public static final BlockTags CAN_GLIDE_THROUGH = bind("can_glide_through");
 
     /**
      * Unofficial tag for all glass blocks
@@ -550,6 +554,7 @@ public class BlockTags {
         BlockTags.GUARDED_BY_PIGLINS.addTag(BlockTags.COPPER_CHESTS).addTag(BlockTags.SHULKER_BOXES).addTag(BlockTags.GOLD_ORES).add(StateTypes.GOLD_BLOCK, StateTypes.BARREL, StateTypes.CHEST, StateTypes.ENDER_CHEST, StateTypes.GILDED_BLACKSTONE, StateTypes.TRAPPED_CHEST, StateTypes.RAW_GOLD_BLOCK);
         BlockTags.PREVENT_MOB_SPAWNING_INSIDE.addTag(BlockTags.RAILS);
         BlockTags.UNSTABLE_BOTTOM_CENTER.addTag(BlockTags.FENCE_GATES);
+        BlockTags.CAN_GLIDE_THROUGH.addTag(BlockTags.CAVE_VINES).add(StateTypes.VINE, StateTypes.TWISTING_VINES, StateTypes.TWISTING_VINES_PLANT, StateTypes.WEEPING_VINES, StateTypes.WEEPING_VINES_PLANT);
         BlockTags.INFINIBURN_NETHER.addTag(BlockTags.INFINIBURN_OVERWORLD);
         BlockTags.INFINIBURN_END.addTag(BlockTags.INFINIBURN_OVERWORLD).add(StateTypes.BEDROCK);
         BlockTags.OVERWORLD_CARVER_REPLACEABLES.addTag(BlockTags.BASE_STONE_OVERWORLD).addTag(BlockTags.DIRT).addTag(BlockTags.SAND).addTag(BlockTags.TERRACOTTA).addTag(BlockTags.IRON_ORES).addTag(BlockTags.COPPER_ORES).addTag(BlockTags.SNOW).add(StateTypes.WATER, StateTypes.GRAVEL, StateTypes.SUSPICIOUS_GRAVEL, StateTypes.SANDSTONE, StateTypes.RED_SANDSTONE, StateTypes.CALCITE, StateTypes.PACKED_ICE, StateTypes.RAW_IRON_BLOCK, StateTypes.RAW_COPPER_BLOCK);
