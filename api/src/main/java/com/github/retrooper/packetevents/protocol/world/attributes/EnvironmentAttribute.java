@@ -28,5 +28,10 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public interface EnvironmentAttribute<T> extends MappedEntity, NbtCodec<T> {
 
+    /**
+     * @return whether this attribute will be synced via network.
+     */
+    boolean isSynced();
+
     T getDefaultValue();
 }

@@ -53,11 +53,12 @@ public final class EnvironmentAttributes {
 
     @ApiStatus.Internal
     public static <T> EnvironmentAttribute<T> defineUnsynced(String name) {
-        return define(name, NbtCodecs.errorCodec(), null);
+        return REGISTRY.define(name, data ->
+                new StaticEnvironmentAttribute<>(data, null, null));
     }
 
     @ApiStatus.Internal
-    public static <T> EnvironmentAttribute<T> define(String name, NbtCodec<T> codec, @UnknownNullability T defaultValue) {
+    public static <T> EnvironmentAttribute<T> define(String name, NbtCodec<T> codec, T defaultValue) {
         return REGISTRY.define(name, data ->
                 new StaticEnvironmentAttribute<>(data, codec, defaultValue));
     }

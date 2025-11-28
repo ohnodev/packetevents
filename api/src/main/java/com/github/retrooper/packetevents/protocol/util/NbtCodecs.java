@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+// TODO use NbtCodecException everywhere vanilla returns data errors (so also for integer parsing etc.)
 @NullMarked
 @ApiStatus.Experimental
 public final class NbtCodecs {

@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.protocol.world.attributes;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
+import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
@@ -46,7 +47,9 @@ public class EnvironmentAttributeMap {
             Map<EnvironmentAttribute<?>, Entry> entries = new HashMap<>();
             for (Map.Entry<String, NBT> entry : compound.getTags().entrySet()) {
                 EnvironmentAttribute<?> attribute = EnvironmentAttributes.getRegistry().getByNameOrThrow(entry.getKey());
-                entries.put(attribute, new Entry(entry.getValue()));
+                if (attribute.isSynced()) {
+                    entries.put(attribute, new Entry(entry.getValue()));
+                }
             }
             return new EnvironmentAttributeMap(entries);
         }
@@ -55,8 +58,10 @@ public class EnvironmentAttributeMap {
         public NBT encode(PacketWrapper<?> wrapper, EnvironmentAttributeMap value) {
             NBTCompound compound = new NBTCompound();
             for (Map.Entry<EnvironmentAttribute<?>, Entry> entry : value.entries.entrySet()) {
-                String key = entry.getKey().getName().toString();
-                compound.setTag(key, entry.getValue().tag);
+                if (entry.getKey().isSynced()) {
+                    String key = entry.getKey().getName().toString();
+                    compound.setTag(key, entry.getValue().tag);
+                }
             }
             return compound;
         }
@@ -111,16 +116,19 @@ public class EnvironmentAttributeMap {
         return Objects.hashCode(this.entries);
     }
 
-    /**
-     * There is currently no support for fully decoding environment attribute maps. TODO fix.
-     */
-    @ApiStatus.Experimental
-    public static final class Entry {
+    public static final class Entry<T, A> {
 
         private final NBT tag;
 
         public Entry(NBT tag) {
             this.tag = tag;
+        }
+
+        public static <T> NbtCodec<Entry<T, ?>> codec(EnvironmentAttribute<T> attribute){
+            try {
+
+            } catch ()
+            NbtCodec<AttributeModifier<T, ?>> modifierCodec;
         }
     }
 }
