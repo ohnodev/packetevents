@@ -103,9 +103,9 @@ public final class AttributeTypes {
 
     public static final AttributeType<Boolean> BOOLEAN = define("boolean", NbtCodecs.BOOLEAN, AttributeModifier.BOOLEAN_LIBRARY);
     public static final AttributeType<Float> FLOAT = define("float", NbtCodecs.FLOAT, AttributeModifier.FLOAT_LIBRARY);
-    public static final AttributeType<Float> ANGLE_DEGREES = define("angles_degrees", NbtCodecs.FLOAT, );
-    public static final AttributeType<Color> RGB_COLOR = define("rgb_color", NbtCodecs.RGB_COLOR, );
-    public static final AttributeType<AlphaColor> ARGB_COLOR = define("argb_color", NbtCodecs.ARGB_COLOR, );
+    public static final AttributeType<Float> ANGLE_DEGREES = define("angles_degrees", NbtCodecs.FLOAT, AttributeModifier.FLOAT_LIBRARY);
+    public static final AttributeType<Color> RGB_COLOR = define("rgb_color", NbtCodecs.RGB_COLOR, AttributeModifier.RGB_COLOR_LIBRARY);
+    public static final AttributeType<AlphaColor> ARGB_COLOR = define("argb_color", NbtCodecs.ARGB_COLOR, AttributeModifier.ARGB_COLOR_LIBRARY);
     public static final AttributeType<MoonPhase> MOON_PHASE = define("moon_phase", MoonPhase.CODEC);
     public static final AttributeType<Particle<?>> PARTICLE = define("particle", Particle.CODEC);
     public static final AttributeType<List<ParticleSettings>> AMBIENT_PARTICLES = define("ambient_particles", ParticleSettings.CODEC.applyList());

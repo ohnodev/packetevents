@@ -192,6 +192,35 @@ public class Color implements RGBLike {
         return (src * srcAlpha + dest * (alpha - srcAlpha)) / alpha;
     }
 
+    public Color asGrayscale() {
+        int grayscale = (int) ((float) this.red * 0.30f + (float) this.green * 0.59f + (float) this.blue * 0.11f);
+        return new Color(grayscale, grayscale, grayscale);
+    }
+
+    public Color scale(float scale) {
+        return this.scale(scale, scale, scale);
+    }
+
+    public Color scale(float redScale, float greenScale, float blueScale) {
+        return new Color(
+                (int) ((float) this.red * redScale),
+                (int) ((float) this.green * greenScale),
+                (int) ((float) this.blue * blueScale)
+        );
+    }
+
+    public Color lerpSrgb(Color dest, float t) {
+        return new Color(
+                MathUtil.lerp(t, this.red, dest.red),
+                MathUtil.lerp(t, this.green, dest.green),
+                MathUtil.lerp(t, this.blue, dest.blue)
+        );
+    }
+
+    public @Range(from = 0L, to = 255L) int alpha() {
+        return 255;
+    }
+
     @Override
     public @Range(from = 0L, to = 255L) int red() {
         return red;

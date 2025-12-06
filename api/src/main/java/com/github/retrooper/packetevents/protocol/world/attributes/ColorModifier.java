@@ -24,6 +24,9 @@ import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
 import org.jspecify.annotations.NullMarked;
 
+/**
+ * @version 1.21.11+
+ */
 @NullMarked
 public interface ColorModifier<A> extends AttributeModifier<Color, A> {
 
@@ -31,6 +34,17 @@ public interface ColorModifier<A> extends AttributeModifier<Color, A> {
     ColorModifier<Color> ADD = (RgbModifier) Color::plus;
     ColorModifier<Color> SUBTRACT = (RgbModifier) Color::minus;
     ColorModifier<Color> MULTIPLY = (RgbModifier) Color::times;
+    ColorModifier<BlendToGrayArgument> BLEND_TO_GRAY = new ColorModifier<BlendToGrayArgument>() {
+        @Override
+        public Color apply(Color value, BlendToGrayArgument arg) {
+            return arg.blend(value);
+        }
+
+        @Override
+        public NbtCodec<BlendToGrayArgument> argumentCodec(EnvironmentAttribute<Color> attribute) {
+            return BlendToGrayArgument.CODEC;
+        }
+    };
 
     @FunctionalInterface
     interface ArgbModifier extends ColorModifier<AlphaColor> {

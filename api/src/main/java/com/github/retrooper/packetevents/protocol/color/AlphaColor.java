@@ -152,12 +152,11 @@ public final class AlphaColor extends Color {
 
     @Override
     public AlphaColor times(Color other) {
-        int otherAlpha = other instanceof AlphaColor ? ((AlphaColor) other).alpha : 255;
-        if (otherAlpha == 255 && other.red == 255 && other.green == 255 && other.blue == 255) {
+        if (other.alpha() == 255 && other.red == 255 && other.green == 255 && other.blue == 255) {
             return this;
         }
         return new AlphaColor(
-                (this.alpha * otherAlpha) / 255,
+                (this.alpha * other.alpha()) / 255,
                 (this.red * other.red) / 255,
                 (this.green * other.green) / 255,
                 (this.blue * other.blue) / 255
@@ -184,6 +183,38 @@ public final class AlphaColor extends Color {
         return (src * srcAlpha + dest * (alpha - srcAlpha)) / alpha;
     }
 
+    @Override
+    public AlphaColor asGrayscale() {
+        int grayscale = (int) ((float) this.red * 0.30f + (float) this.green * 0.59f + (float) this.blue * 0.11f);
+        return new AlphaColor(this.alpha, grayscale, grayscale, grayscale);
+    }
+
+    @Override
+    public AlphaColor scale(float scale) {
+        return this.scale(scale, scale, scale);
+    }
+
+    @Override
+    public AlphaColor scale(float redScale, float greenScale, float blueScale) {
+        return new AlphaColor(
+                this.alpha,
+                (int) ((float) this.red * redScale),
+                (int) ((float) this.green * greenScale),
+                (int) ((float) this.blue * blueScale)
+        );
+    }
+
+    @Override
+    public AlphaColor lerpSrgb(Color dest, float t) {
+        return new AlphaColor(
+                MathUtil.lerp(t, this.alpha, dest.alpha()),
+                MathUtil.lerp(t, this.red, dest.red),
+                MathUtil.lerp(t, this.green, dest.green),
+                MathUtil.lerp(t, this.blue, dest.blue)
+        );
+    }
+
+    @Override
     public @Range(from = 0L, to = 255L) int alpha() {
         return this.alpha;
     }

@@ -31,6 +31,10 @@ public final class MathUtil {
         return t * (b - a) + a;
     }
 
+    public static int lerp(float t, int a, int b) {
+        return floor(t * (b - a)) + a;
+    }
+
     public static int clamp(int value, int min, int max) {
         return value < min ? min : Math.min(value, max);
     }

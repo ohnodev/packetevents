@@ -24,6 +24,9 @@ import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
 import org.jspecify.annotations.NullMarked;
 
+/**
+ * @version 1.21.11+
+ */
 @NullMarked
 public interface AlphaColorModifier<A> extends AttributeModifier<AlphaColor, A> {
 
@@ -31,6 +34,17 @@ public interface AlphaColorModifier<A> extends AttributeModifier<AlphaColor, A> 
     AlphaColorModifier<Color> ADD = (RgbModifier) AlphaColor::plus;
     AlphaColorModifier<Color> SUBTRACT = (RgbModifier) AlphaColor::minus;
     AlphaColorModifier<AlphaColor> MULTIPLY = (ArgbModifier) AlphaColor::times;
+    AlphaColorModifier<BlendToGrayArgument> BLEND_TO_GRAY = new AlphaColorModifier<BlendToGrayArgument>() {
+        @Override
+        public AlphaColor apply(AlphaColor value, BlendToGrayArgument arg) {
+            return arg.blend(value);
+        }
+
+        @Override
+        public NbtCodec<BlendToGrayArgument> argumentCodec(EnvironmentAttribute<AlphaColor> attribute) {
+            return BlendToGrayArgument.CODEC;
+        }
+    };
 
     @FunctionalInterface
     interface ArgbModifier extends AlphaColorModifier<AlphaColor> {
