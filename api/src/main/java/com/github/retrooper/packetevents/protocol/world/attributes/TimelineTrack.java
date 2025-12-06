@@ -1,5 +1,7 @@
 package com.github.retrooper.packetevents.protocol.world.attributes;
 
+import com.github.retrooper.packetevents.protocol.util.NbtCodec;
+import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -16,7 +18,12 @@ public class TimelineTrack<T, A> {
         this.argumentTrack = argumentTrack;
     }
 
-    // TODO
+//    public static <T>NbtCodec<>
+
+    public static <T, A> NbtMapCodec<TimelineTrack<T, A>> codec(EnvironmentAttribute<T> attribute, AttributeModifier<T, A> modifier) {
+        return KeyframeTrack.mapCodec(modifier.argumentCodec(attribute))
+                .apply(track -> new TimelineTrack<>(modifier, track), TimelineTrack::getArgumentTrack);
+    }
 
     public AttributeModifier<T, A> getModifier() {
         return this.modifier;
