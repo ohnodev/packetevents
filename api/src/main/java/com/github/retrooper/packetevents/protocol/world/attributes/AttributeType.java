@@ -26,14 +26,9 @@ import org.jspecify.annotations.NullMarked;
  * @version 1.21.11+
  */
 @NullMarked
-public interface EnvironmentAttribute<T> extends MappedEntity {
+public interface AttributeType<T> extends MappedEntity {
 
-    AttributeType<T> getType();
+    NbtCodec<T> getValueCodec();
 
-    /**
-     * @return whether this attribute will be synced via network.
-     */
-    boolean isSynced();
-
-    T getDefaultValue();
+    NbtCodec<AttributeModifier<T, ?>> getModifierCodec();
 }

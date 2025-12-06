@@ -16,24 +16,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.retrooper.packetevents.protocol.world.attributes;
+package com.github.retrooper.packetevents.util;
 
-import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
-import com.github.retrooper.packetevents.protocol.util.NbtCodec;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
-/**
- * @version 1.21.11+
- */
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+@ApiStatus.Internal
 @NullMarked
-public interface EnvironmentAttribute<T> extends MappedEntity {
+public final class MapUtil {
 
-    AttributeType<T> getType();
+    private MapUtil() {
+    }
 
-    /**
-     * @return whether this attribute will be synced via network.
-     */
-    boolean isSynced();
-
-    T getDefaultValue();
+    // would be built-in with modern java...
+    @SafeVarargs
+    public static <K, V> Map<K, V> createMap(Map.Entry<? extends K, ? extends V>... entries) {
+        if (entries.length == 0) {
+            return Collections.emptyMap();
+        }
+        Map<K, V> map = new HashMap<>(entries.length);
+        for (Map.Entry<? extends K, ? extends V> entry : entries) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+        return Collections.unmodifiableMap(map);
+    }
 }

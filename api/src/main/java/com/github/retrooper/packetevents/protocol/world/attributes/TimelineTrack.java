@@ -18,7 +18,9 @@ public class TimelineTrack<T, A> {
         this.argumentTrack = argumentTrack;
     }
 
-//    public static <T>NbtCodec<>
+    public static <T>NbtCodec<TimelineTrack<T,?>> codec(EnvironmentAttribute<T> attribute) {
+        attribute.getType() // TODO
+    }
 
     public static <T, A> NbtMapCodec<TimelineTrack<T, A>> codec(EnvironmentAttribute<T> attribute, AttributeModifier<T, A> modifier) {
         return KeyframeTrack.mapCodec(modifier.argumentCodec(attribute))

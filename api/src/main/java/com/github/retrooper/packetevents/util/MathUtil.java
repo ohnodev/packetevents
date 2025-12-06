@@ -23,6 +23,14 @@ public final class MathUtil {
     private MathUtil() {
     }
 
+    public static float lerp(float t, float a, float b) {
+        return t * (b - a) + a;
+    }
+
+    public static double lerp(double t, double a, double b) {
+        return t * (b - a) + a;
+    }
+
     public static int clamp(int value, int min, int max) {
         return value < min ? min : Math.min(value, max);
     }

@@ -28,11 +28,12 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.util.MathUtil;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import net.kyori.adventure.util.RGBLike;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;
 
+@NullMarked
 public class Color implements RGBLike {
 
     public static final Color WHITE = new Color(0xFFFFFFFF);
@@ -42,10 +43,14 @@ public class Color implements RGBLike {
 
     protected final int red, green, blue;
 
-    public Color(@Range(from = 0L, to = 255L) int red, @Range(from = 0L, to = 255L) int green, @Range(from = 0L, to = 255L) int blue) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
+    public Color(
+            @Range(from = 0L, to = 255L) int red,
+            @Range(from = 0L, to = 255L) int green,
+            @Range(from = 0L, to = 255L) int blue
+    ) {
+        this.red = MathUtil.clamp(red, 0, 255);
+        this.green = MathUtil.clamp(green, 0, 255);
+        this.blue = MathUtil.clamp(blue, 0, 255);
     }
 
     public Color(
@@ -112,20 +117,79 @@ public class Color implements RGBLike {
         return list;
     }
 
-    public @NotNull Color withRed(@Range(from = 0L, to = 255L) int red) {
+    public AlphaColor withAlpha() {
+        return this.withAlpha(255);
+    }
+
+    public AlphaColor withAlpha(@Range(from = 0L, to = 255L) int alpha) {
+        return new AlphaColor(alpha, this.red, this.green, this.blue);
+    }
+
+    public Color withRed(@Range(from = 0L, to = 255L) int red) {
         return new Color(red, green, blue);
     }
 
-    public @NotNull Color withGreen(@Range(from = 0L, to = 255L) int green) {
+    public Color withGreen(@Range(from = 0L, to = 255L) int green) {
         return new Color(red, green, blue);
     }
 
-    public @NotNull Color withBlue(@Range(from = 0L, to = 255L) int blue) {
+    public Color withBlue(@Range(from = 0L, to = 255L) int blue) {
         return new Color(red, green, blue);
     }
 
     public int asRGB() {
         return (this.red << 16) | (this.green << 8) | this.blue;
+    }
+
+    public Color plus(Color other) {
+        return new Color(
+                this.red + other.red,
+                this.green + other.green,
+                this.blue + other.blue
+        );
+    }
+
+    public Color minus(Color other) {
+        return new Color(
+                this.red - other.red,
+                this.green - other.green,
+                this.blue - other.blue
+        );
+    }
+
+    public Color times(Color other) {
+        if (other instanceof AlphaColor) {
+            return other.times(this);
+        } else if (this.red == 255 && this.green == 255 && this.blue == 255) {
+            return other;
+        } else if (other.red == 255 && other.green == 255 && other.blue == 255) {
+            return this;
+        }
+        return new Color(
+                (this.red * other.red) / 255,
+                (this.green * other.green) / 255,
+                (this.blue * other.blue) / 255
+        );
+    }
+
+    public AlphaColor blendWith(AlphaColor source) {
+        int srcAlpha = source.alpha();
+        if (srcAlpha == 255) {
+            return source;
+        } else if (srcAlpha == 0) {
+            return this.withAlpha();
+        }
+        int alpha = srcAlpha + (255 - srcAlpha);
+        return new AlphaColor(
+                alpha,
+                alphaBlendChannel(alpha, srcAlpha, this.red, source.red),
+                alphaBlendChannel(alpha, srcAlpha, this.green, source.green),
+                alphaBlendChannel(alpha, srcAlpha, this.blue, source.blue)
+        );
+    }
+
+    protected static int alphaBlendChannel(int alpha, int srcAlpha, int dest, int src) {
+        return (src * srcAlpha + dest * (alpha - srcAlpha)) / alpha;
     }
 
     @Override
