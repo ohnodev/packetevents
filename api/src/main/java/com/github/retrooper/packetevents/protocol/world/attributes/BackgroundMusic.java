@@ -18,9 +18,10 @@
 
 package com.github.retrooper.packetevents.protocol.world.attributes;
 
-import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
+import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
+import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
 import com.github.retrooper.packetevents.protocol.world.biome.BiomeEffects.MusicSettings;
 import com.github.retrooper.packetevents.util.RandomWeightedList;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -38,10 +39,9 @@ import java.util.Objects;
 @NullMarked
 public class BackgroundMusic {
 
-    public static final NbtCodec<BackgroundMusic> CODEC = new NbtCodec<BackgroundMusic>() {
+    public static final NbtCodec<BackgroundMusic> CODEC = new NbtMapCodec<BackgroundMusic>() {
         @Override
-        public BackgroundMusic decode(NBT nbt, PacketWrapper<?> wrapper) {
-            NBTCompound compound = (NBTCompound) nbt;
+        public BackgroundMusic decode(NBTCompound compound, PacketWrapper<?> wrapper) throws NbtCodecException {
             MusicSettings defaultt = compound.getOrNull("default", MusicSettings.CODEC, wrapper);
             MusicSettings creative = compound.getOrNull("creative", MusicSettings.CODEC, wrapper);
             MusicSettings underwater = compound.getOrNull("underwater", MusicSettings.CODEC, wrapper);
@@ -49,8 +49,7 @@ public class BackgroundMusic {
         }
 
         @Override
-        public NBT encode(PacketWrapper<?> wrapper, BackgroundMusic value) {
-            NBTCompound compound = new NBTCompound();
+        public void encode(NBTCompound compound, PacketWrapper<?> wrapper, BackgroundMusic value) throws NbtCodecException {
             if (value.defaultMusic != null) {
                 compound.set("default", value.defaultMusic, MusicSettings.CODEC, wrapper);
             }
@@ -60,9 +59,8 @@ public class BackgroundMusic {
             if (value.underwaterMusic != null) {
                 compound.set("underwater", value.underwaterMusic, MusicSettings.CODEC, wrapper);
             }
-            return compound;
         }
-    };
+    }.codec();
 
     public static final BackgroundMusic EMPTY = new BackgroundMusic(null, null, null);
 

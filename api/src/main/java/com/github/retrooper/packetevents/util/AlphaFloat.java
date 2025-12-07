@@ -36,10 +36,10 @@ public final class AlphaFloat {
             if (nbt instanceof NBTNumber) {
                 return new AlphaFloat(((NBTNumber) nbt).getAsFloat(), 1f);
             }
-            NBTCompound compound = (NBTCompound) nbt;
+            NBTCompound compound = nbt.castOrThrow(NBTCompound.class);
             float value = compound.getNumberTagValueOrThrow("value").floatValue();
             float alpha = compound.getNumberTagValueOrDefault("alpha", 1f).floatValue();
-            return new AlphaFloat(value,alpha);
+            return new AlphaFloat(value, alpha);
         }
 
         @Override

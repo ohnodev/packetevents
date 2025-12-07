@@ -28,12 +28,12 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public interface EnvironmentAttribute<T> extends MappedEntity {
 
-    AttributeType<T> getType();
-
     /**
      * @return whether this attribute will be synced via network.
      */
     boolean isSynced();
+
+    AttributeType<T> getType();
 
     T getDefaultValue();
 }

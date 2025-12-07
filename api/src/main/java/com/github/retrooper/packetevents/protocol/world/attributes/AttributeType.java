@@ -28,6 +28,11 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public interface AttributeType<T> extends MappedEntity {
 
+    /**
+     * @return whether this attribute will be synced via network.
+     */
+    boolean isSynced();
+
     NbtCodec<T> getValueCodec();
 
     NbtCodec<AttributeModifier<T, ?>> getModifierCodec();

@@ -8,8 +8,11 @@ import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
 import com.github.retrooper.packetevents.util.MathUtil;
 import com.github.retrooper.packetevents.util.easing.CubicBezierControls;
 import com.github.retrooper.packetevents.util.easing.CubicCurve;
+import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @versions 1.21.11+
@@ -37,7 +40,12 @@ public final class CubicBezierEasingType extends AbstractMappedEntity implements
     private final CubicCurve curveY;
 
     public CubicBezierEasingType(CubicBezierControls controls) {
-        super(null);
+        this(null, controls);
+    }
+
+    @ApiStatus.Internal
+    public CubicBezierEasingType(@Nullable TypesBuilderData data, CubicBezierControls controls) {
+        super(data);
         this.controls = controls;
         this.curveX = controls.calcCurveX();
         this.curveY = controls.calcCurveY();

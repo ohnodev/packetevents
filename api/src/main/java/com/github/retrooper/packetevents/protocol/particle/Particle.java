@@ -27,6 +27,8 @@ import com.github.retrooper.packetevents.protocol.particle.type.ParticleType;
 import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
+import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
+import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jspecify.annotations.NullMarked;
 
@@ -35,11 +37,10 @@ import java.util.Objects;
 @NullMarked
 public class Particle<T extends ParticleData> {
 
-    public static final NbtCodec<Particle<?>> CODEC = new NbtCodec<Particle<?>>() {
+    public static final NbtCodec<Particle<?>> CODEC = new NbtMapCodec<Particle<?>>() {
         @Override
-        public Particle<?> decode(NBT nbt, PacketWrapper<?> wrapper) {
+        public Particle<?> decode(NBTCompound compound, PacketWrapper<?> wrapper) throws NbtCodecException {
             ClientVersion version = wrapper.getServerVersion().toClientVersion();
-            NBTCompound compound = (NBTCompound) nbt;
             ParticleType<?> type = compound.getOrThrow("type", ParticleTypes.CODEC, wrapper);
             @SuppressWarnings("unchecked")
             ParticleType<? super ParticleData> genericType = (ParticleType<? super ParticleData>) type;
@@ -48,15 +49,13 @@ public class Particle<T extends ParticleData> {
         }
 
         @Override
-        public NBT encode(PacketWrapper<?> wrapper, Particle<?> value) {
-            NBTCompound compound = new NBTCompound();
+        public void encode(NBTCompound compound, PacketWrapper<?> wrapper, Particle<?> value) throws NbtCodecException {
             @SuppressWarnings("unchecked")
             ParticleType<? super ParticleData> type = (ParticleType<? super ParticleData>) value.type;
             compound.setTag("type", new NBTString(type.getName().toString()));
             type.encodeData(value.getData(), wrapper.getServerVersion().toClientVersion(), compound);
-            return compound;
         }
-    };
+    }.codec();
 
     private ParticleType<T> type;
     private T data;

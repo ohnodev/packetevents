@@ -18,10 +18,11 @@
 
 package com.github.retrooper.packetevents.protocol.world.attributes;
 
-import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.sound.Sound;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
+import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
+import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
 import com.github.retrooper.packetevents.protocol.world.biome.BiomeEffects.AdditionsSettings;
 import com.github.retrooper.packetevents.protocol.world.biome.BiomeEffects.MoodSettings;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -38,10 +39,9 @@ import java.util.Objects;
 @NullMarked
 public class AmbientSounds {
 
-    public static final NbtCodec<AmbientSounds> CODEC = new NbtCodec<AmbientSounds>() {
+    public static final NbtCodec<AmbientSounds> CODEC = new NbtMapCodec<AmbientSounds>() {
         @Override
-        public AmbientSounds decode(NBT nbt, PacketWrapper<?> wrapper) {
-            NBTCompound compound = (NBTCompound) nbt;
+        public AmbientSounds decode(NBTCompound compound, PacketWrapper<?> wrapper) throws NbtCodecException {
             Sound sound = compound.getOrNull("loop", Sound.CODEC, wrapper);
             MoodSettings mood = compound.getOrNull("mood", MoodSettings.CODEC, wrapper);
             List<AdditionsSettings> additions = compound.getOr("additions", AdditionsSettings.LIST_CODEC, Collections.emptyList(), wrapper);
@@ -49,8 +49,7 @@ public class AmbientSounds {
         }
 
         @Override
-        public NBT encode(PacketWrapper<?> wrapper, AmbientSounds value) {
-            NBTCompound compound = new NBTCompound();
+        public void encode(NBTCompound compound, PacketWrapper<?> wrapper, AmbientSounds value) throws NbtCodecException {
             if (value.loop != null) {
                 compound.set("loop", value.loop, Sound.CODEC, wrapper);
             }
@@ -60,9 +59,8 @@ public class AmbientSounds {
             if (!value.additions.isEmpty()) {
                 compound.set("additions", value.additions, AdditionsSettings.LIST_CODEC, wrapper);
             }
-            return compound;
         }
-    };
+    }.codec();
 
     public static final AmbientSounds EMPTY = new AmbientSounds(null, null, Collections.emptyList());
 

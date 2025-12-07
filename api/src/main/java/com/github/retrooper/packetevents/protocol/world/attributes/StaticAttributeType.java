@@ -24,19 +24,20 @@ import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
 /**
  * @versions 1.21.11+
  */
 @NullMarked
 public class StaticAttributeType<T> extends AbstractMappedEntity implements AttributeType<T> {
 
-    private final NbtCodec<T> valueCodec;
+    private final @Nullable NbtCodec<T> valueCodec;
     private final NbtCodec<AttributeModifier<T, ?>> modifierCodec;
 
     @ApiStatus.Internal
     public StaticAttributeType(
             @Nullable TypesBuilderData data,
-            NbtCodec<T> valueCodec,
+            @Nullable NbtCodec<T> valueCodec,
             NbtCodec<AttributeModifier<T, ?>> modifierCodec
     ) {
         super(data);
@@ -45,7 +46,15 @@ public class StaticAttributeType<T> extends AbstractMappedEntity implements Attr
     }
 
     @Override
+    public boolean isSynced() {
+        return this.valueCodec != null;
+    }
+
+    @Override
     public NbtCodec<T> getValueCodec() {
+        if (this.valueCodec == null) {
+            throw new UnsupportedOperationException();
+        }
         return this.valueCodec;
     }
 

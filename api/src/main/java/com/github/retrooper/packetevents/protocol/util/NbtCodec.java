@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -82,13 +83,24 @@ public interface NbtCodec<T> extends NbtEncoder<T>, NbtDecoder<T> {
     default NbtCodec<List<T>> applyList() {
         return new NbtCodec<List<T>>() {
             @Override
-            public List<T> decode(NBT nbt, PacketWrapper<?> wrapper) {
-                List<? extends NBT> list = NbtCodecs.GENERIC_LIST.decode(nbt, wrapper);
-                List<T> ret = new ArrayList<>(list.size());
-                for (NBT tag : list) {
-                    ret.add(NbtCodec.this.decode(tag, wrapper));
+            public List<T> decode(NBT nbt, PacketWrapper<?> wrapper) throws NbtCodecException {
+                try {
+                    List<? extends NBT> list = NbtCodecs.GENERIC_LIST.decode(nbt, wrapper);
+                    List<T> ret = new ArrayList<>(list.size());
+                    for (NBT tag : list) {
+                        ret.add(NbtCodec.this.decode(tag, wrapper));
+                    }
+                    return ret;
+                } catch (NbtCodecException leftException) {
+                    try {
+                        // fallback to compact list codec
+                        T element = NbtCodec.this.decode(nbt, wrapper);
+                        return Collections.singletonList(element);
+                    } catch (NbtCodecException rightException) {
+                        leftException.addSuppressed(rightException);
+                        throw leftException;
+                    }
                 }
-                return ret;
             }
 
             @Override

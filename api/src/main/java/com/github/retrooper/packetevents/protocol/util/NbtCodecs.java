@@ -50,7 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-// TODO use NbtCodecException everywhere vanilla returns data errors (so also for integer parsing etc.)
 @NullMarked
 @ApiStatus.Experimental
 public final class NbtCodecs {
@@ -58,7 +57,7 @@ public final class NbtCodecs {
     public static final NbtCodec<Integer> INT = new NbtCodec<Integer>() {
         @Override
         public Integer decode(NBT nbt, PacketWrapper<?> wrapper) {
-            return ((NBTNumber) nbt).getAsInt();
+            return nbt.castOrThrow(NBTNumber.class).getAsInt();
         }
 
         @Override
@@ -69,7 +68,7 @@ public final class NbtCodecs {
     public static final NbtCodec<Double> DOUBLE = new NbtCodec<Double>() {
         @Override
         public Double decode(NBT nbt, PacketWrapper<?> wrapper) {
-            return ((NBTNumber) nbt).getAsDouble();
+            return nbt.castOrThrow(NBTNumber.class).getAsDouble();
         }
 
         @Override
@@ -80,7 +79,7 @@ public final class NbtCodecs {
     public static final NbtCodec<Float> FLOAT = new NbtCodec<Float>() {
         @Override
         public Float decode(NBT nbt, PacketWrapper<?> wrapper) {
-            return ((NBTNumber) nbt).getAsFloat();
+            return nbt.castOrThrow(NBTNumber.class).getAsFloat();
         }
 
         @Override
@@ -91,7 +90,7 @@ public final class NbtCodecs {
     public static final NbtCodec<Boolean> BOOLEAN = new NbtCodec<Boolean>() {
         @Override
         public Boolean decode(NBT nbt, PacketWrapper<?> wrapper) {
-            return ((NBTNumber) nbt).getAsByte() != 0;
+            return nbt.castOrThrow(NBTNumber.class).getAsByte() != 0;
         }
 
         @Override
@@ -103,7 +102,7 @@ public final class NbtCodecs {
     public static final NbtCodec<String> STRING = new NbtCodec<String>() {
         @Override
         public String decode(NBT nbt, PacketWrapper<?> wrapper) {
-            return ((NBTString) nbt).getValue();
+            return nbt.castOrThrow(NBTString.class).getValue();
         }
 
         @Override
@@ -144,7 +143,7 @@ public final class NbtCodecs {
                 }
                 return list;
             }
-            throw new RuntimeException("Not a list: " + nbt);
+            throw new NbtCodecException("Not a list: " + nbt);
         }
 
         @Override
@@ -200,11 +199,7 @@ public final class NbtCodecs {
             int size = list.size();
             int[] array = new int[size];
             for (int i = 0; i < size; i++) {
-                NBT tag = list.get(i);
-                if (!(tag instanceof NBTNumber)) {
-                    throw new RuntimeException("Some elements are not numbers: " + list);
-                }
-                array[i] = ((NBTNumber) tag).getAsInt();
+                array[i] = list.get(i).castOrThrow(NBTNumber.class).getAsInt();
             }
             return array;
         }
@@ -224,13 +219,17 @@ public final class NbtCodecs {
             if (nbt instanceof NBTString) {
                 String string = ((NBTString) nbt).getValue();
                 if (string.isEmpty() || string.charAt(0) != '#') {
-                    throw new IllegalStateException("Hex color must begin with #");
+                    throw new NbtCodecException("Hex color must begin with #");
                 } else if (string.length() - 1 != 6) {
-                    throw new IllegalStateException("Hex color is wrong, expected 6 digits but got " + string);
+                    throw new NbtCodecException("Hex color is wrong, expected 6 digits but got " + string);
                 }
-                String digits = string.substring(1);
-                int rgb = Integer.parseInt(digits, 16);
-                return new Color(rgb);
+                try {
+                    String digits = string.substring(1);
+                    int rgb = Integer.parseInt(digits, 16);
+                    return new Color(rgb);
+                } catch (NumberFormatException exception) {
+                    throw new NbtCodecException(exception);
+                }
             } else if (nbt instanceof NBTNumber) {
                 return new Color(((NBTNumber) nbt).getAsInt());
             }
@@ -248,13 +247,17 @@ public final class NbtCodecs {
             if (nbt instanceof NBTString) {
                 String string = ((NBTString) nbt).getValue();
                 if (string.isEmpty() || string.charAt(0) != '#') {
-                    throw new IllegalStateException("Hex color must begin with #");
+                    throw new NbtCodecException("Hex color must begin with #");
                 } else if (string.length() - 1 != 8) {
-                    throw new IllegalStateException("Hex color is wrong, expected 8 digits but got " + string);
+                    throw new NbtCodecException("Hex color is wrong, expected 8 digits but got " + string);
                 }
-                String digits = string.substring(1);
-                int rgb = Integer.parseUnsignedInt(digits, 16);
-                return new AlphaColor(rgb);
+                try {
+                    String digits = string.substring(1);
+                    int rgb = Integer.parseUnsignedInt(digits, 16);
+                    return new AlphaColor(rgb);
+                } catch (NumberFormatException exception) {
+                    throw new NbtCodecException(exception);
+                }
             } else if (nbt instanceof NBTNumber) {
                 return new AlphaColor(((NBTNumber) nbt).getAsInt());
             }
@@ -320,7 +323,7 @@ public final class NbtCodecs {
                 String key = ((NBTString) nbt).getValue();
                 T value = this.map.get(key);
                 if (value == null) {
-                    throw new RuntimeException("Can't find " + key + " in " + this.map.keySet());
+                    throw new NbtCodecException("Can't find " + key + " in " + this.map.keySet());
                 }
                 return value;
             }

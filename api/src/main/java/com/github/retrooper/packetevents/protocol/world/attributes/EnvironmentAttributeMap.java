@@ -18,7 +18,6 @@
 
 package com.github.retrooper.packetevents.protocol.world.attributes;
 
-import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
@@ -42,10 +41,9 @@ import java.util.function.Function;
 @NullMarked
 public class EnvironmentAttributeMap {
 
-    public static final NbtCodec<EnvironmentAttributeMap> CODEC = new NbtCodec<EnvironmentAttributeMap>() {
+    public static final NbtCodec<EnvironmentAttributeMap> CODEC = new NbtMapCodec<EnvironmentAttributeMap>() {
         @Override
-        public EnvironmentAttributeMap decode(NBT nbt, PacketWrapper<?> wrapper) {
-            NBTCompound compound = (NBTCompound) nbt;
+        public EnvironmentAttributeMap decode(NBTCompound compound, PacketWrapper<?> wrapper) throws NbtCodecException {
             Map<EnvironmentAttribute<?>, Entry<?, ?>> entries = new HashMap<>();
             for (String tag : compound.getTagNames()) {
                 EnvironmentAttribute<?> attribute = EnvironmentAttributes.getRegistry().getByNameOrThrow(tag);
@@ -57,14 +55,12 @@ public class EnvironmentAttributeMap {
         }
 
         @Override
-        public NBT encode(PacketWrapper<?> wrapper, EnvironmentAttributeMap value) {
-            NBTCompound compound = new NBTCompound();
+        public void encode(NBTCompound compound, PacketWrapper<?> wrapper, EnvironmentAttributeMap value) throws NbtCodecException {
             for (Map.Entry<EnvironmentAttribute<?>, Entry<?, ?>> entry : value.entries.entrySet()) {
                 if (entry.getKey().isSynced()) {
                     this.encode0(compound, entry.getKey(), entry.getValue(), wrapper);
                 }
             }
-            return compound;
         }
 
         private <T> void encode0(NBTCompound compound, EnvironmentAttribute<?> attribute, Entry<T, ?> entry, PacketWrapper<?> wrapper) {
@@ -72,7 +68,7 @@ public class EnvironmentAttributeMap {
             EnvironmentAttribute<T> castAttribute = (EnvironmentAttribute<T>) attribute;
             compound.set(attribute.getName().toString(), entry, Entry.codec(castAttribute), wrapper);
         }
-    };
+    }.codec();
 
     public static final EnvironmentAttributeMap EMPTY = new EnvironmentAttributeMap(Collections.emptyMap());
 

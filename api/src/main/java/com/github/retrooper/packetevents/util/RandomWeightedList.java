@@ -27,6 +27,8 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTList;
 import com.github.retrooper.packetevents.protocol.nbt.NBTType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
+import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
+import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jspecify.annotations.NullMarked;
 
@@ -120,23 +122,20 @@ public class RandomWeightedList<T> implements Iterable<RandomWeightedList.Entry<
         }
 
         public static <T> NbtCodec<Entry<T>> codec(NbtCodec<T> codec) {
-            return new NbtCodec<Entry<T>>() {
+            return new NbtMapCodec<Entry<T>>() {
                 @Override
-                public Entry<T> decode(NBT nbt, PacketWrapper<?> wrapper) {
-                    NBTCompound compound = (NBTCompound) nbt;
+                public Entry<T> decode(NBTCompound compound, PacketWrapper<?> wrapper) throws NbtCodecException {
                     int weight = compound.getNumberTagOrThrow("weight").getAsInt();
                     T data = compound.getOrThrow("data", codec, wrapper);
                     return new Entry<>(data, weight);
                 }
 
                 @Override
-                public NBT encode(PacketWrapper<?> wrapper, Entry<T> value) {
-                    NBTCompound compound = new NBTCompound();
+                public void encode(NBTCompound compound, PacketWrapper<?> wrapper, Entry<T> value) throws NbtCodecException {
                     compound.setTag("weight", new NBTInt(value.weight));
                     compound.set("data", value.data, codec, wrapper);
-                    return compound;
                 }
-            };
+            }.codec();
         }
 
         @Deprecated

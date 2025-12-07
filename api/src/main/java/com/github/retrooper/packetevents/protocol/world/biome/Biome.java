@@ -29,7 +29,9 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTFloat;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.util.CodecNameable;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
+import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
+import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
 import com.github.retrooper.packetevents.protocol.world.attributes.EnvironmentAttributeMap;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -41,10 +43,9 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public interface Biome extends MappedEntity, CopyableEntity<Biome>, DeepComparableEntity {
 
-    NbtCodec<Biome> CODEC = new NbtCodec<Biome>() {
+    NbtCodec<Biome> CODEC = new NbtMapCodec<Biome>() {
         @Override
-        public Biome decode(NBT nbt, PacketWrapper<?> wrapper) {
-            NBTCompound compound = (NBTCompound) nbt;
+        public Biome decode(NBTCompound compound, PacketWrapper<?> wrapper) throws NbtCodecException {
             float temperature = compound.getNumberTagOrThrow("temperature").getAsFloat();
             TemperatureModifier temperatureModifier = compound.getOr("temperature_modifier", TemperatureModifier.CODEC, TemperatureModifier.NONE, wrapper);
             float downfall = compound.getNumberTagOrThrow("downfall").getAsFloat();
@@ -79,8 +80,7 @@ public interface Biome extends MappedEntity, CopyableEntity<Biome>, DeepComparab
         }
 
         @Override
-        public NBT encode(PacketWrapper<?> wrapper, Biome value) {
-            NBTCompound compound = new NBTCompound();
+        public void encode(NBTCompound compound, PacketWrapper<?> wrapper, Biome value) throws NbtCodecException {
             compound.setTag("temperature", new NBTFloat(value.getTemperature()));
             if (value.getTemperatureModifier() != TemperatureModifier.NONE) {
                 compound.set("temperature_modifier", value.getTemperatureModifier(), TemperatureModifier.CODEC, wrapper);
@@ -108,9 +108,8 @@ public interface Biome extends MappedEntity, CopyableEntity<Biome>, DeepComparab
                     }
                 }
             }
-            return compound;
         }
-    };
+    }.codec();
 
     boolean hasPrecipitation();
 
