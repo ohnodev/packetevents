@@ -94,7 +94,7 @@ public final class SynchronizedRegistriesHandler {
         // packetevents ignores a few unimportant registries which aren't used anywhere else in the protocol:
         // test_environment, test_instance
         Stream.of(
-                new RegistryEntry<>(Biomes.getRegistry(), Biome::decode),
+                new RegistryEntry<>(Biomes.getRegistry(), Biome.CODEC),
                 new RegistryEntry<>(ChatTypes.getRegistry(), ChatType::decode),
                 new RegistryEntry<>(TrimPatterns.getRegistry(), (NbtEntryDecoder<TrimPattern>) TrimPattern::decode),
                 new RegistryEntry<>(TrimMaterials.getRegistry(), (NbtEntryDecoder<TrimMaterial>) TrimMaterial::decode),

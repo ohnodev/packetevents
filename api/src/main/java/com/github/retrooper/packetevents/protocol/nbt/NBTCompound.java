@@ -241,6 +241,10 @@ public class NBTCompound extends NBT {
         return nbtByte != null ? nbtByte.getAsByte() != 0 : defaultValue;
     }
 
+    public boolean getBooleanOrThrow(String string) {
+        return this.getTagOfTypeOrThrow(string, NBTNumber.class).getAsByte() != 0;
+    }
+
     @Contract("_, _, !null, _ -> !null")
     public <T> @Nullable T getOr(String key, NbtDecoder<T> decoder, @Nullable T def, PacketWrapper<?> wrapper) {
         NBT tag = this.getTagOrNull(key);

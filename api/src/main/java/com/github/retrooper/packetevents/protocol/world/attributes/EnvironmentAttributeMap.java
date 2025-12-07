@@ -92,6 +92,14 @@ public class EnvironmentAttributeMap {
         return new EnvironmentAttributeMap(new HashMap<>(this.entries));
     }
 
+    public <T> void set(EnvironmentAttribute<T> attribute, T value) {
+        this.set(attribute, value, AttributeModifier.override());
+    }
+
+    public <T, A> void set(EnvironmentAttribute<T> attribute, A value, AttributeModifier<T, A> modifier) {
+        this.entries.put(attribute, new Entry<>(value, modifier));
+    }
+
     public <T> T applyToDefault(EnvironmentAttribute<T> attribute) {
         return this.apply(attribute, attribute.getDefaultValue());
     }
