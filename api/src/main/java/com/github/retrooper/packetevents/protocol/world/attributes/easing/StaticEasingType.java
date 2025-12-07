@@ -9,7 +9,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * @versions 1.21.1+
+ * @versions 1.21.11+
  */
 @NullMarked
 public class StaticEasingType extends AbstractMappedEntity implements EasingType {

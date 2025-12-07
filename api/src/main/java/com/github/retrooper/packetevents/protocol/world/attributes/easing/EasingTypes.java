@@ -7,7 +7,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * @versions 1.21.1+
+ * @versions 1.21.11+
  */
 @NullMarked
 public final class EasingTypes {
