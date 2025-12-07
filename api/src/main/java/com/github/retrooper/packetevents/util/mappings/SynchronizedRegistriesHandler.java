@@ -60,6 +60,9 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTList;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.User;
+import com.github.retrooper.packetevents.protocol.util.NbtDecoder;
+import com.github.retrooper.packetevents.protocol.world.attributes.timelines.Timeline;
+import com.github.retrooper.packetevents.protocol.world.attributes.timelines.Timelines;
 import com.github.retrooper.packetevents.protocol.world.biome.Biome;
 import com.github.retrooper.packetevents.protocol.world.biome.Biomes;
 import com.github.retrooper.packetevents.protocol.world.damagetype.DamageType;
@@ -110,7 +113,8 @@ public final class SynchronizedRegistriesHandler {
                 new RegistryEntry<>(EnchantmentTypes.getRegistry(), (NbtEntryDecoder<EnchantmentType>) EnchantmentType::decode),
                 new RegistryEntry<>(JukeboxSongs.getRegistry(), (NbtEntryDecoder<IJukeboxSong>) IJukeboxSong::decode),
                 new RegistryEntry<>(Instruments.getRegistry(), (NbtEntryDecoder<Instrument>) Instrument::decode),
-                new RegistryEntry<>(Dialogs.getRegistry(), Dialog::decodeDirect)
+                new RegistryEntry<>(Dialogs.getRegistry(), Dialog::decodeDirect),
+                new RegistryEntry<>(Timelines.getRegistry(), Timeline.CODEC)
         ).forEach(entry -> REGISTRY_KEYS.put(entry.getRegistryKey(), entry));
     }
 
@@ -229,6 +233,14 @@ public final class SynchronizedRegistriesHandler {
 
         public RegistryEntry(
                 IRegistry<T> baseRegistry,
+                NbtDecoder<T> decoder
+        ) {
+            this(baseRegistry, (NbtEntryDecoder<T>) (tag, wrapper, data) ->
+                    decoder.decode(tag, wrapper).copy(data));
+        }
+
+        public RegistryEntry(
+                IRegistry<T> baseRegistry,
                 NbtEntryDecoder<T> decoder
         ) {
             this.baseRegistry = baseRegistry;
@@ -262,14 +274,14 @@ public final class SynchronizedRegistriesHandler {
                 T value = this.decoder.decode(element.getData(), wrapper, data);
                 if (!value.deepEquals(copiedBaseEntry)) {
                     // only define decoded value if it doesn't match the base
-                    // registry value this ensures we don't save everything twice,
+                    // registry value; this ensures we don't save everything twice,
                     // if it has been already stored in memory
                     registry.define(elementName, id, value);
                     return;
                 }
             }
 
-            // fallback to looking up in vanilla registry
+            // fallback to looking up in vanilla registry;
             // this isn't a 100% valid solution, but a full solution to this
             // is not possible with Mojang's concept of known packs
             //
@@ -278,7 +290,7 @@ public final class SynchronizedRegistriesHandler {
             // the player would tell the server it already knows about them
             //
             // this will cause issues, especially when some datapack overrides world height
-            // of a vanilla dimension - and this can't be fixed (or I missed something)
+            // of a vanilla dimension - and this can't be fixed (unless I missed something)
 
             if (copiedBaseEntry != null) {
                 registry.define(elementName, id, copiedBaseEntry);
