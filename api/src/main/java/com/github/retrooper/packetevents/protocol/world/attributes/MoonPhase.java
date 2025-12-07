@@ -24,7 +24,7 @@ import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * @version 1.21.11+
+ * @versions 1.21.11+
  */
 @NullMarked
 public enum MoonPhase implements CodecNameable {

@@ -29,14 +29,14 @@ public class KeyframeTrack<T> {
             @Override
             public KeyframeTrack<T> decode(NBTCompound compound, PacketWrapper<?> wrapper) throws NbtCodecException {
                 List<Keyframe<T>> keyframes = compound.getOrThrow("keyframes", keyframesCodec, wrapper);
-                EasingType easingType = compound.getOr("ease", EasingType.CODEC, EasingType.LINEAR, wrapper);
+                EasingType easingType = compound.getOr("ease", EasingType.CODEC, EasingTypes.LINEAR, wrapper);
                 return new KeyframeTrack<>(keyframes, easingType);
             }
 
             @Override
             public void encode(NBTCompound compound, PacketWrapper<?> wrapper, KeyframeTrack<T> value) throws NbtCodecException {
                 compound.set("keyframes", value.keyframes, keyframesCodec, wrapper);
-                if (value.easingType != EasingType.LINEAR) {
+                if (value.easingType != EasingTypes.LINEAR) {
                     compound.set("ease", value.easingType, EasingType.CODEC, wrapper);
                 }
             }

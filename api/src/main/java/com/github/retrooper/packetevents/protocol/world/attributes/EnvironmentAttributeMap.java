@@ -22,6 +22,9 @@ import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
+import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
+import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
+import com.github.retrooper.packetevents.util.Either;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -31,9 +34,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
- * @version 1.21.11++
+ * @versions 1.21.11++
  */
 @NullMarked
 public class EnvironmentAttributeMap {
@@ -134,41 +138,50 @@ public class EnvironmentAttributeMap {
             this.modifier = modifier;
         }
 
+        public static <T> Entry<T, T> createOverride(T value) {
+            return new Entry<>(value, AttributeModifier.override());
+        }
+
         public static <T> NbtCodec<Entry<T, ?>> codec(EnvironmentAttribute<T> attribute) {
             NbtCodec<T> valueCodec = attribute.getType().getValueCodec();
             NbtCodec<AttributeModifier<T, ?>> modifierCodec = attribute.getType().getModifierCodec();
-            return new NbtCodec<Entry<T, ?>>() {
-                @Override
-                public Entry<T, ?> decode(NBT nbt, PacketWrapper<?> wrapper) throws NbtCodecException {
-                    try {
-                        return new Entry<>(valueCodec.decode(nbt, wrapper), AttributeModifier.override());
-                    } catch (NbtCodecException ignored) {
-                    }
-                    NBTCompound compound = nbt.castOrThrow(NBTCompound.class);
-                    AttributeModifier<T, ?> modifier = compound.getOrThrow("modifier", modifierCodec, wrapper);
-                    Object arg = compound.getOrThrow("argument", modifier.argumentCodec(attribute), wrapper);
-                    @SuppressWarnings("unchecked")
-                    Entry<T, Object> entry = new Entry<>(arg, (AttributeModifier<T, ? super Object>) modifier);
-                    return entry;
-                }
+            return NbtCodecs.either(
+                    valueCodec,
+                    new NbtMapCodec<Entry<T, ?>>() {
+                        @Override
+                        public Entry<T, ?> decode(NBTCompound compound, PacketWrapper<?> wrapper) throws NbtCodecException {
+                            AttributeModifier<T, ?> modifier = compound.getOrThrow("modifier", modifierCodec, wrapper);
+                            Object arg = compound.getOrThrow("argument", modifier.argumentCodec(attribute), wrapper);
+                            @SuppressWarnings("unchecked")
+                            Entry<T, Object> entry = new Entry<>(arg, (AttributeModifier<T, ? super Object>) modifier);
+                            return entry;
+                        }
 
-                @Override
-                public NBT encode(PacketWrapper<?> wrapper, Entry<T, ?> value) throws NbtCodecException {
-                    return this.encode0(wrapper, value);
-                }
+                        @Override
+                        public void encode(NBTCompound compound, PacketWrapper<?> wrapper, Entry<T, ?> value) throws NbtCodecException {
+                            this.encode0(compound, wrapper, value);
+                        }
 
-                private <A> NBT encode0(PacketWrapper<?> wrapper, Entry<T, A> value) throws NbtCodecException {
-                    if (value.modifier == AttributeModifier.override()) {
-                        @SuppressWarnings("unchecked")
-                        T valueArg = (T) value.argument;
-                        return valueCodec.encode(wrapper, valueArg);
+                        private <A> void encode0(NBTCompound compound, PacketWrapper<?> wrapper, Entry<T, A> value) throws NbtCodecException {
+                            compound.set("modifier", value.modifier, modifierCodec, wrapper);
+                            compound.set("argument", value.argument, value.modifier.argumentCodec(attribute), wrapper);
+                        }
+                    }.codec()
+            ).apply(
+                    e -> e.map(Entry::createOverride, Function.identity()),
+                    e -> {
+                        if (e.isOverride()) {
+                            @SuppressWarnings("unchecked")
+                            T arg = (T) e.argument;
+                            return Either.createLeft(arg);
+                        }
+                        return Either.createRight(e);
                     }
-                    NBTCompound compound = new NBTCompound();
-                    compound.set("modifier", value.modifier, modifierCodec, wrapper);
-                    compound.set("argument", value.argument, value.modifier.argumentCodec(attribute), wrapper);
-                    return compound;
-                }
-            };
+            );
+        }
+
+        public boolean isOverride() {
+            return this.modifier == AttributeModifier.override();
         }
 
         public T getValue(T base) {

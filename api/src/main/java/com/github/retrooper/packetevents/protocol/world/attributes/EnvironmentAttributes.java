@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @version 1.21.11+
+ * @versions 1.21.11+
  */
 @NullMarked
 public final class EnvironmentAttributes {

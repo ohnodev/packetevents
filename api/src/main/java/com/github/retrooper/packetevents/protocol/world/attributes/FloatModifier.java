@@ -25,7 +25,7 @@ import com.github.retrooper.packetevents.util.MathUtil;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * @version 1.21.11+
+ * @versions 1.21.11+
  */
 @NullMarked
 public interface FloatModifier<A> extends AttributeModifier<Float, A> {

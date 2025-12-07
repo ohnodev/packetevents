@@ -25,7 +25,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * @version 1.21.11+
+ * @versions 1.21.11+
  */
 @NullMarked
 public class StaticEnvironmentAttribute<T> extends AbstractMappedEntity implements EnvironmentAttribute<T> {

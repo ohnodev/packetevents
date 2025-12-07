@@ -29,7 +29,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * @version 1.21.11+
+ * @versions 1.21.11+
  */
 @NullMarked
 public final class BlendToGrayArgument {

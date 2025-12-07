@@ -49,8 +49,8 @@ public interface AttributeModifier<T, A> {
     );
 
     @SuppressWarnings("unchecked") // types don't matter
-    static <T> AttributeModifier<T, ?> override() {
-        return (AttributeModifier<T, ?>) OverrideModifier.INSTANCE;
+    static <T> AttributeModifier<T, T> override() {
+        return (AttributeModifier<T, T>) OverrideModifier.INSTANCE;
     }
 
     T apply(T value, A arg);

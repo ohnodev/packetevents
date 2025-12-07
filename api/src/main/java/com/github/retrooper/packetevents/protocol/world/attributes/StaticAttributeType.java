@@ -25,7 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 /**
- * @version 1.21.11+
+ * @versions 1.21.11+
  */
 @NullMarked
 public class StaticAttributeType<T> extends AbstractMappedEntity implements AttributeType<T> {

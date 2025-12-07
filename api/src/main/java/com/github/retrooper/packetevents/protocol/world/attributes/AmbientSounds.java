@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @version 1.21.11+
+ * @versions 1.21.11+
  */
 @NullMarked
 public class AmbientSounds {

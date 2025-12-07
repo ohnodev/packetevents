@@ -25,6 +25,7 @@ import org.jspecify.annotations.NullMarked;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @NullMarked
 public interface NbtCodec<T> extends NbtEncoder<T>, NbtDecoder<T> {
@@ -39,6 +40,27 @@ public interface NbtCodec<T> extends NbtEncoder<T>, NbtDecoder<T> {
             @Override
             public NBT encode(PacketWrapper<?> wrapper, T value) {
                 return encoder.encode(wrapper, value);
+            }
+        };
+    }
+
+    default NbtCodec<T> validate(Predicate<T> predicate) {
+        return new NbtCodec<T>() {
+            @Override
+            public T decode(NBT nbt, PacketWrapper<?> wrapper) throws NbtCodecException {
+                T val = NbtCodec.this.decode(nbt, wrapper);
+                if (!predicate.test(val)) {
+                    throw new NbtCodecException("Decode predicate failed " + predicate);
+                }
+                return val;
+            }
+
+            @Override
+            public NBT encode(PacketWrapper<?> wrapper, T value) throws NbtCodecException {
+                if (!predicate.test(value)) {
+                    throw new NbtCodecException("Encode predicate failed " + predicate);
+                }
+                return NbtCodec.this.encode(wrapper, value);
             }
         };
     }

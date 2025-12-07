@@ -37,6 +37,7 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTString;
 import com.github.retrooper.packetevents.protocol.nbt.NBTType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
+import com.github.retrooper.packetevents.util.Either;
 import com.github.retrooper.packetevents.util.UniqueIdUtil;
 import com.github.retrooper.packetevents.util.mappings.IRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -336,19 +337,52 @@ public final class NbtCodecs {
             @Override
             public T decode(NBT nbt, PacketWrapper<?> wrapper) {
                 IRegistry<T> replacedRegistry = wrapper.replaceRegistry(registry);
+                T entry = null;
                 if (nbt instanceof NBTNumber) {
                     ClientVersion version = wrapper.getServerVersion().toClientVersion();
                     int id = ((NBTNumber) nbt).getAsInt();
-                    return replacedRegistry.getByIdOrThrow(version, id);
+                    entry = replacedRegistry.getById(version, id);
                 } else if (nbt instanceof NBTString) {
-                    return replacedRegistry.getByNameOrThrow(((NBTString) nbt).getValue());
+                    entry = replacedRegistry.getByName(((NBTString) nbt).getValue());
                 }
-                throw new IllegalStateException("Can't decode " + nbt + " for " + registry);
+                if (entry == null) {
+                    throw new NbtCodecException("Can't decode registry " + registry.getRegistryKey());
+                }
+                return entry;
             }
 
             @Override
             public NBT encode(PacketWrapper<?> wrapper, T value) {
+                if (!value.isRegistered()) {
+                    throw new NbtCodecException("Unregistered entry");
+                }
                 return ResourceLocation.CODEC.encode(wrapper, value.getName());
+            }
+        };
+    }
+
+    public static <L, R> NbtCodec<Either<L, R>> either(NbtCodec<L> left, NbtCodec<R> right) {
+        return new NbtCodec<Either<L, R>>() {
+            @Override
+            public Either<L, R> decode(NBT nbt, PacketWrapper<?> wrapper) throws NbtCodecException {
+                try {
+                    return Either.createLeft(left.decode(nbt, wrapper));
+                } catch (NbtCodecException leftException) {
+                    try {
+                        return Either.createRight(right.decode(nbt, wrapper));
+                    } catch (NbtCodecException rightException) {
+                        rightException.addSuppressed(leftException);
+                        throw rightException;
+                    }
+                }
+            }
+
+            @Override
+            public NBT encode(PacketWrapper<?> wrapper, Either<L, R> value) throws NbtCodecException {
+                return value.map(
+                        v -> left.encode(wrapper, v),
+                        v -> right.encode(wrapper, v)
+                );
             }
         };
     }

@@ -23,7 +23,7 @@ import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * @version 1.21.11+
+ * @versions 1.21.11+
  */
 @NullMarked
 public interface EnvironmentAttribute<T> extends MappedEntity {

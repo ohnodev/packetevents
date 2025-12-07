@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @version 1.21.11+
+ * @versions 1.21.11+
  */
 @NullMarked
 public final class AttributeTypes {
