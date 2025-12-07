@@ -94,6 +94,11 @@ public interface AttributeModifier<T, A> {
         private static final OverrideModifier<?> INSTANCE = new OverrideModifier<>();
 
         @Override
+        public T apply(T value, T arg) {
+            return arg;
+        }
+
+        @Override
         public NbtCodec<T> argumentCodec(EnvironmentAttribute<T> attribute) {
             return attribute.getType().getValueCodec();
         }

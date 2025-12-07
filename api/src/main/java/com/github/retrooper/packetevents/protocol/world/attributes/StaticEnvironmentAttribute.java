@@ -19,10 +19,7 @@
 package com.github.retrooper.packetevents.protocol.world.attributes;
 
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
-import com.github.retrooper.packetevents.protocol.nbt.NBT;
-import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
-import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -33,22 +30,30 @@ import org.jspecify.annotations.Nullable;
 @NullMarked
 public class StaticEnvironmentAttribute<T> extends AbstractMappedEntity implements EnvironmentAttribute<T> {
 
-    private final @Nullable NbtCodec<T> codec;
+    private final @Nullable AttributeType<T> attributeType;
     private final @Nullable T defaultValue;
 
     @ApiStatus.Internal
     public StaticEnvironmentAttribute(
             @org.jetbrains.annotations.Nullable TypesBuilderData data,
-            @Nullable NbtCodec<T> codec, @Nullable T defaultValue
+            @Nullable AttributeType<T> attributeType, @Nullable T defaultValue
     ) {
         super(data);
-        this.codec = codec;
+        this.attributeType = attributeType;
         this.defaultValue = defaultValue;
     }
 
     @Override
     public boolean isSynced() {
-        return this.codec != null;
+        return this.attributeType != null;
+    }
+
+    @Override
+    public AttributeType<T> getType() {
+        if (this.attributeType == null) {
+            throw new UnsupportedOperationException();
+        }
+        return this.attributeType;
     }
 
     @Override
@@ -57,21 +62,5 @@ public class StaticEnvironmentAttribute<T> extends AbstractMappedEntity implemen
             throw new UnsupportedOperationException();
         }
         return this.defaultValue;
-    }
-
-    @Override
-    public T decode(NBT nbt, PacketWrapper<?> wrapper) {
-        if (this.codec == null) {
-            throw new UnsupportedOperationException();
-        }
-        return this.codec.decode(nbt, wrapper);
-    }
-
-    @Override
-    public NBT encode(PacketWrapper<?> wrapper, T value) {
-        if (this.codec == null) {
-            throw new UnsupportedOperationException();
-        }
-        return this.codec.encode(wrapper, value);
     }
 }

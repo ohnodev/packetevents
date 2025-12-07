@@ -28,7 +28,6 @@ import com.github.retrooper.packetevents.protocol.world.biome.BiomeEffects.Parti
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import net.kyori.adventure.util.TriState;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Collections;
@@ -58,43 +57,43 @@ public final class EnvironmentAttributes {
     }
 
     @ApiStatus.Internal
-    public static <T> EnvironmentAttribute<T> define(String name, NbtCodec<T> codec, T defaultValue) {
+    public static <T> EnvironmentAttribute<T> define(String name, AttributeType<T> attributeType, T defaultValue) {
         return REGISTRY.define(name, data ->
-                new StaticEnvironmentAttribute<>(data, codec, defaultValue));
+                new StaticEnvironmentAttribute<>(data, attributeType, defaultValue));
     }
 
-    public static EnvironmentAttribute<Color> VISUAL_FOG_COLOR = define("visual/fog_color", NbtCodecs.RGB_COLOR, Color.BLACK);
-    public static EnvironmentAttribute<Float> VISUAL_FOG_START_DISTANCE = define("visual/fog_start_distance", NbtCodecs.FLOAT, 0f);
-    public static EnvironmentAttribute<Float> VISUAL_FOG_END_DISTANCE = define("visual/fog_end_distance", NbtCodecs.FLOAT, 1024f);
-    public static EnvironmentAttribute<Float> VISUAL_SKY_FOG_END_DISTANCE = define("visual/sky_fog_end_distance", NbtCodecs.FLOAT, 512f);
-    public static EnvironmentAttribute<Float> VISUAL_CLOUD_FOG_END_DISTANCE = define("visual/cloud_fog_end_distance", NbtCodecs.FLOAT, 2048f);
-    public static EnvironmentAttribute<Color> VISUAL_WATER_FOG_COLOR = define("visual/water_fog_color", NbtCodecs.RGB_COLOR, new Color(0xFAFACD));
-    public static EnvironmentAttribute<Float> VISUAL_WATER_FOG_START_DISTANCE = define("visual/water_fog_start_distance", NbtCodecs.FLOAT, -8f);
-    public static EnvironmentAttribute<Float> VISUAL_WATER_FOG_END_DISTANCE = define("visual/water_fog_end_distance", NbtCodecs.FLOAT, 96f);
-    public static EnvironmentAttribute<Color> VISUAL_SKY_COLOR = define("visual/sky_color", NbtCodecs.RGB_COLOR, Color.BLACK);
-    public static EnvironmentAttribute<AlphaColor> VISUAL_SUNRISE_SUNSET_COLOR = define("visual/sunrise_sunset_color", NbtCodecs.ARGB_COLOR, AlphaColor.TRANSPARENT);
-    public static EnvironmentAttribute<AlphaColor> VISUAL_CLOUD_COLOR = define("visual/cloud_color", NbtCodecs.ARGB_COLOR, AlphaColor.TRANSPARENT);
-    public static EnvironmentAttribute<Float> VISUAL_CLOUD_HEIGHT = define("visual/cloud_height", NbtCodecs.FLOAT, 192.33f);
-    public static EnvironmentAttribute<Float> VISUAL_SUN_ANGLE = define("visual/sun_angle", NbtCodecs.FLOAT, 0f);
-    public static EnvironmentAttribute<Float> VISUAL_MOON_ANGLE = define("visual/moon_angle", NbtCodecs.FLOAT, 0f);
-    public static EnvironmentAttribute<Float> VISUAL_STAR_ANGLE = define("visual/star_angle", NbtCodecs.FLOAT, 0f);
-    public static EnvironmentAttribute<MoonPhase> VISUAL_MOON_PHASE = define("visual/moon_phase", MoonPhase.CODEC, MoonPhase.FULL_MOON);
-    public static EnvironmentAttribute<Float> VISUAL_STAR_BRIGHTNESS = define("visual/star_brightness", NbtCodecs.FLOAT, 0f);
-    public static EnvironmentAttribute<Color> VISUAL_SKY_LIGHT_COLOR = define("visual/sky_light_color", NbtCodecs.RGB_COLOR, Color.WHITE);
-    public static EnvironmentAttribute<Float> VISUAL_SKY_LIGHT_FACTOR = define("visual/sky_light_factor", NbtCodecs.FLOAT, 1f);
-    public static EnvironmentAttribute<Particle<?>> VISUAL_DEFAULT_DRIPSTONE_PARTICLE = define("visual/default_dripstone_particle", Particle.CODEC, new Particle<>(ParticleTypes.DRIPPING_DRIPSTONE_WATER));
-    public static EnvironmentAttribute<List<ParticleSettings>> VISUAL_AMBIENT_PARTICLES = define("visual/ambient_particles", ParticleSettings.CODEC.applyList(), Collections.emptyList());
-    public static EnvironmentAttribute<BackgroundMusic> AUDIO_BACKGROUND_MUSIC = define("audio/background_music", BackgroundMusic.CODEC, BackgroundMusic.EMPTY);
-    public static EnvironmentAttribute<Float> AUDIO_MUSIC_VOLUME = define("audio/music_volume", NbtCodecs.FLOAT, 1f);
-    public static EnvironmentAttribute<AmbientSounds> AUDIO_AMBIENT_SOUNDS = define("audio/ambient_sounds", AmbientSounds.CODEC, AmbientSounds.EMPTY);
-    public static EnvironmentAttribute<Boolean> AUDIO_FIREFLY_BUSH_SOUNDS = define("audio/firefly_bush_sounds", NbtCodecs.BOOLEAN, false);
-    public static EnvironmentAttribute<Float> GAMEPLAY_SKY_LIGHT_LEVEL = define("gameplay/sky_light_level", NbtCodecs.FLOAT, 15f);
+    public static EnvironmentAttribute<Color> VISUAL_FOG_COLOR = define("visual/fog_color", AttributeTypes.RGB_COLOR, Color.BLACK);
+    public static EnvironmentAttribute<Float> VISUAL_FOG_START_DISTANCE = define("visual/fog_start_distance", AttributeTypes.FLOAT, 0f);
+    public static EnvironmentAttribute<Float> VISUAL_FOG_END_DISTANCE = define("visual/fog_end_distance", AttributeTypes.FLOAT, 1024f);
+    public static EnvironmentAttribute<Float> VISUAL_SKY_FOG_END_DISTANCE = define("visual/sky_fog_end_distance", AttributeTypes.FLOAT, 512f);
+    public static EnvironmentAttribute<Float> VISUAL_CLOUD_FOG_END_DISTANCE = define("visual/cloud_fog_end_distance", AttributeTypes.FLOAT, 2048f);
+    public static EnvironmentAttribute<Color> VISUAL_WATER_FOG_COLOR = define("visual/water_fog_color", AttributeTypes.RGB_COLOR, new Color(0xFAFACD));
+    public static EnvironmentAttribute<Float> VISUAL_WATER_FOG_START_DISTANCE = define("visual/water_fog_start_distance", AttributeTypes.FLOAT, -8f);
+    public static EnvironmentAttribute<Float> VISUAL_WATER_FOG_END_DISTANCE = define("visual/water_fog_end_distance", AttributeTypes.FLOAT, 96f);
+    public static EnvironmentAttribute<Color> VISUAL_SKY_COLOR = define("visual/sky_color", AttributeTypes.RGB_COLOR, Color.BLACK);
+    public static EnvironmentAttribute<AlphaColor> VISUAL_SUNRISE_SUNSET_COLOR = define("visual/sunrise_sunset_color", AttributeTypes.ARGB_COLOR, AlphaColor.TRANSPARENT);
+    public static EnvironmentAttribute<AlphaColor> VISUAL_CLOUD_COLOR = define("visual/cloud_color", AttributeTypes.ARGB_COLOR, AlphaColor.TRANSPARENT);
+    public static EnvironmentAttribute<Float> VISUAL_CLOUD_HEIGHT = define("visual/cloud_height", AttributeTypes.FLOAT, 192.33f);
+    public static EnvironmentAttribute<Float> VISUAL_SUN_ANGLE = define("visual/sun_angle", AttributeTypes.ANGLE_DEGREES, 0f);
+    public static EnvironmentAttribute<Float> VISUAL_MOON_ANGLE = define("visual/moon_angle", AttributeTypes.ANGLE_DEGREES, 0f);
+    public static EnvironmentAttribute<Float> VISUAL_STAR_ANGLE = define("visual/star_angle", AttributeTypes.ANGLE_DEGREES, 0f);
+    public static EnvironmentAttribute<MoonPhase> VISUAL_MOON_PHASE = define("visual/moon_phase", AttributeTypes.MOON_PHASE, MoonPhase.FULL_MOON);
+    public static EnvironmentAttribute<Float> VISUAL_STAR_BRIGHTNESS = define("visual/star_brightness", AttributeTypes.FLOAT, 0f);
+    public static EnvironmentAttribute<Color> VISUAL_SKY_LIGHT_COLOR = define("visual/sky_light_color", AttributeTypes.RGB_COLOR, Color.WHITE);
+    public static EnvironmentAttribute<Float> VISUAL_SKY_LIGHT_FACTOR = define("visual/sky_light_factor", AttributeTypes.FLOAT, 1f);
+    public static EnvironmentAttribute<Particle<?>> VISUAL_DEFAULT_DRIPSTONE_PARTICLE = define("visual/default_dripstone_particle", AttributeTypes.PARTICLE, new Particle<>(ParticleTypes.DRIPPING_DRIPSTONE_WATER));
+    public static EnvironmentAttribute<List<ParticleSettings>> VISUAL_AMBIENT_PARTICLES = define("visual/ambient_particles", AttributeTypes.AMBIENT_PARTICLES, Collections.emptyList());
+    public static EnvironmentAttribute<BackgroundMusic> AUDIO_BACKGROUND_MUSIC = define("audio/background_music", AttributeTypes.BACKGROUND_MUSIC, BackgroundMusic.EMPTY);
+    public static EnvironmentAttribute<Float> AUDIO_MUSIC_VOLUME = define("audio/music_volume", AttributeTypes.FLOAT, 1f);
+    public static EnvironmentAttribute<AmbientSounds> AUDIO_AMBIENT_SOUNDS = define("audio/ambient_sounds", AttributeTypes.AMBIENT_SOUNDS, AmbientSounds.EMPTY);
+    public static EnvironmentAttribute<Boolean> AUDIO_FIREFLY_BUSH_SOUNDS = define("audio/firefly_bush_sounds", AttributeTypes.BOOLEAN, false);
+    public static EnvironmentAttribute<Float> GAMEPLAY_SKY_LIGHT_LEVEL = define("gameplay/sky_light_level", AttributeTypes.FLOAT, 15f);
     /**
      * Not synced via network, not usable via packetevents.
      */
     @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_CAN_START_RAID = defineUnsynced("gameplay/can_start_raid");
-    public static EnvironmentAttribute<Boolean> GAMEPLAY_WATER_EVAPORATES = define("gameplay/water_evaporates", NbtCodecs.BOOLEAN, false);
+    public static EnvironmentAttribute<Boolean> GAMEPLAY_WATER_EVAPORATES = define("gameplay/water_evaporates", AttributeTypes.BOOLEAN, false);
     /**
      * Not synced via network, not usable via packetevents.
      */
@@ -110,7 +109,7 @@ public final class EnvironmentAttributes {
      */
     @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_NETHER_PORTAL_SPAWNS_PIGLIN = defineUnsynced("gameplay/nether_portal_spawns_piglin");
-    public static EnvironmentAttribute<Boolean> GAMEPLAY_FAST_LAVA = define("gameplay/fast_lava", NbtCodecs.BOOLEAN, false);
+    public static EnvironmentAttribute<Boolean> GAMEPLAY_FAST_LAVA = define("gameplay/fast_lava", AttributeTypes.BOOLEAN, false);
     /**
      * Not synced via network, not usable via packetevents.
      */
@@ -126,13 +125,13 @@ public final class EnvironmentAttributes {
      */
     @ApiStatus.Obsolete
     public static EnvironmentAttribute<Float> GAMEPLAY_TURTLE_EGG_HATCH_CHANCE = defineUnsynced("gameplay/turtle_egg_hatch_chance");
-    public static EnvironmentAttribute<Boolean> GAMEPLAY_PIGLINS_ZOMBIFY = define("gameplay/piglins_zombify", NbtCodecs.BOOLEAN, true);
+    public static EnvironmentAttribute<Boolean> GAMEPLAY_PIGLINS_ZOMBIFY = define("gameplay/piglins_zombify", AttributeTypes.BOOLEAN, true);
     /**
      * Not synced via network, not usable via packetevents.
      */
     @ApiStatus.Obsolete
     public static EnvironmentAttribute<Boolean> GAMEPLAY_SNOW_GOLEM_MELTS = defineUnsynced("gameplay/snow_golem_melts");
-    public static EnvironmentAttribute<Boolean> GAMEPLAY_CREAKING_ACTIVE = define("gameplay/creaking_active", NbtCodecs.BOOLEAN, false);
+    public static EnvironmentAttribute<Boolean> GAMEPLAY_CREAKING_ACTIVE = define("gameplay/creaking_active", AttributeTypes.BOOLEAN, false);
     /**
      * Not synced via network, not usable via packetevents.
      */

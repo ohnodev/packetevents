@@ -21,15 +21,13 @@ package com.github.retrooper.packetevents.protocol.world.attributes;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
-import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
+import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
-import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -44,11 +42,11 @@ public class EnvironmentAttributeMap {
         @Override
         public EnvironmentAttributeMap decode(NBT nbt, PacketWrapper<?> wrapper) {
             NBTCompound compound = (NBTCompound) nbt;
-            Map<EnvironmentAttribute<?>, Entry> entries = new HashMap<>();
-            for (Map.Entry<String, NBT> entry : compound.getTags().entrySet()) {
-                EnvironmentAttribute<?> attribute = EnvironmentAttributes.getRegistry().getByNameOrThrow(entry.getKey());
+            Map<EnvironmentAttribute<?>, Entry<?, ?>> entries = new HashMap<>();
+            for (String tag : compound.getTagNames()) {
+                EnvironmentAttribute<?> attribute = EnvironmentAttributes.getRegistry().getByNameOrThrow(tag);
                 if (attribute.isSynced()) {
-                    entries.put(attribute, new Entry(entry.getValue()));
+                    entries.put(attribute, compound.getOrThrow(tag, Entry.codec(attribute), wrapper));
                 }
             }
             return new EnvironmentAttributeMap(entries);
@@ -57,21 +55,26 @@ public class EnvironmentAttributeMap {
         @Override
         public NBT encode(PacketWrapper<?> wrapper, EnvironmentAttributeMap value) {
             NBTCompound compound = new NBTCompound();
-            for (Map.Entry<EnvironmentAttribute<?>, Entry> entry : value.entries.entrySet()) {
+            for (Map.Entry<EnvironmentAttribute<?>, Entry<?, ?>> entry : value.entries.entrySet()) {
                 if (entry.getKey().isSynced()) {
-                    String key = entry.getKey().getName().toString();
-                    compound.setTag(key, entry.getValue().tag);
+                    this.encode0(compound, entry.getKey(), entry.getValue(), wrapper);
                 }
             }
             return compound;
+        }
+
+        private <T> void encode0(NBTCompound compound, EnvironmentAttribute<?> attribute, Entry<T, ?> entry, PacketWrapper<?> wrapper) {
+            @SuppressWarnings("unchecked")
+            EnvironmentAttribute<T> castAttribute = (EnvironmentAttribute<T>) attribute;
+            compound.set(attribute.getName().toString(), entry, Entry.codec(castAttribute), wrapper);
         }
     };
 
     public static final EnvironmentAttributeMap EMPTY = new EnvironmentAttributeMap(Collections.emptyMap());
 
-    private final Map<EnvironmentAttribute<?>, Entry> entries;
+    private final Map<EnvironmentAttribute<?>, Entry<?, ?>> entries;
 
-    private EnvironmentAttributeMap(Map<EnvironmentAttribute<?>, Entry> entries) {
+    private EnvironmentAttributeMap(Map<EnvironmentAttribute<?>, Entry<?, ?>> entries) {
         this.entries = entries;
     }
 
@@ -80,7 +83,7 @@ public class EnvironmentAttributeMap {
     }
 
     public EnvironmentAttributeMap copyImmutable() {
-        Map<EnvironmentAttribute<?>, Entry> entries = new HashMap<>(this.entries);
+        Map<EnvironmentAttribute<?>, Entry<?, ?>> entries = new HashMap<>(this.entries);
         return new EnvironmentAttributeMap(Collections.unmodifiableMap(entries));
     }
 
@@ -88,13 +91,18 @@ public class EnvironmentAttributeMap {
         return new EnvironmentAttributeMap(new HashMap<>(this.entries));
     }
 
-    public <T> T getValue(EnvironmentAttribute<T> attribute) {
-        // TODO does this map even work like this?
-        return attribute.getDefaultValue();
+    public <T> T applyToDefault(EnvironmentAttribute<T> attribute) {
+        return this.apply(attribute, attribute.getDefaultValue());
     }
 
-    public <T> @Nullable Entry get(EnvironmentAttribute<T> attribute) {
-        return this.entries.get(attribute);
+    @SuppressWarnings("unchecked")
+    public <T> @Nullable Entry<T, ?> get(EnvironmentAttribute<T> attribute) {
+        return (Entry<T, ?>) this.entries.get(attribute);
+    }
+
+    public <T> T apply(EnvironmentAttribute<T> attribute, T base) {
+        Entry<T, ?> entry = this.get(attribute);
+        return entry != null ? entry.getValue(base) : base;
     }
 
     public boolean contains(EnvironmentAttribute<?> attribute) {
@@ -118,17 +126,61 @@ public class EnvironmentAttributeMap {
 
     public static final class Entry<T, A> {
 
-        private final NBT tag;
+        private final A argument;
+        private final AttributeModifier<T, A> modifier;
 
-        public Entry(NBT tag) {
-            this.tag = tag;
+        public Entry(A argument, AttributeModifier<T, A> modifier) {
+            this.argument = argument;
+            this.modifier = modifier;
         }
 
-        public static <T> NbtCodec<Entry<T, ?>> codec(EnvironmentAttribute<T> attribute){
-            try {
+        public static <T> NbtCodec<Entry<T, ?>> codec(EnvironmentAttribute<T> attribute) {
+            NbtCodec<T> valueCodec = attribute.getType().getValueCodec();
+            NbtCodec<AttributeModifier<T, ?>> modifierCodec = attribute.getType().getModifierCodec();
+            return new NbtCodec<Entry<T, ?>>() {
+                @Override
+                public Entry<T, ?> decode(NBT nbt, PacketWrapper<?> wrapper) throws NbtCodecException {
+                    try {
+                        return new Entry<>(valueCodec.decode(nbt, wrapper), AttributeModifier.override());
+                    } catch (NbtCodecException ignored) {
+                    }
+                    NBTCompound compound = nbt.castOrThrow(NBTCompound.class);
+                    AttributeModifier<T, ?> modifier = compound.getOrThrow("modifier", modifierCodec, wrapper);
+                    Object arg = compound.getOrThrow("argument", modifier.argumentCodec(attribute), wrapper);
+                    @SuppressWarnings("unchecked")
+                    Entry<T, Object> entry = new Entry<>(arg, (AttributeModifier<T, ? super Object>) modifier);
+                    return entry;
+                }
 
-            } catch ()
-            NbtCodec<AttributeModifier<T, ?>> modifierCodec;
+                @Override
+                public NBT encode(PacketWrapper<?> wrapper, Entry<T, ?> value) throws NbtCodecException {
+                    return this.encode0(wrapper, value);
+                }
+
+                private <A> NBT encode0(PacketWrapper<?> wrapper, Entry<T, A> value) throws NbtCodecException {
+                    if (value.modifier == AttributeModifier.override()) {
+                        @SuppressWarnings("unchecked")
+                        T valueArg = (T) value.argument;
+                        return valueCodec.encode(wrapper, valueArg);
+                    }
+                    NBTCompound compound = new NBTCompound();
+                    compound.set("modifier", value.modifier, modifierCodec, wrapper);
+                    compound.set("argument", value.argument, value.modifier.argumentCodec(attribute), wrapper);
+                    return compound;
+                }
+            };
+        }
+
+        public T getValue(T base) {
+            return this.modifier.apply(base, this.argument);
+        }
+
+        public A getArgument() {
+            return this.argument;
+        }
+
+        public AttributeModifier<T, A> getModifier() {
+            return this.modifier;
         }
     }
 }
