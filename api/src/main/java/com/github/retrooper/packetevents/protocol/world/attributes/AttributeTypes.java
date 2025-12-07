@@ -25,6 +25,7 @@ import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
+import com.github.retrooper.packetevents.protocol.world.attributes.modifiers.AttributeModifier;
 import com.github.retrooper.packetevents.protocol.world.biome.BiomeEffects.ParticleSettings;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;

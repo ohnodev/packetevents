@@ -1,7 +1,7 @@
-package com.github.retrooper.packetevents.protocol.world.attributes;
+package com.github.retrooper.packetevents.protocol.world.attributes.easing;
 
-import com.github.retrooper.packetevents.util.easing.EasingFunctions;
 import com.github.retrooper.packetevents.util.FloatUnaryOperator;
+import com.github.retrooper.packetevents.util.easing.EasingFunctions;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;

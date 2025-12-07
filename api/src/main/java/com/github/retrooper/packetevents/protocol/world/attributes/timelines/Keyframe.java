@@ -1,4 +1,4 @@
-package com.github.retrooper.packetevents.protocol.world.attributes;
+package com.github.retrooper.packetevents.protocol.world.attributes.timelines;
 
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTInt;

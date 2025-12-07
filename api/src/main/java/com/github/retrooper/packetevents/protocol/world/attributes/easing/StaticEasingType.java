@@ -1,10 +1,8 @@
-package com.github.retrooper.packetevents.protocol.world.attributes;
+package com.github.retrooper.packetevents.protocol.world.attributes.easing;
 // Created by booky10 in packetevents (8:41 PM 07.12.2025)
 
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.util.FloatUnaryOperator;
-import com.github.retrooper.packetevents.util.easing.CubicBezierControls;
-import com.github.retrooper.packetevents.util.easing.CubicCurve;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;

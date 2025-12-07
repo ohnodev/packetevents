@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.retrooper.packetevents.protocol.world.attributes;
+package com.github.retrooper.packetevents.protocol.world.attributes.modifiers;
 
 import com.github.retrooper.packetevents.protocol.color.AlphaColor;
 import com.github.retrooper.packetevents.protocol.color.Color;

@@ -16,10 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.retrooper.packetevents.protocol.world.attributes;
+package com.github.retrooper.packetevents.protocol.world.attributes.modifiers;
 
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
+import com.github.retrooper.packetevents.protocol.world.attributes.EnvironmentAttribute;
 import org.jspecify.annotations.NullMarked;
 
 /**

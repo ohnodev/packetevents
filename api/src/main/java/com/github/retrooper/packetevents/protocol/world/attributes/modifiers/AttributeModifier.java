@@ -1,10 +1,11 @@
-package com.github.retrooper.packetevents.protocol.world.attributes;
+package com.github.retrooper.packetevents.protocol.world.attributes.modifiers;
 
 import com.github.retrooper.packetevents.protocol.color.AlphaColor;
 import com.github.retrooper.packetevents.protocol.color.Color;
 import com.github.retrooper.packetevents.protocol.util.CodecNameable;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
+import com.github.retrooper.packetevents.protocol.world.attributes.EnvironmentAttribute;
 import com.github.retrooper.packetevents.util.MapUtil;
 import org.jspecify.annotations.NullMarked;
 

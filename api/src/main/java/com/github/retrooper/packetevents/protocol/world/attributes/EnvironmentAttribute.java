@@ -19,7 +19,6 @@
 package com.github.retrooper.packetevents.protocol.world.attributes;
 
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
-import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import org.jspecify.annotations.NullMarked;
 
 /**

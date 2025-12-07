@@ -1,4 +1,4 @@
-package com.github.retrooper.packetevents.protocol.world.attributes;
+package com.github.retrooper.packetevents.protocol.world.attributes.easing;
 
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;

@@ -20,6 +20,7 @@ package com.github.retrooper.packetevents.protocol.world.attributes;
 
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
+import com.github.retrooper.packetevents.protocol.world.attributes.modifiers.AttributeModifier;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;

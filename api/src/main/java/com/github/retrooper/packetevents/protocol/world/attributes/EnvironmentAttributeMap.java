@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
 import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
+import com.github.retrooper.packetevents.protocol.world.attributes.modifiers.AttributeModifier;
 import com.github.retrooper.packetevents.util.Either;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jspecify.annotations.NullMarked;

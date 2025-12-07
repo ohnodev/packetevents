@@ -1,9 +1,11 @@
-package com.github.retrooper.packetevents.protocol.world.attributes;
+package com.github.retrooper.packetevents.protocol.world.attributes.timelines;
 
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
 import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
+import com.github.retrooper.packetevents.protocol.world.attributes.EnvironmentAttribute;
+import com.github.retrooper.packetevents.protocol.world.attributes.modifiers.AttributeModifier;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jspecify.annotations.NullMarked;
 
