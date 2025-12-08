@@ -149,7 +149,8 @@ public interface DimensionTypeRef {
 
         @Override
         public DimensionType resolve(IRegistry<DimensionType> registry, PacketWrapper<?> wrapper) {
-            return registry.getByNameOrThrow(this.name);
+            ClientVersion version = wrapper.getServerVersion().toClientVersion();
+            return registry.getByNameOrThrow(version, this.name);
         }
 
         @Override

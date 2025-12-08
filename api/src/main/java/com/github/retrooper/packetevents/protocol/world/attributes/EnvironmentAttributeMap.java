@@ -19,12 +19,14 @@
 package com.github.retrooper.packetevents.protocol.world.attributes;
 
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
 import com.github.retrooper.packetevents.protocol.util.NbtCodecs;
 import com.github.retrooper.packetevents.protocol.util.NbtMapCodec;
 import com.github.retrooper.packetevents.protocol.world.attributes.modifiers.AttributeModifier;
 import com.github.retrooper.packetevents.util.Either;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -45,9 +47,11 @@ public class EnvironmentAttributeMap {
     public static final NbtCodec<EnvironmentAttributeMap> CODEC = new NbtMapCodec<EnvironmentAttributeMap>() {
         @Override
         public EnvironmentAttributeMap decode(NBTCompound compound, PacketWrapper<?> wrapper) throws NbtCodecException {
+            VersionedRegistry<EnvironmentAttribute<?>> registry = EnvironmentAttributes.getRegistry();
+            ClientVersion version = wrapper.getServerVersion().toClientVersion();
             Map<EnvironmentAttribute<?>, Entry<?, ?>> entries = new HashMap<>();
             for (String tag : compound.getTagNames()) {
-                EnvironmentAttribute<?> attribute = EnvironmentAttributes.getRegistry().getByNameOrThrow(tag);
+                EnvironmentAttribute<?> attribute = registry.getByNameOrThrow(version, tag);
                 if (attribute.isSynced()) {
                     entries.put(attribute, compound.getOrThrow(tag, Entry.codec(attribute), wrapper));
                 }

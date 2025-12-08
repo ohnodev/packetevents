@@ -263,7 +263,8 @@ public final class SynchronizedRegistriesHandler {
                 int id, PacketWrapper<?> wrapper
         ) {
             ResourceLocation elementName = element.getId();
-            T baseEntry = this.baseRegistry.getByName(elementName);
+            ClientVersion version = wrapper.getServerVersion().toClientVersion();
+            T baseEntry = this.baseRegistry.getByName(version, elementName);
 
             // save new element definition in base entry for comparison - and fallback
             TypesBuilderData data = new SimpleTypesBuilderData(elementName, id);

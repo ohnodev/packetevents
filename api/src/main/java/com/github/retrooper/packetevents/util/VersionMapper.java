@@ -19,8 +19,11 @@
 package com.github.retrooper.packetevents.util;
 
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class VersionMapper {
+
     private final ClientVersion[] versions;
     private final ClientVersion[] reversedVersions;
 
@@ -52,5 +55,9 @@ public class VersionMapper {
         }
         //Give them the oldest version
         return 0;
+    }
+
+    public int size() {
+        return this.versions.length;
     }
 }

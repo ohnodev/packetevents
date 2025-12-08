@@ -26,6 +26,7 @@ import com.github.retrooper.packetevents.protocol.nbt.serializer.SequentialNBTRe
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.VersionMapper;
+import com.github.retrooper.packetevents.util.VersionRange;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -161,7 +162,11 @@ public class TypesBuilder {
     }
 
     public int getDataIndex(ClientVersion rawVersion) {
-        return versionMapper.getIndex(rawVersion);
+        return this.versionMapper.getIndex(rawVersion);
+    }
+
+    public VersionMapper getVersionMapper() {
+        return this.versionMapper;
     }
 
     @VisibleForTesting
@@ -174,11 +179,11 @@ public class TypesBuilder {
         entries = null;
     }
 
-    public TypesBuilderData define(String key) {
+    public TypesBuilderData define(String key, VersionRange range) {
         final ResourceLocation name = new ResourceLocation(key);
-        final int[] ids = new int[getVersions().length];
+        final int[] ids = new int[this.getVersions().length];
         int index = 0;
-        for (ClientVersion v : getVersions()) {
+        for (ClientVersion v : this.getVersions()) {
             final Map<String, Integer> map = entries.get(v);
             if (map.containsKey(key)) {
                 int id = map.get(key);
@@ -188,7 +193,7 @@ public class TypesBuilder {
             }
             index++;
         }
-        return new TypesBuilderData(this, name, ids);
+        return new TypesBuilderData(name, ids, this, range);
     }
 
     public @Nullable Map<ClientVersion, Map<String, Integer>> getEntries() {
