@@ -92,15 +92,21 @@ public class EnvironmentAttributeMap {
         return new EnvironmentAttributeMap(new HashMap<>(this.entries));
     }
 
-    public <T> void set(EnvironmentAttribute<T> attribute, T value) {
+    public <T> EnvironmentAttributeMap set(EnvironmentAttribute<T> attribute, T value) {
         this.set(attribute, value, AttributeModifier.override());
+        return this;
     }
 
-    public <T, A> void set(EnvironmentAttribute<T> attribute, A value, AttributeModifier<T, A> modifier) {
+    public <T, A> EnvironmentAttributeMap set(EnvironmentAttribute<T> attribute, A value, AttributeModifier<T, A> modifier) {
         this.entries.put(attribute, new Entry<>(value, modifier));
+        return this;
     }
 
-    public <T> T applyToDefault(EnvironmentAttribute<T> attribute) {
+    public void setAll(EnvironmentAttributeMap map) {
+        this.entries.putAll(map.entries);
+    }
+
+    public <T> T getOrDefault(EnvironmentAttribute<T> attribute) {
         return this.apply(attribute, attribute.getDefaultValue());
     }
 
@@ -120,6 +126,14 @@ public class EnvironmentAttributeMap {
 
     public Set<EnvironmentAttribute<?>> keySet() {
         return this.entries.keySet();
+    }
+
+    public int size() {
+        return this.entries.size();
+    }
+
+    public boolean isEmpty() {
+        return this.entries.isEmpty();
     }
 
     @Override

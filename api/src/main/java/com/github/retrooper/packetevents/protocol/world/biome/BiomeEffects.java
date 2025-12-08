@@ -82,17 +82,17 @@ public class BiomeEffects {
                     dryFoliageColor = compound.getOrNull("dry_foliage_color", NbtCodecs.RGB_COLOR, wrapper);
                     if (attributes != null) {
                         // set legacy fields using new attribute values (if present)
-                        fogColor = attributes.applyToDefault(EnvironmentAttributes.VISUAL_FOG_COLOR);
-                        waterFogColor = attributes.applyToDefault(EnvironmentAttributes.VISUAL_WATER_FOG_COLOR);
-                        skyColor = attributes.applyToDefault(EnvironmentAttributes.VISUAL_SKY_COLOR);
-                        List<ParticleSettings> particles = attributes.applyToDefault(EnvironmentAttributes.VISUAL_AMBIENT_PARTICLES);
+                        fogColor = attributes.getOrDefault(EnvironmentAttributes.VISUAL_FOG_COLOR);
+                        waterFogColor = attributes.getOrDefault(EnvironmentAttributes.VISUAL_WATER_FOG_COLOR);
+                        skyColor = attributes.getOrDefault(EnvironmentAttributes.VISUAL_SKY_COLOR);
+                        List<ParticleSettings> particles = attributes.getOrDefault(EnvironmentAttributes.VISUAL_AMBIENT_PARTICLES);
                         particle = particles.isEmpty() ? null : particles.get(0);
-                        AmbientSounds ambientSounds = attributes.applyToDefault(EnvironmentAttributes.AUDIO_AMBIENT_SOUNDS);
+                        AmbientSounds ambientSounds = attributes.getOrDefault(EnvironmentAttributes.AUDIO_AMBIENT_SOUNDS);
                         ambientSound = ambientSounds.getLoop();
                         moodSound = ambientSounds.getMood();
                         additionsSound = ambientSounds.getAdditions().isEmpty() ? null : ambientSounds.getAdditions().get(0);
-                        musicVolume = attributes.applyToDefault(EnvironmentAttributes.AUDIO_MUSIC_VOLUME);
-                        music = attributes.applyToDefault(EnvironmentAttributes.AUDIO_BACKGROUND_MUSIC).asList();
+                        musicVolume = attributes.getOrDefault(EnvironmentAttributes.AUDIO_MUSIC_VOLUME);
+                        music = attributes.getOrDefault(EnvironmentAttributes.AUDIO_BACKGROUND_MUSIC).asList();
                     } else {
                         musicVolume = FALLBACK_MUSIC_VOLUME;
                         music = new RandomWeightedList<>();

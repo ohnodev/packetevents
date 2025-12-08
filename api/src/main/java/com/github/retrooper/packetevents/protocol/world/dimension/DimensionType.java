@@ -33,7 +33,6 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTFloat;
 import com.github.retrooper.packetevents.protocol.nbt.NBTInt;
 import com.github.retrooper.packetevents.protocol.nbt.NBTLong;
 import com.github.retrooper.packetevents.protocol.nbt.NBTNumber;
-import com.github.retrooper.packetevents.protocol.nbt.NBTString;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.util.CodecNameable;
 import com.github.retrooper.packetevents.protocol.util.NbtCodec;
@@ -44,6 +43,7 @@ import com.github.retrooper.packetevents.protocol.world.attributes.EnvironmentAt
 import com.github.retrooper.packetevents.protocol.world.attributes.EnvironmentAttributes;
 import com.github.retrooper.packetevents.protocol.world.attributes.timelines.Timeline;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
+import com.github.retrooper.packetevents.resources.TagKey;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.ApiStatus;
@@ -58,88 +58,125 @@ public interface DimensionType extends MappedEntity, CopyableEntity<DimensionTyp
     NbtCodec<DimensionType> CODEC = new NbtMapCodec<DimensionType>() {
         @Override
         public DimensionType decode(NBTCompound compound, PacketWrapper<?> wrapper) throws NbtCodecException {
-            boolean hasFixedTime;
-            Skybox skybox;
-            CardinalLight cardinalLight;
-            EnvironmentAttributeMap attributes;
-            MappedEntityRefSet<Timeline> timelines;
+            DimensionTypeBuilder builder = DimensionTypeBuilder.dimensionTypeBuilder();
 
             ServerVersion version = wrapper.getServerVersion();
             if (version.isNewerThanOrEquals(ServerVersion.V_1_21_11)) {
-                hasFixedTime = compound.getBooleanOr("has_fixed_time", false);
-                skybox = compound.getOr("skybox", Skybox.CODEC, Skybox.OVERWORLD, wrapper);
-                cardinalLight = compound.getOr("cardinal_light", CardinalLight.CODEC, CardinalLight.DEFAULT, wrapper);
-                attributes = compound.getOr("attributes", EnvironmentAttributeMap.CODEC, EnvironmentAttributeMap.EMPTY, wrapper);
-                timelines = compound.getOr("timelines", MappedEntitySet::decodeRefSet, MappedEntitySet.createEmpty(), wrapper);
+                builder
+                        .setHasFixedTime(compound.getBooleanOr("has_fixed_time", false))
+                        .setSkybox(compound.getOr("skybox", Skybox.CODEC, Skybox.OVERWORLD, wrapper))
+                        .setCardinalLight(compound.getOr("cardinal_light", CardinalLight.CODEC, CardinalLight.DEFAULT, wrapper))
+                        .setAttributes(compound.getOr("attributes", EnvironmentAttributeMap.CODEC, EnvironmentAttributeMap.EMPTY, wrapper))
+                        .setTimelines(compound.getOr("timelines", MappedEntitySet::decodeRefSet, MappedEntitySet.createEmpty(), wrapper));
             } else {
-                hasFixedTime = false;
-                skybox = Skybox.NONE;
-                cardinalLight = CardinalLight.DEFAULT;
-                attributes = EnvironmentAttributeMap.create();
-                timelines = MappedEntitySet.createEmpty();
-            }
-
-            double coordinateScale;
-            int minY = 0;
-            int height = 256;
-            NBT monsterSpawnLightLevel = null;
-            int monsterSpawnBlockLightLimit = 0;
-            if (version.isNewerThanOrEquals(ServerVersion.V_1_16_2)) {
-                coordinateScale = compound.getNumberTagOrThrow("coordinate_scale").getAsDouble();
-                if (version.isNewerThanOrEquals(ServerVersion.V_1_17)) {
-                    minY = compound.getNumberTagOrThrow("min_y").getAsInt();
-                    height = compound.getNumberTagOrThrow("height").getAsInt();
-                    if (version.isNewerThanOrEquals(ServerVersion.V_1_19)) {
-                        // TODO proper int provider decoding/encoding
-                        monsterSpawnLightLevel = compound.getTagOrThrow("monster_spawn_light_level");
-                        monsterSpawnBlockLightLimit = compound.getNumberTagOrThrow("monster_spawn_block_light_limit").getAsInt();
-                    }
-                }
-            } else {
-                coordinateScale = compound.getBoolean("shrunk") ? 8d : 1d;
-            }
-
-            ResourceLocation effectsLocation = null;
-            OptionalLong fixedTime = OptionalLong.empty();
-            if (version.isOlderThan(ServerVersion.V_1_21_11)) {
                 Number fixedTimeNum = compound.getNumberTagValueOrNull("fixed_time");
-                if (fixedTimeNum != null) {
-                    hasFixedTime = true;
-                    fixedTime = OptionalLong.of(fixedTimeNum.longValue());
-                }
-                boolean ultrawarm = compound.getBoolean("ultrawarm");
-                boolean natural = compound.getBoolean("natural");
-                boolean bedWorking = compound.getBoolean("bed_works");
-                boolean respawnAnchorWorking = compound.getBoolean("respawn_anchor_works");
-                boolean piglinSafe = compound.getBoolean("piglin_safe");
-                boolean hasRaids = compound.getBoolean("has_raids");
-
+                builder
+                        .setFixedTime(fixedTimeNum != null ? fixedTimeNum.longValue() : null)
+                        .setAttribute(EnvironmentAttributes.GAMEPLAY_WATER_EVAPORATES, compound.getBoolean("ultrawarm"))
+                        .setNatural(compound.getBoolean("natural"))
+                        .setBedWorks(compound.getBoolean("bed_works"))
+                        .setRespawnAnchorWorks(compound.getBoolean("respawn_anchor_works"))
+                        .setAttribute(EnvironmentAttributes.GAMEPLAY_PIGLINS_ZOMBIFY, !compound.getBoolean("piglin_safe"))
+                        .setAttribute(EnvironmentAttributes.GAMEPLAY_CAN_START_RAID, compound.getBoolean("has_raids"));
                 if (version.isNewerThanOrEquals(ServerVersion.V_1_16_2)) {
-                    effectsLocation = compound.getOrThrow("effects", ResourceLocation.CODEC, wrapper);
+                    builder.setEffects(compound.getOrThrow("effects", ResourceLocation.CODEC, wrapper));
                 }
                 if (version.isNewerThanOrEquals(ServerVersion.V_1_21_6)) {
                     NBTNumber cloudHeightTag = compound.getNumberTagOrNull("cloud_height");
                     if (cloudHeightTag != null) {
-                        attributes.set(EnvironmentAttributes.VISUAL_CLOUD_HEIGHT, cloudHeightTag.getAsFloat());
+                        builder.setAttribute(EnvironmentAttributes.VISUAL_CLOUD_HEIGHT, cloudHeightTag.getAsFloat());
                     }
                 }
             }
 
-            boolean hasSkylight = compound.getBooleanOrThrow("has_skylight");
-            boolean hasCeiling = compound.getBooleanOrThrow("has_ceiling");
-            int logicalHeight = compound.getNumberTagValueOrThrow("logical_height").intValue();
-            // TODO proper tag key decoding/encoding
-            String infiniburn = compound.getStringTagValueOrThrow("infiniburn");
-            float ambientLight = compound.getNumberTagValueOrThrow("ambient_light").floatValue();
+            if (version.isNewerThanOrEquals(ServerVersion.V_1_16_2)) {
+                builder.setCoordinateScale(compound.getNumberTagOrThrow("coordinate_scale").getAsDouble());
+                if (version.isNewerThanOrEquals(ServerVersion.V_1_17)) {
+                    builder.setMinY(compound.getNumberTagOrThrow("min_y").getAsInt());
+                    builder.setHeight(compound.getNumberTagOrThrow("height").getAsInt());
+                    if (version.isNewerThanOrEquals(ServerVersion.V_1_19)) {
+                        // TODO proper int provider decoding/encoding
+                        builder.setMonsterSpawnLightLevel(compound.getTagOrThrow("monster_spawn_light_level"));
+                        builder.setMonsterSpawnBlockLightLimit(compound.getNumberTagOrThrow("monster_spawn_block_light_limit").getAsInt());
+                    }
+                }
+            } else {
+                builder.setCoordinateScale(compound.getBoolean("shrunk") ? 8d : 1d);
+            }
 
-            // new
+            return builder
+                    .setHasSkylight(compound.getBooleanOrThrow("has_skylight"))
+                    .setHasCeiling(compound.getBooleanOrThrow("has_ceiling"))
+                    .setLogicalHeight(compound.getNumberTagValueOrThrow("logical_height").intValue())
+                    .setInfiniburn(compound.getOrThrow("infiniburn", TagKey.CODEC, wrapper))
+                    .setAmbientLight(compound.getNumberTagValueOrThrow("ambient_light").floatValue())
+                    .build();
         }
 
         @Override
         public void encode(NBTCompound compound, PacketWrapper<?> wrapper, DimensionType value) throws NbtCodecException {
-
+            ServerVersion version = wrapper.getServerVersion();
+            if (version.isNewerThanOrEquals(ServerVersion.V_1_21_11)) {
+                if (value.hasFixedTime()) {
+                    compound.setTag("has_fixed_time", new NBTByte(true));
+                }
+                Skybox skybox = value.getSkybox();
+                if (skybox != Skybox.OVERWORLD) {
+                    compound.set("skybox", skybox, Skybox.CODEC, wrapper);
+                }
+                CardinalLight cardinalLight = value.getCardinalLight();
+                if (cardinalLight != CardinalLight.DEFAULT) {
+                    compound.set("cardinal_light", cardinalLight, CardinalLight.CODEC, wrapper);
+                }
+                EnvironmentAttributeMap env = value.getAttributes();
+                if (!env.isEmpty()) {
+                    compound.set("attributes", env, EnvironmentAttributeMap.CODEC, wrapper);
+                }
+                MappedEntityRefSet<Timeline> timelines = value.getTimelinesRef();
+                if (!timelines.isEmpty()) {
+                    compound.set("timelines", timelines, MappedEntitySet::encodeRefSet, wrapper);
+                }
+            } else {
+                OptionalLong fixedTime = value.getFixedTime();
+                if (fixedTime.isPresent()) {
+                    compound.setTag("fixed_time", new NBTLong(fixedTime.getAsLong()));
+                }
+                compound.setTag("ultrawarm", new NBTByte(value.isUltraWarm()));
+                compound.setTag("natural", new NBTByte(value.isNatural()));
+                compound.setTag("bed_works", new NBTByte(value.isBedWorking()));
+                compound.setTag("respawn_anchor_works", new NBTByte(value.isRespawnAnchorWorking()));
+                compound.setTag("piglin_safe", new NBTByte(value.isPiglinSafe()));
+                compound.setTag("has_raids", new NBTByte(value.hasRaids()));
+                if (version.isNewerThanOrEquals(ServerVersion.V_1_16_2)) {
+                    compound.set("effects", value.getEffectsLocation(), ResourceLocation.CODEC, wrapper);
+                }
+                if (version.isNewerThanOrEquals(ServerVersion.V_1_21_6)) {
+                    Integer cloudHeight = value.getCloudHeight();
+                    if (cloudHeight != null) {
+                        compound.setTag("cloud_height", new NBTInt(cloudHeight));
+                    }
+                }
+            }
+            if (version.isNewerThanOrEquals(ServerVersion.V_1_16_2)) {
+                compound.setTag("coordinate_scale", new NBTDouble(value.getCoordinateScale()));
+                if (version.isNewerThanOrEquals(ServerVersion.V_1_17)) {
+                    compound.setTag("min_y", new NBTInt(value.getMinY()));
+                    compound.setTag("height", new NBTInt(value.getHeight()));
+                    if (version.isNewerThanOrEquals(ServerVersion.V_1_19)) {
+                        compound.setTag("monster_spawn_light_level", value.getMonsterSpawnLightLevel());
+                        compound.setTag("monster_spawn_block_light_limit", new NBTInt(value.getMonsterSpawnBlockLightLimit()));
+                    }
+                }
+            } else {
+                compound.setTag("shrunk", new NBTByte(value.isShrunk()));
+            }
+            compound.setTag("has_skylight", new NBTByte(value.hasSkyLight()));
+            compound.setTag("has_ceiling", new NBTByte(value.hasCeiling()));
+            compound.setTag("logical_height", new NBTInt(value.getLogicalHeight()));
+            compound.set("infiniburn", value.getInfiniburn(), TagKey.CODEC, wrapper);
+            compound.setTag("ambient_light", new NBTFloat(value.getAmbientLight()));
         }
-    }.codec;
+    }.codec();
 
     /**
      * @versions 1.21.11+
@@ -147,6 +184,8 @@ public interface DimensionType extends MappedEntity, CopyableEntity<DimensionTyp
     boolean hasFixedTime();
 
     /**
+     * <strong>Warning:</strong> May be empty even if {@link #hasFixedTime()} returns true.
+     *
      * @versions -1.21.10
      */
     @ApiStatus.Obsolete
@@ -216,7 +255,12 @@ public interface DimensionType extends MappedEntity, CopyableEntity<DimensionTyp
 
     int getLogicalHeight(ClientVersion version);
 
-    String getInfiniburnTag();
+    TagKey getInfiniburn();
+
+    @Deprecated
+    default String getInfiniburnTag() {
+        return this.getInfiniburn().toString();
+    }
 
     /**
      * @versions 1.16.2-1.21.10
@@ -257,99 +301,55 @@ public interface DimensionType extends MappedEntity, CopyableEntity<DimensionTyp
      */
     int getMonsterSpawnBlockLightLimit();
 
+    // environment
+
+    /**
+     * @versions 1.21.11+
+     */
+    Skybox getSkybox();
+
+    /**
+     * @versions 1.21.11+
+     */
+    CardinalLight getCardinalLight();
+
+    /**
+     * @versions 1.21.11+
+     */
+    EnvironmentAttributeMap getAttributes();
+
+    /**
+     * @versions 1.21.11+
+     */
+    MappedEntitySet<Timeline> getTimelines();
+
+    /**
+     * @versions 1.21.11+
+     */
+    MappedEntityRefSet<Timeline> getTimelinesRef();
+
     // conversion utilities
 
+    default DimensionTypeRef asRef(PacketWrapper<?> wrapper) {
+        return new DimensionTypeRef.DirectRef(this, wrapper);
+    }
+
+    @Deprecated
     default DimensionTypeRef asRef(ClientVersion version) {
-        return new DimensionTypeRef.DirectRef(this, version);
+        return this.asRef(PacketWrapper.createDummyWrapper(version));
     }
 
     // nbt decoding/encoding
 
+    @Deprecated
     static DimensionType decode(NBT nbt, ClientVersion version, @Nullable TypesBuilderData data) {
-        NBTCompound compound = (NBTCompound) nbt;
-        OptionalLong fixedTime = !compound.getTags().containsKey("fixed_time") ? OptionalLong.empty() :
-                OptionalLong.of(compound.getNumberTagOrThrow("fixed_time").getAsLong());
-        boolean hasSkylight = compound.getBoolean("has_skylight");
-        boolean hasCeiling = compound.getBoolean("has_ceiling");
-        boolean ultrawarm = compound.getBoolean("ultrawarm");
-        boolean natural = compound.getBoolean("natural");
-        boolean bedWorking = compound.getBoolean("bed_works");
-        boolean respawnAnchorWorking = compound.getBoolean("respawn_anchor_works");
-        int logicalHeight = compound.getNumberTagOrThrow("logical_height").getAsInt();
-        String infiniburnTag = compound.getStringTagValueOrThrow("infiniburn");
-        float ambientLight = compound.getNumberTagOrThrow("ambient_light").getAsFloat();
-        boolean piglinSafe = compound.getBoolean("piglin_safe");
-        boolean hasRaids = compound.getBoolean("has_raids");
-
-        double coordinateScale;
-        int minY = 0;
-        int height = 256;
-        ResourceLocation effectsLocation = null;
-        Integer cloudHeight = null;
-        NBT monsterSpawnLightLevel = null;
-        int monsterSpawnBlockLightLimit = 0;
-        if (version.isNewerThanOrEquals(ClientVersion.V_1_16_2)) {
-            coordinateScale = compound.getNumberTagOrThrow("coordinate_scale").getAsDouble();
-            effectsLocation = new ResourceLocation(compound.getStringTagValueOrThrow("effects"));
-            if (version.isNewerThanOrEquals(ClientVersion.V_1_17)) {
-                minY = compound.getNumberTagOrThrow("min_y").getAsInt();
-                height = compound.getNumberTagOrThrow("height").getAsInt();
-                if (version.isNewerThanOrEquals(ClientVersion.V_1_19)) {
-                    monsterSpawnLightLevel = compound.getTagOrThrow("monster_spawn_light_level");
-                    monsterSpawnBlockLightLimit = compound.getNumberTagOrThrow("monster_spawn_block_light_limit").getAsInt();
-                    if (version.isNewerThanOrEquals(ClientVersion.V_1_21_6)) {
-                        NBTNumber cloudHeightTag = compound.getNumberTagOrNull("cloud_height");
-                        cloudHeight = cloudHeightTag != null ? cloudHeightTag.getAsInt() : null;
-                    }
-                }
-            }
-        } else {
-            coordinateScale = compound.getBoolean("shrunk") ? 8d : 1d;
-        }
-
-        return new StaticDimensionType(data, fixedTime, hasSkylight, hasCeiling, ultrawarm, natural, coordinateScale,
-                bedWorking, respawnAnchorWorking, minY, height, logicalHeight, infiniburnTag, effectsLocation,
-                ambientLight, cloudHeight, piglinSafe, hasRaids, monsterSpawnLightLevel, monsterSpawnBlockLightLimit);
+        return CODEC.decode(nbt, PacketWrapper.createDummyWrapper(version)).copy(data);
     }
 
+    @Deprecated
     static NBT encode(DimensionType dimensionType, ClientVersion version) {
-        NBTCompound compound = new NBTCompound();
-        dimensionType.getFixedTime().ifPresent(fixedTime ->
-                compound.setTag("fixed_time", new NBTLong(fixedTime)));
-        compound.setTag("has_skylight", new NBTByte(dimensionType.hasSkyLight()));
-        compound.setTag("has_ceiling", new NBTByte(dimensionType.hasCeiling()));
-        compound.setTag("ultrawarm", new NBTByte(dimensionType.isUltraWarm()));
-        compound.setTag("natural", new NBTByte(dimensionType.isNatural()));
-        compound.setTag("bed_works", new NBTByte(dimensionType.isBedWorking()));
-        compound.setTag("respawn_anchor_works", new NBTByte(dimensionType.isRespawnAnchorWorking()));
-        compound.setTag("logical_height", new NBTInt(dimensionType.getLogicalHeight(version)));
-        compound.setTag("infiniburn", new NBTString(dimensionType.getInfiniburnTag()));
-        compound.setTag("ambient_light", new NBTFloat(dimensionType.getAmbientLight()));
-        compound.setTag("piglin_safe", new NBTByte(dimensionType.isPiglinSafe()));
-        compound.setTag("has_raids", new NBTByte(dimensionType.hasRaids()));
-
-        if (version.isNewerThanOrEquals(ClientVersion.V_1_16_2)) {
-            compound.setTag("coordinate_scale", new NBTDouble(dimensionType.getCoordinateScale()));
-            compound.setTag("effects", new NBTString(dimensionType.getEffectsLocation().toString()));
-            if (version.isNewerThanOrEquals(ClientVersion.V_1_17)) {
-                compound.setTag("min_y", new NBTInt(dimensionType.getMinY(version)));
-                compound.setTag("height", new NBTInt(dimensionType.getHeight(version)));
-                if (version.isNewerThanOrEquals(ClientVersion.V_1_19)) {
-                    compound.setTag("monster_spawn_light_level", dimensionType.getMonsterSpawnLightLevel());
-                    compound.setTag("monster_spawn_block_light_limit", new NBTInt(dimensionType.getMonsterSpawnBlockLightLimit()));
-                    if (version.isNewerThanOrEquals(ClientVersion.V_1_21_6)) {
-                        if (dimensionType.getCloudHeight() != null) {
-                            compound.setTag("cloud_height", new NBTInt(dimensionType.getCloudHeight()));
-                        }
-                    }
-                }
-            }
-        } else {
-            compound.setTag("shrunk", new NBTByte(dimensionType.isShrunk()));
-        }
-        return compound;
+        return CODEC.encode(PacketWrapper.createDummyWrapper(version), dimensionType);
     }
-
 
     /**
      * @versions 1.21.11+

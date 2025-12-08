@@ -1031,9 +1031,8 @@ public final class SpigotReflectionUtil {
              DataOutputStream stream = new DataOutputStream(byteStream)) {
             writeNmsNbtToStream(nbtCompound, stream);
             bytes = byteStream.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
         }
 
         Object buffer = UnpooledByteBufAllocationHelper.wrappedBuffer(bytes);

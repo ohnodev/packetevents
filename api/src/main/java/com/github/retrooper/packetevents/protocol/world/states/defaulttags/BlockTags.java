@@ -20,6 +20,7 @@ package com.github.retrooper.packetevents.protocol.world.states.defaulttags;
 
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
+import com.github.retrooper.packetevents.resources.TagKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -646,6 +647,10 @@ public class BlockTags {
 
     public boolean contains(StateType state) {
         return this.states.contains(state);
+    }
+
+    public TagKey getKey() {
+        return new TagKey(this.name);
     }
 
     public String getName() {

@@ -107,7 +107,7 @@ public final class SynchronizedRegistriesHandler {
                 new RegistryEntry<>(ChickenVariants.getRegistry(), ChickenVariant::decode),
                 new RegistryEntry<>(ZombieNautilusVariants.getRegistry(), ZombieNautilusVariant::decode),
                 new RegistryEntry<>(PaintingVariants.getRegistry(), PaintingVariant::decode),
-                new RegistryEntry<>(DimensionTypes.getRegistry(), DimensionType::decode),
+                new RegistryEntry<>(DimensionTypes.getRegistry(), DimensionType.CODEC),
                 new RegistryEntry<>(DamageTypes.getRegistry(), DamageType::decode),
                 new RegistryEntry<>(BannerPatterns.getRegistry(), BannerPattern::decode),
                 new RegistryEntry<>(EnchantmentTypes.getRegistry(), (NbtEntryDecoder<EnchantmentType>) EnchantmentType::decode),
