@@ -1,5 +1,4 @@
 package com.github.retrooper.packetevents.util;
-// Created by booky10 in packetevents (2:03 PM 08.12.2025)
 
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import org.jetbrains.annotations.ApiStatus;
@@ -9,6 +8,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
+/**
+ * Version range with inclusive minimum and inclusive maximum.
+ */
 @ApiStatus.Internal
 @NullMarked
 public final class VersionRange {
@@ -51,7 +53,7 @@ public final class VersionRange {
 
     public boolean contains(ClientVersion version) {
         return version.compareTo(this.minimum) >= 0
-                && version.compareTo(this.maximum) < 0;
+                && version.compareTo(this.maximum) <= 0;
     }
 
     public ClientVersion getMinimum() {
