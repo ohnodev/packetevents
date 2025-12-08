@@ -18,7 +18,6 @@
 
 package com.github.retrooper.packetevents.protocol.world.dimension;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.mapper.CopyableEntity;
 import com.github.retrooper.packetevents.protocol.mapper.DeepComparableEntity;
@@ -228,32 +227,39 @@ public interface DimensionType extends MappedEntity, CopyableEntity<DimensionTyp
     /**
      * @versions 1.17+
      */
-    default int getMinY() {
-        return this.getMinY(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+    int getMinY();
+
+    /**
+     * @versions 1.17+
+     * @deprecated use {@link #getMinY()}
+     */
+    @Deprecated
+    default int getMinY(ClientVersion version) {
+        return this.getMinY();
     }
 
     /**
      * @versions 1.17+
      */
-    int getMinY(ClientVersion version);
+    int getHeight();
 
     /**
      * @versions 1.17+
+     * @deprecated use {@link #getHeight()}
      */
-    default int getHeight() {
-        return this.getHeight(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+    default int getHeight(ClientVersion version) {
+        return this.getHeight();
     }
+
+    int getLogicalHeight();
 
     /**
-     * @versions 1.17+
+     * @deprecated use {@link #getLogicalHeight()}
      */
-    int getHeight(ClientVersion version);
-
-    default int getLogicalHeight() {
-        return this.getLogicalHeight(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+    @Deprecated
+    default int getLogicalHeight(ClientVersion version) {
+        return this.getLogicalHeight();
     }
-
-    int getLogicalHeight(ClientVersion version);
 
     TagKey getInfiniburn();
 

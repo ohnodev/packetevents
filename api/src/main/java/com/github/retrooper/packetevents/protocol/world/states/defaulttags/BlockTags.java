@@ -20,6 +20,7 @@ package com.github.retrooper.packetevents.protocol.world.states.defaulttags;
 
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.resources.TagKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -611,13 +612,13 @@ public class BlockTags {
         BlockTags.DEAD_CORAL_PLANTS.add(StateTypes.DEAD_TUBE_CORAL, StateTypes.DEAD_BRAIN_CORAL, StateTypes.DEAD_BUBBLE_CORAL, StateTypes.DEAD_FIRE_CORAL, StateTypes.DEAD_HORN_CORAL);
     }
 
-    String name;
+    TagKey name;
     Set<StateType> states = new HashSet<>(); // o(1)
     boolean reallyEmpty;
 
     public BlockTags(final String name) {
         byName.put(name, this);
-        this.name = name;
+        this.name = new TagKey(new ResourceLocation(name));
     }
 
     private static BlockTags bind(final String s) {
@@ -650,11 +651,11 @@ public class BlockTags {
     }
 
     public TagKey getKey() {
-        return new TagKey(this.name);
+        return this.name;
     }
 
     public String getName() {
-        return this.name;
+        return this.name.getId().toString();
     }
 
     public static BlockTags getByName(String name) {

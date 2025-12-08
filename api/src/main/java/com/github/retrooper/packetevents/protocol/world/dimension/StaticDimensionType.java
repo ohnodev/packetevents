@@ -254,17 +254,17 @@ public class StaticDimensionType extends AbstractMappedEntity implements Dimensi
     }
 
     @Override
-    public int getMinY(ClientVersion version) {
+    public int getMinY() {
         return this.minY;
     }
 
     @Override
-    public int getHeight(ClientVersion version) {
+    public int getHeight() {
         return this.height;
     }
 
     @Override
-    public int getLogicalHeight(ClientVersion version) {
+    public int getLogicalHeight() {
         return this.logicalHeight;
     }
 
@@ -275,6 +275,9 @@ public class StaticDimensionType extends AbstractMappedEntity implements Dimensi
 
     @Override
     public ResourceLocation getEffectsLocation() {
+        if (this.effects == null) {
+            throw new UnsupportedOperationException();
+        }
         return this.effects;
     }
 
