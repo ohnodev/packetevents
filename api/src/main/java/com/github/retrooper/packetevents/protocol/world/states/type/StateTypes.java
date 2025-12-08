@@ -1497,7 +1497,7 @@ public final class StateTypes {
         MaterialType materialType;
 
         public Builder name(String name) {
-            this.name = new ResourceLocation(name);
+            this.name = new ResourceLocation(name.toLowerCase(Locale.ROOT));
             return this;
         }
 
