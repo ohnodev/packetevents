@@ -38,6 +38,8 @@ import java.util.function.Function;
 @NullMarked
 public final class VersionedRegistry<T extends MappedEntity> implements IRegistry<T> {
 
+    private static final String REGISTRY_MAPPINGS_PREFIX = "registries/";
+
     private final ResourceLocation registryKey;
     private final TypesBuilder typesBuilder;
 
@@ -46,18 +48,35 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     private final Set<T> entries = new HashSet<>();
 
     public VersionedRegistry(String registry) {
-        this(registry, "registries/" + registry);
+        this(registry, new ClientVersion[0]);
+    }
+
+    public VersionedRegistry(String registry, ClientVersion... extraSteps) {
+        this(registry, REGISTRY_MAPPINGS_PREFIX + registry, extraSteps);
     }
 
     public VersionedRegistry(String registry, String mappingsPath) {
-        this(new ResourceLocation(registry), mappingsPath);
+        this(registry, mappingsPath, new ClientVersion[0]);
+    }
+
+    public VersionedRegistry(String registry, String mappingsPath, ClientVersion... extraSteps) {
+        this(new ResourceLocation(registry), mappingsPath, extraSteps);
+    }
+
+    public VersionedRegistry(ResourceLocation registryKey, String mappingsPath) {
+        this(registryKey, mappingsPath, new ClientVersion[0]);
     }
 
     @SuppressWarnings("unchecked") // there is no way to create arrays with generic types properly
-    public VersionedRegistry(ResourceLocation registryKey, String mappingsPath) {
+    public VersionedRegistry(ResourceLocation registryKey, String mappingsPath, ClientVersion... extraSteps) {
         this.registryKey = registryKey;
         this.typesBuilder = new TypesBuilder(mappingsPath);
         this.typesBuilder.registry = this;
+
+        // add extra steps to version mapper
+        for (ClientVersion extraStep : extraSteps) {
+            this.typesBuilder.addExtraVersionStep(extraStep);
+        }
 
         int versions = this.typesBuilder.getVersionMapper().size();
         this.typeNames = new Map[versions];

@@ -169,6 +169,17 @@ public class TypesBuilder {
         return this.versionMapper;
     }
 
+    public void addExtraVersionStep(ClientVersion version) {
+        VersionMapper newMapper = this.versionMapper.withExtra(version);
+        if (this.versionMapper != newMapper) {
+            // version was inserted, update entries
+            int baseIndex = this.versionMapper.getIndex(version);
+            ClientVersion baseVersion = this.versionMapper.getVersions()[baseIndex];
+            this.entries.put(version, this.entries.get(baseVersion));
+            this.versionMapper = newMapper; // save new mapper
+        }
+    }
+
     @VisibleForTesting
     public boolean isMappingDataLoaded() {
         return this.entries != null;

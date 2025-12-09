@@ -63,4 +63,9 @@ public final class VersionRange {
     public ClientVersion getMaximum() {
         return this.maximum;
     }
+
+    @Override
+    public String toString() {
+        return "(" + this.minimum + " to " + this.maximum + ")";
+    }
 }

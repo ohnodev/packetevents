@@ -46,7 +46,8 @@ import java.util.function.Consumer;
 @NullMarked
 public final class DimensionTypes {
 
-    private static final VersionedRegistry<DimensionType> REGISTRY = new VersionedRegistry<>("dimension_type");
+    private static final VersionedRegistry<DimensionType> REGISTRY = new VersionedRegistry<>(
+            "dimension_type", ClientVersion.V_1_18);
 
     private DimensionTypes() {
     }

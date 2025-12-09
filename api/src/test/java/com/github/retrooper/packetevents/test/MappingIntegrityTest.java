@@ -5,6 +5,8 @@ import com.github.retrooper.packetevents.protocol.item.enchantment.type.Enchantm
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.biome.Biomes;
+import com.github.retrooper.packetevents.protocol.world.dimension.DimensionType;
+import com.github.retrooper.packetevents.protocol.world.dimension.DimensionTypes;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.enums.Axis;
 import com.github.retrooper.packetevents.protocol.world.states.enums.East;
@@ -14,12 +16,15 @@ import com.github.retrooper.packetevents.protocol.world.states.enums.South;
 import com.github.retrooper.packetevents.protocol.world.states.enums.West;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.test.base.BaseDummyAPITest;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@NullMarked
 public class MappingIntegrityTest extends BaseDummyAPITest {
 
     @Test
@@ -60,6 +65,14 @@ public class MappingIntegrityTest extends BaseDummyAPITest {
     public void testItemTypeMapping() {
         assertNotNull(ItemTypes.getByName("minecraft:piglin_head"));
         assertNotNull(ItemTypes.getByName("piglin_head"));
+    }
+
+    @Test
+    @DisplayName("Test dimension type mappings")
+    public void testDimensionTypeMapping() {
+        VersionedRegistry<DimensionType> registry = DimensionTypes.getRegistry();
+        assertEquals(256, registry.getByNameOrThrow(ClientVersion.V_1_17_1, "overworld").getHeight());
+        assertEquals(384, registry.getByNameOrThrow(ClientVersion.V_1_18, "overworld").getHeight());
     }
 
     @Test
