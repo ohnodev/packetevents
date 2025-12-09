@@ -1,8 +1,8 @@
 !!!!! v2.11.0
 
-# PacketEvents 2.10.1 is finally out! 🎉
+# PacketEvents 2.11.0 is finally out! 🎉
 
-This update includes some bug fixes.
+This update adds support for Minecraft 1.21.11.
 
 # Brief Announcement 📢⚠️
 
