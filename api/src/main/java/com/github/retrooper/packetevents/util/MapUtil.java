@@ -18,18 +18,51 @@
 
 package com.github.retrooper.packetevents.util;
 
+import com.github.retrooper.packetevents.protocol.mapper.DeepComparableEntity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @ApiStatus.Internal
 @NullMarked
 public final class MapUtil {
 
     private MapUtil() {
+    }
+
+    public static boolean isDeepEqual(@Nullable Object o1, @Nullable Object o2) {
+        if (o1 == o2) {
+            return true;
+        } else if (o1 == null || o2 == null) {
+            return false;
+        } else if (o1 instanceof DeepComparableEntity) {
+            return ((DeepComparableEntity) o1).deepEquals(o2);
+        } else if (o2 instanceof DeepComparableEntity) {
+            return ((DeepComparableEntity) o2).deepEquals(o2);
+        } else {
+            return Objects.equals(o1, o2);
+        }
+    }
+
+    public static <K> boolean isDeepEqual(Map<K, ?> map1, Map<K, ?> map2) {
+        if (map1.isEmpty() && map2.isEmpty()) {
+            return true;
+        } else if (map1.size() != map2.size()) {
+            return false;
+        }
+        // compare each entry
+        for (Map.Entry<K, ?> entry : map1.entrySet()) {
+            Object val2 = map2.get(entry.getKey());
+            if (!isDeepEqual(entry.getValue(), val2)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // would be built-in with modern java...

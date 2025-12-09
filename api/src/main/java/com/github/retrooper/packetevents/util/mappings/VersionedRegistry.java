@@ -22,6 +22,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
+import com.github.retrooper.packetevents.util.MapUtil;
 import com.github.retrooper.packetevents.util.VersionRange;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -111,7 +112,7 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
         Map<String, T> lastNameMap = this.typeNames[0];
         for (int i = 1; i < this.typeNames.length; i++) {
             Map<String, T> nameMap = this.typeNames[i];
-            if (lastNameMap.equals(nameMap)) {
+            if (MapUtil.isDeepEqual(lastNameMap, nameMap)) {
                 this.typeNames[i] = lastNameMap;
             } else {
                 lastNameMap = nameMap;
