@@ -185,6 +185,7 @@ public class ClassStructureTest extends BaseDummyAPITest {
                     // temporarily load mappings again to validate each entry has a matching constant
                     TypesBuilder typesBuilder = registry.getTypesBuilder();
                     typesBuilder.load();
+                    registry.postLoadMappings();
 
                     Map<ClientVersion, Map<String, Integer>> entries = typesBuilder.getEntries();
                     assert entries != null; // ensured above
@@ -195,7 +196,7 @@ public class ClassStructureTest extends BaseDummyAPITest {
                             .distinct()
                             .filter(name -> registry.getByName(name) == null)
                             .collect(Collectors.joining(","));
-                    typesBuilder.unloadFileMappings();
+                    registry.unloadMappings();
 
                     if (!invalidEntries.isEmpty()) {
                         fail("Found invalid entries in registry " + registry.getRegistryKey() + ": " + invalidEntries);

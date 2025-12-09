@@ -43,6 +43,7 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
 
     private final ResourceLocation registryKey;
     private final TypesBuilder typesBuilder;
+    private final ClientVersion[] extraSteps;
 
     private final Map<String, T>[] typeNames;
     private final Map<Integer, T>[] typeIds;
@@ -72,12 +73,8 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     public VersionedRegistry(ResourceLocation registryKey, String mappingsPath, ClientVersion... extraSteps) {
         this.registryKey = registryKey;
         this.typesBuilder = new TypesBuilder(mappingsPath);
-        this.typesBuilder.registry = this;
-
-        // add extra steps to version mapper
-        for (ClientVersion extraStep : extraSteps) {
-            this.typesBuilder.addExtraVersionStep(extraStep);
-        }
+        this.extraSteps = extraSteps;
+        this.postLoadMappings();
 
         int versions = this.typesBuilder.getVersionMapper().size();
         this.typeNames = new Map[versions];
@@ -101,6 +98,16 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     @ApiStatus.Internal
     public TypesBuilder getTypesBuilder() {
         return this.typesBuilder;
+    }
+
+    @VisibleForTesting
+    @ApiStatus.Internal
+    public void postLoadMappings() {
+        this.typesBuilder.registry = this;
+        // add extra steps to version mapper
+        for (ClientVersion extraStep : this.extraSteps) {
+            this.typesBuilder.addExtraVersionStep(extraStep);
+        }
     }
 
     @ApiStatus.Internal
