@@ -40,7 +40,7 @@ public interface Sound extends MappedEntity {
                 return Sounds.getByNameOrCreate(((NBTString) nbt).getValue());
             }
             NBTCompound compound = nbt.castOrThrow(NBTCompound.class);
-            ResourceLocation soundId = compound.getOrThrow("sound_is", ResourceLocation.CODEC, wrapper);
+            ResourceLocation soundId = compound.getOrThrow("sound_id", ResourceLocation.CODEC, wrapper);
             Float range = compound.getOrNull("range", NbtCodecs.FLOAT, wrapper);
             return new StaticSound(soundId, range);
         }
