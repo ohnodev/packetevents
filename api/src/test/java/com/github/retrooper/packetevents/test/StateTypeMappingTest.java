@@ -9,16 +9,16 @@ import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.test.base.BaseDummyAPITest;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -185,7 +185,7 @@ public class StateTypeMappingTest extends BaseDummyAPITest {
         List<BlockTags> blockTags = new ArrayList<>();
         for (ServerVersion version : ServerVersion.values()) {
             if (version.isNewerThan(serverVersion)) { // Use isNewerThan to exclude the server's own version
-                BlockTags blockTag = BlockTags.getByName(version.name()); // Use name() to match enum naming convention
+                BlockTags blockTag = BlockTags.getByName(version.name().toLowerCase(Locale.ROOT)); // Use name() to match enum naming convention
                 if (blockTag != null) { // Only add non-null tags
                     blockTags.add(blockTag);
                 }
