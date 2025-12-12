@@ -20,6 +20,8 @@ package com.github.retrooper.packetevents.protocol.world.states.defaulttags;
 
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
+import com.github.retrooper.packetevents.resources.TagKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -372,6 +374,10 @@ public class BlockTags {
      * @versions 1.21.9+
      */
     public static final BlockTags INCORRECT_FOR_COPPER_TOOL = bind("incorrect_for_copper_tool");
+    /**
+     * @versions 1.21.11+
+     */
+    public static final BlockTags CAN_GLIDE_THROUGH = bind("can_glide_through");
 
     /**
      * Unofficial tag for all glass blocks
@@ -394,37 +400,37 @@ public class BlockTags {
      * Unofficial tag for all blocks added in 1.20.5
      */
     @VisibleForTesting @ApiStatus.Internal
-    public static final BlockTags V_1_20_5 = bind("V_1_20_5");
+    public static final BlockTags V_1_20_5 = bind("v_1_20_5");
 
     /**
      * Unofficial tag for all blocks added in 1.21.2
      */
     @VisibleForTesting @ApiStatus.Internal
-    public static final BlockTags V_1_21_2 = bind("V_1_21_2");
+    public static final BlockTags V_1_21_2 = bind("v_1_21_2");
 
     /**
      * Unofficial tag for all blocks added in 1.21.4
      */
     @VisibleForTesting @ApiStatus.Internal
-    public static final BlockTags V_1_21_4 = bind("V_1_21_4");
+    public static final BlockTags V_1_21_4 = bind("v_1_21_4");
 
     /**
      * Unofficial tag for all blocks added in 1.21.5
      */
     @VisibleForTesting @ApiStatus.Internal
-    public static final BlockTags V_1_21_5 = bind("V_1_21_5");
+    public static final BlockTags V_1_21_5 = bind("v_1_21_5");
 
     /**
      * Unofficial tag for all blocks added in 1.21.6
      */
     @VisibleForTesting @ApiStatus.Internal
-    public static final BlockTags V_1_21_6 = bind("V_1_21_6");
+    public static final BlockTags V_1_21_6 = bind("v_1_21_6");
 
     /**
      * Unofficial tag for all blocks added in 1.21.9
      */
     @VisibleForTesting @ApiStatus.Internal
-    public static final BlockTags V_1_21_9 = bind("V_1_21_9");
+    public static final BlockTags V_1_21_9 = bind("v_1_21_9");
 
     static {
         BlockTags.WOOL.add(StateTypes.WHITE_WOOL, StateTypes.ORANGE_WOOL, StateTypes.MAGENTA_WOOL, StateTypes.LIGHT_BLUE_WOOL, StateTypes.YELLOW_WOOL, StateTypes.LIME_WOOL, StateTypes.PINK_WOOL, StateTypes.GRAY_WOOL, StateTypes.LIGHT_GRAY_WOOL, StateTypes.CYAN_WOOL, StateTypes.PURPLE_WOOL, StateTypes.BLUE_WOOL, StateTypes.BROWN_WOOL, StateTypes.GREEN_WOOL, StateTypes.RED_WOOL, StateTypes.BLACK_WOOL);
@@ -586,6 +592,7 @@ public class BlockTags {
         BlockTags.GUARDED_BY_PIGLINS.addTag(BlockTags.COPPER_CHESTS).addTag(BlockTags.SHULKER_BOXES).addTag(BlockTags.GOLD_ORES).add(StateTypes.GOLD_BLOCK, StateTypes.BARREL, StateTypes.CHEST, StateTypes.ENDER_CHEST, StateTypes.GILDED_BLACKSTONE, StateTypes.TRAPPED_CHEST, StateTypes.RAW_GOLD_BLOCK);
         BlockTags.PREVENT_MOB_SPAWNING_INSIDE.addTag(BlockTags.RAILS);
         BlockTags.UNSTABLE_BOTTOM_CENTER.addTag(BlockTags.FENCE_GATES);
+        BlockTags.CAN_GLIDE_THROUGH.addTag(BlockTags.CAVE_VINES).add(StateTypes.VINE, StateTypes.TWISTING_VINES, StateTypes.TWISTING_VINES_PLANT, StateTypes.WEEPING_VINES, StateTypes.WEEPING_VINES_PLANT);
         BlockTags.INFINIBURN_NETHER.addTag(BlockTags.INFINIBURN_OVERWORLD);
         BlockTags.INFINIBURN_END.addTag(BlockTags.INFINIBURN_OVERWORLD).add(StateTypes.BEDROCK);
         BlockTags.OVERWORLD_CARVER_REPLACEABLES.addTag(BlockTags.BASE_STONE_OVERWORLD).addTag(BlockTags.DIRT).addTag(BlockTags.SAND).addTag(BlockTags.TERRACOTTA).addTag(BlockTags.IRON_ORES).addTag(BlockTags.COPPER_ORES).addTag(BlockTags.SNOW).add(StateTypes.WATER, StateTypes.GRAVEL, StateTypes.SUSPICIOUS_GRAVEL, StateTypes.SANDSTONE, StateTypes.RED_SANDSTONE, StateTypes.CALCITE, StateTypes.PACKED_ICE, StateTypes.RAW_IRON_BLOCK, StateTypes.RAW_COPPER_BLOCK);
@@ -647,13 +654,13 @@ public class BlockTags {
         BlockTags.V_1_21_9.add(StateTypes.ACACIA_SHELF, StateTypes.BAMBOO_SHELF, StateTypes.BIRCH_SHELF, StateTypes.CHERRY_SHELF, StateTypes.CRIMSON_SHELF, StateTypes.DARK_OAK_SHELF, StateTypes.JUNGLE_SHELF, StateTypes.MANGROVE_SHELF, StateTypes.OAK_SHELF, StateTypes.PALE_OAK_SHELF, StateTypes.SPRUCE_SHELF, StateTypes.WARPED_SHELF, StateTypes.COPPER_TORCH, StateTypes.COPPER_WALL_TORCH, StateTypes.COPPER_BARS, StateTypes.EXPOSED_COPPER_BARS, StateTypes.WEATHERED_COPPER_BARS, StateTypes.OXIDIZED_COPPER_BARS, StateTypes.WAXED_COPPER_BARS, StateTypes.WAXED_EXPOSED_COPPER_BARS, StateTypes.WAXED_WEATHERED_COPPER_BARS, StateTypes.WAXED_OXIDIZED_COPPER_BARS, StateTypes.IRON_CHAIN, StateTypes.COPPER_CHAIN, StateTypes.EXPOSED_COPPER_CHAIN, StateTypes.WEATHERED_COPPER_CHAIN, StateTypes.OXIDIZED_COPPER_CHAIN, StateTypes.WAXED_COPPER_CHAIN, StateTypes.WAXED_EXPOSED_COPPER_CHAIN, StateTypes.WAXED_WEATHERED_COPPER_CHAIN, StateTypes.WAXED_OXIDIZED_COPPER_CHAIN, StateTypes.COPPER_LANTERN, StateTypes.EXPOSED_COPPER_LANTERN, StateTypes.WEATHERED_COPPER_LANTERN, StateTypes.OXIDIZED_COPPER_LANTERN, StateTypes.WAXED_COPPER_LANTERN, StateTypes.WAXED_EXPOSED_COPPER_LANTERN, StateTypes.WAXED_WEATHERED_COPPER_LANTERN, StateTypes.WAXED_OXIDIZED_COPPER_LANTERN, StateTypes.COPPER_CHEST, StateTypes.EXPOSED_COPPER_CHEST, StateTypes.WEATHERED_COPPER_CHEST, StateTypes.OXIDIZED_COPPER_CHEST, StateTypes.WAXED_COPPER_CHEST, StateTypes.WAXED_EXPOSED_COPPER_CHEST, StateTypes.WAXED_WEATHERED_COPPER_CHEST, StateTypes.WAXED_OXIDIZED_COPPER_CHEST, StateTypes.COPPER_GOLEM_STATUE, StateTypes.EXPOSED_COPPER_GOLEM_STATUE, StateTypes.WEATHERED_COPPER_GOLEM_STATUE, StateTypes.OXIDIZED_COPPER_GOLEM_STATUE, StateTypes.WAXED_COPPER_GOLEM_STATUE, StateTypes.WAXED_EXPOSED_COPPER_GOLEM_STATUE, StateTypes.WAXED_WEATHERED_COPPER_GOLEM_STATUE, StateTypes.WAXED_OXIDIZED_COPPER_GOLEM_STATUE, StateTypes.EXPOSED_LIGHTNING_ROD, StateTypes.WEATHERED_LIGHTNING_ROD, StateTypes.OXIDIZED_LIGHTNING_ROD, StateTypes.WAXED_LIGHTNING_ROD, StateTypes.WAXED_EXPOSED_LIGHTNING_ROD, StateTypes.WAXED_WEATHERED_LIGHTNING_ROD, StateTypes.WAXED_OXIDIZED_LIGHTNING_ROD);
     }
 
-    String name;
+    TagKey name;
     Set<StateType> states = new HashSet<>(); // o(1)
     boolean reallyEmpty;
 
     public BlockTags(final String name) {
         byName.put(name, this);
-        this.name = name;
+        this.name = new TagKey(new ResourceLocation(name));
     }
 
     private static BlockTags bind(final String s) {
@@ -685,8 +692,12 @@ public class BlockTags {
         return this.states.contains(state);
     }
 
-    public String getName() {
+    public TagKey getKey() {
         return this.name;
+    }
+
+    public String getName() {
+        return this.name.getId().toString();
     }
 
     public static BlockTags getByName(String name) {

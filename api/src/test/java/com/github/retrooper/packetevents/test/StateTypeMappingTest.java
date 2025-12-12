@@ -202,7 +202,7 @@ public class StateTypeMappingTest extends BaseDummyAPITest {
         List<BlockTags> blockTags = new ArrayList<>();
         for (ServerVersion version : ServerVersion.values()) {
             if (version.isNewerThan(serverVersion)) { // Use isNewerThan to exclude the server's own version
-                BlockTags blockTag = BlockTags.getByName(version.name()); // Use name() to match enum naming convention
+                BlockTags blockTag = BlockTags.getByName(version.name().toLowerCase(Locale.ROOT)); // Use name() to match enum naming convention
                 if (blockTag != null) { // Only add non-null tags
                     blockTags.add(blockTag);
                 }
