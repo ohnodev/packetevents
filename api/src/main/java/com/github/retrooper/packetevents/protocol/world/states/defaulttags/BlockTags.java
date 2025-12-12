@@ -396,6 +396,42 @@ public class BlockTags {
      */
     public static final BlockTags DEAD_CORAL_PLANTS = bind("dead_coral_plants");
 
+    /**
+     * Unofficial tag for all blocks added in 1.20.5
+     */
+    @VisibleForTesting @ApiStatus.Internal
+    public static final BlockTags V_1_20_5 = bind("v_1_20_5");
+
+    /**
+     * Unofficial tag for all blocks added in 1.21.2
+     */
+    @VisibleForTesting @ApiStatus.Internal
+    public static final BlockTags V_1_21_2 = bind("v_1_21_2");
+
+    /**
+     * Unofficial tag for all blocks added in 1.21.4
+     */
+    @VisibleForTesting @ApiStatus.Internal
+    public static final BlockTags V_1_21_4 = bind("v_1_21_4");
+
+    /**
+     * Unofficial tag for all blocks added in 1.21.5
+     */
+    @VisibleForTesting @ApiStatus.Internal
+    public static final BlockTags V_1_21_5 = bind("v_1_21_5");
+
+    /**
+     * Unofficial tag for all blocks added in 1.21.6
+     */
+    @VisibleForTesting @ApiStatus.Internal
+    public static final BlockTags V_1_21_6 = bind("v_1_21_6");
+
+    /**
+     * Unofficial tag for all blocks added in 1.21.9
+     */
+    @VisibleForTesting @ApiStatus.Internal
+    public static final BlockTags V_1_21_9 = bind("v_1_21_9");
+
     static {
         BlockTags.WOOL.add(StateTypes.WHITE_WOOL, StateTypes.ORANGE_WOOL, StateTypes.MAGENTA_WOOL, StateTypes.LIGHT_BLUE_WOOL, StateTypes.YELLOW_WOOL, StateTypes.LIME_WOOL, StateTypes.PINK_WOOL, StateTypes.GRAY_WOOL, StateTypes.LIGHT_GRAY_WOOL, StateTypes.CYAN_WOOL, StateTypes.PURPLE_WOOL, StateTypes.BLUE_WOOL, StateTypes.BROWN_WOOL, StateTypes.GREEN_WOOL, StateTypes.RED_WOOL, StateTypes.BLACK_WOOL);
         BlockTags.PLANKS.add(StateTypes.OAK_PLANKS, StateTypes.SPRUCE_PLANKS, StateTypes.BIRCH_PLANKS, StateTypes.JUNGLE_PLANKS, StateTypes.ACACIA_PLANKS, StateTypes.DARK_OAK_PLANKS, StateTypes.PALE_OAK_PLANKS, StateTypes.CRIMSON_PLANKS, StateTypes.WARPED_PLANKS, StateTypes.MANGROVE_PLANKS, StateTypes.BAMBOO_PLANKS, StateTypes.CHERRY_PLANKS);
@@ -610,6 +646,12 @@ public class BlockTags {
         BlockTags.GLASS_PANES.add(StateTypes.GLASS_PANE, StateTypes.WHITE_STAINED_GLASS_PANE, StateTypes.ORANGE_STAINED_GLASS_PANE, StateTypes.MAGENTA_STAINED_GLASS_PANE, StateTypes.LIGHT_BLUE_STAINED_GLASS_PANE, StateTypes.YELLOW_STAINED_GLASS_PANE, StateTypes.LIME_STAINED_GLASS_PANE, StateTypes.PINK_STAINED_GLASS_PANE, StateTypes.GRAY_STAINED_GLASS_PANE, StateTypes.LIGHT_GRAY_STAINED_GLASS_PANE, StateTypes.CYAN_STAINED_GLASS_PANE, StateTypes.PURPLE_STAINED_GLASS_PANE, StateTypes.BLUE_STAINED_GLASS_PANE, StateTypes.BROWN_STAINED_GLASS_PANE, StateTypes.GREEN_STAINED_GLASS_PANE, StateTypes.RED_STAINED_GLASS_PANE, StateTypes.BLACK_STAINED_GLASS_PANE);
         BlockTags.ALL_CORAL_PLANTS.add(StateTypes.TUBE_CORAL, StateTypes.BRAIN_CORAL, StateTypes.BUBBLE_CORAL, StateTypes.FIRE_CORAL, StateTypes.HORN_CORAL, StateTypes.DEAD_TUBE_CORAL, StateTypes.DEAD_BRAIN_CORAL, StateTypes.DEAD_BUBBLE_CORAL, StateTypes.DEAD_FIRE_CORAL, StateTypes.DEAD_HORN_CORAL);
         BlockTags.DEAD_CORAL_PLANTS.add(StateTypes.DEAD_TUBE_CORAL, StateTypes.DEAD_BRAIN_CORAL, StateTypes.DEAD_BUBBLE_CORAL, StateTypes.DEAD_FIRE_CORAL, StateTypes.DEAD_HORN_CORAL);
+        BlockTags.V_1_20_5.add(StateTypes.VAULT, StateTypes.HEAVY_CORE);
+        BlockTags.V_1_21_2.add(StateTypes.PALE_OAK_WOOD, StateTypes.PALE_OAK_PLANKS, StateTypes.PALE_OAK_SAPLING, StateTypes.PALE_OAK_LOG, StateTypes.STRIPPED_PALE_OAK_LOG, StateTypes.STRIPPED_PALE_OAK_WOOD, StateTypes.PALE_OAK_LEAVES, StateTypes.CREAKING_HEART, StateTypes.PALE_OAK_SIGN, StateTypes.PALE_OAK_WALL_SIGN, StateTypes.PALE_OAK_HANGING_SIGN, StateTypes.PALE_OAK_WALL_HANGING_SIGN, StateTypes.PALE_OAK_PRESSURE_PLATE, StateTypes.PALE_OAK_TRAPDOOR, StateTypes.POTTED_PALE_OAK_SAPLING, StateTypes.PALE_OAK_BUTTON, StateTypes.PALE_OAK_STAIRS, StateTypes.PALE_OAK_SLAB, StateTypes.PALE_OAK_FENCE_GATE, StateTypes.PALE_OAK_FENCE, StateTypes.PALE_OAK_DOOR, StateTypes.PALE_MOSS_BLOCK, StateTypes.PALE_MOSS_CARPET, StateTypes.PALE_HANGING_MOSS);
+        BlockTags.V_1_21_4.add(StateTypes.RESIN_CLUMP, StateTypes.RESIN_BLOCK, StateTypes.RESIN_BRICKS, StateTypes.RESIN_BRICK_STAIRS, StateTypes.RESIN_BRICK_SLAB, StateTypes.RESIN_BRICK_WALL, StateTypes.CHISELED_RESIN_BRICKS, StateTypes.OPEN_EYEBLOSSOM, StateTypes.CLOSED_EYEBLOSSOM, StateTypes.POTTED_OPEN_EYEBLOSSOM, StateTypes.POTTED_CLOSED_EYEBLOSSOM);
+        BlockTags.V_1_21_5.add(StateTypes.BUSH, StateTypes.FIREFLY_BUSH, StateTypes.SHORT_DRY_GRASS, StateTypes.TALL_DRY_GRASS, StateTypes.WILDFLOWERS, StateTypes.LEAF_LITTER, StateTypes.CACTUS_FLOWER, StateTypes.TEST_BLOCK, StateTypes.TEST_INSTANCE_BLOCK);
+        BlockTags.V_1_21_6.add(StateTypes.DRIED_GHAST);
+        BlockTags.V_1_21_9.add(StateTypes.ACACIA_SHELF, StateTypes.BAMBOO_SHELF, StateTypes.BIRCH_SHELF, StateTypes.CHERRY_SHELF, StateTypes.CRIMSON_SHELF, StateTypes.DARK_OAK_SHELF, StateTypes.JUNGLE_SHELF, StateTypes.MANGROVE_SHELF, StateTypes.OAK_SHELF, StateTypes.PALE_OAK_SHELF, StateTypes.SPRUCE_SHELF, StateTypes.WARPED_SHELF, StateTypes.COPPER_TORCH, StateTypes.COPPER_WALL_TORCH, StateTypes.COPPER_BARS, StateTypes.EXPOSED_COPPER_BARS, StateTypes.WEATHERED_COPPER_BARS, StateTypes.OXIDIZED_COPPER_BARS, StateTypes.WAXED_COPPER_BARS, StateTypes.WAXED_EXPOSED_COPPER_BARS, StateTypes.WAXED_WEATHERED_COPPER_BARS, StateTypes.WAXED_OXIDIZED_COPPER_BARS, StateTypes.IRON_CHAIN, StateTypes.COPPER_CHAIN, StateTypes.EXPOSED_COPPER_CHAIN, StateTypes.WEATHERED_COPPER_CHAIN, StateTypes.OXIDIZED_COPPER_CHAIN, StateTypes.WAXED_COPPER_CHAIN, StateTypes.WAXED_EXPOSED_COPPER_CHAIN, StateTypes.WAXED_WEATHERED_COPPER_CHAIN, StateTypes.WAXED_OXIDIZED_COPPER_CHAIN, StateTypes.COPPER_LANTERN, StateTypes.EXPOSED_COPPER_LANTERN, StateTypes.WEATHERED_COPPER_LANTERN, StateTypes.OXIDIZED_COPPER_LANTERN, StateTypes.WAXED_COPPER_LANTERN, StateTypes.WAXED_EXPOSED_COPPER_LANTERN, StateTypes.WAXED_WEATHERED_COPPER_LANTERN, StateTypes.WAXED_OXIDIZED_COPPER_LANTERN, StateTypes.COPPER_CHEST, StateTypes.EXPOSED_COPPER_CHEST, StateTypes.WEATHERED_COPPER_CHEST, StateTypes.OXIDIZED_COPPER_CHEST, StateTypes.WAXED_COPPER_CHEST, StateTypes.WAXED_EXPOSED_COPPER_CHEST, StateTypes.WAXED_WEATHERED_COPPER_CHEST, StateTypes.WAXED_OXIDIZED_COPPER_CHEST, StateTypes.COPPER_GOLEM_STATUE, StateTypes.EXPOSED_COPPER_GOLEM_STATUE, StateTypes.WEATHERED_COPPER_GOLEM_STATUE, StateTypes.OXIDIZED_COPPER_GOLEM_STATUE, StateTypes.WAXED_COPPER_GOLEM_STATUE, StateTypes.WAXED_EXPOSED_COPPER_GOLEM_STATUE, StateTypes.WAXED_WEATHERED_COPPER_GOLEM_STATUE, StateTypes.WAXED_OXIDIZED_COPPER_GOLEM_STATUE, StateTypes.EXPOSED_LIGHTNING_ROD, StateTypes.WEATHERED_LIGHTNING_ROD, StateTypes.OXIDIZED_LIGHTNING_ROD, StateTypes.WAXED_LIGHTNING_ROD, StateTypes.WAXED_EXPOSED_LIGHTNING_ROD, StateTypes.WAXED_WEATHERED_LIGHTNING_ROD, StateTypes.WAXED_OXIDIZED_LIGHTNING_ROD);
     }
 
     TagKey name;
