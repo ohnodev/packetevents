@@ -20,7 +20,30 @@ package com.github.retrooper.packetevents.util;
 
 public final class MathUtil {
 
+    public static final float EPSILON = 1e-5f;
+    public static final float F_PI = (float) Math.PI;
+
     private MathUtil() {
+    }
+
+    public static float square(float x) {
+        return x * x;
+    }
+
+    public static float cube(float x) {
+        return x * x * x;
+    }
+
+    public static float lerp(float t, float a, float b) {
+        return t * (b - a) + a;
+    }
+
+    public static double lerp(double t, double a, double b) {
+        return t * (b - a) + a;
+    }
+
+    public static int lerp(float t, int a, int b) {
+        return floor(t * (b - a)) + a;
     }
 
     public static int clamp(int value, int min, int max) {
@@ -43,5 +66,14 @@ public final class MathUtil {
     public static int floor(float value) {
         int temp = (int) value;
         return value < (float) temp ? temp - 1 : temp;
+    }
+
+    public static long ceilLong(double value) {
+        long temp = (long) value;
+        return value > (double) temp ? temp + 1L : temp;
+    }
+
+    public static double absMax(double a, double b) {
+        return Math.max(Math.abs(a), Math.abs(b));
     }
 }

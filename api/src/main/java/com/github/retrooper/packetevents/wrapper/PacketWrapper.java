@@ -119,9 +119,11 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -386,6 +388,10 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
 
     public void writeInt(int value) {
         ByteBufHelper.writeInt(buffer, value);
+    }
+
+    public long readUnsignedInt() {
+        return ByteBufHelper.readUnsignedInt(buffer);
     }
 
     public int readMedium() {
@@ -663,6 +669,10 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
 
     public void writeShort(int value) {
         ByteBufHelper.writeShort(buffer, value);
+    }
+
+    public void writeShortLE(int value) {
+        ByteBufHelper.writeShortLE(buffer, value);
     }
 
     public int readVarShort() {
@@ -1362,6 +1372,18 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
 
     public <K, C extends Collection<K>> C readCollection(IntFunction<C> function, Reader<K> reader) {
         int size = this.readVarInt();
+        return _readCollection(function, reader, size);
+    }
+
+    public <K, C extends Collection<K>> C readCollection(IntFunction<C> function, Reader<K> reader, int maxSize) {
+        int size = this.readVarInt();
+        if (size > maxSize) {
+            throw new RuntimeException(size + " elements exceeded max size of: " + maxSize);
+        }
+        return _readCollection(function, reader, size);
+    }
+
+    private <K, C extends Collection<K>> C _readCollection(IntFunction<C> function, Reader<K> reader, int size) {
         Collection<K> collection = function.apply(size);
         for (int i = 0; i < size; ++i) {
             collection.add(reader.apply(this));
@@ -1380,9 +1402,28 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         return this.readCollection(ArrayList::new, reader);
     }
 
+    public <K> List<K> readList(Reader<K> reader, int maxSize) {
+        return this.readCollection(ArrayList::new, reader, maxSize);
+    }
+
     public <K> void writeList(List<K> list, Writer<K> writer) {
         writeVarInt(list.size());
         for (K key : list) {
+            writer.accept(this, key);
+        }
+    }
+
+    public <K> Set<K> readSet(Reader<K> reader) {
+        return this.readCollection(HashSet::new, reader);
+    }
+
+    public <K> Set<K> readSet(Reader<K> reader, int maxSize) {
+        return this.readCollection(HashSet::new, reader, maxSize);
+    }
+
+    public <K> void writeSet(Set<K> set, Writer<K> writer) {
+        this.writeVarInt(set.size());
+        for (K key : set) {
             writer.accept(this, key);
         }
     }
@@ -1410,6 +1451,18 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
 
     public <Z extends Enum<?>> Z readEnum(Z[] values) {
         return values[this.readVarInt()];
+    }
+
+    public <Z extends Enum<?>> Z readEnum(Class<Z> clazz, Z fallback) {
+        return this.readEnum(clazz.getEnumConstants(), fallback);
+    }
+
+    public <Z extends Enum<?>> Z readEnum(Z[] values, Z fallback) {
+        int id = this.readVarInt();
+        if (id < 0 || id >= values.length) {
+            return fallback;
+        }
+        return values[id];
     }
 
     public void writeEnum(Enum<?> value) {

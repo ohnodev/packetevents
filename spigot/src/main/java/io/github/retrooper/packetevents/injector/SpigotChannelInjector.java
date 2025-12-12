@@ -35,11 +35,14 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@ApiStatus.Internal
 public class SpigotChannelInjector implements ChannelInjector {
     //Channels that process connecting clients.
     public final Set<Channel> injectedConnectionChannels = new HashSet<>();
@@ -47,7 +50,6 @@ public class SpigotChannelInjector implements ChannelInjector {
     private int connectionChannelsListIndex = -1;
 
     public void updatePlayer(User user, Object player) {
-        PacketEvents.getAPI().getEventManager().callEvent(new UserLoginEvent(user, player));
         Object channel = user.getChannel();
         if (channel == null) {
             channel = PacketEvents.getAPI().getPlayerManager().getChannel(player);
@@ -59,10 +61,10 @@ public class SpigotChannelInjector implements ChannelInjector {
     public boolean isPlayerSet(Object channel) {
         if (channel == null) return false;
         PacketEventsEncoder encoder = getEncoder((Channel) channel);
-        if (encoder.player != null) return true;
+        if (encoder != null && encoder.player != null) return true;
 
         PacketEventsDecoder decoder = getDecoder((Channel) channel);
-        return decoder.player != null;
+        return decoder != null && decoder.player != null;
     }
 
     @Override
@@ -123,7 +125,7 @@ public class SpigotChannelInjector implements ChannelInjector {
                     try {
                         ServerConnectionInitializer.initChannel(channel, ConnectionState.PLAY);
                     } catch (Exception e) {
-                        PacketEvents.getAPI().getLogManager().severe("Spigot injector failed to inject into an existing channel.");
+                        PacketEvents.getAPI().getLogManager().severe("PacketEvents Spigot injector failed to inject into an existing channel. If you need assistance, join our Discord server: https://discord.gg/DVHxPPxHZc");
                         e.printStackTrace();
                     }
                 }
@@ -228,11 +230,17 @@ public class SpigotChannelInjector implements ChannelInjector {
         }
     }
 
-    private PacketEventsEncoder getEncoder(Channel channel) {
+    /**
+     * @return may return null if the channel is closed already or not initialized yet
+     */
+    public @Nullable PacketEventsEncoder getEncoder(Channel channel) {
         return (PacketEventsEncoder) channel.pipeline().get(PacketEvents.ENCODER_NAME);
     }
 
-    private PacketEventsDecoder getDecoder(Channel channel) {
+    /**
+     * @return may return null if the channel is closed already or not initialized yet
+     */
+    public @Nullable PacketEventsDecoder getDecoder(Channel channel) {
          return (PacketEventsDecoder) channel.pipeline().get(PacketEvents.DECODER_NAME);
     }
 

@@ -32,7 +32,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum ServerVersion {
     //TODO Rename to MinecraftVersion?
-    V_1_7_10(5),
+    V_1_7_2(4), V_1_7_4(4), V_1_7_5(4),
+    V_1_7_6(5), V_1_7_7(5), V_1_7_8(5), V_1_7_9(5), V_1_7_10(5),
     V_1_8(47), V_1_8_3(47), V_1_8_8(47),
     V_1_9(107), V_1_9_1(108), V_1_9_2(109), V_1_9_4(110),
     //1.10 and 1.10.1 are redundant
@@ -49,8 +50,8 @@ public enum ServerVersion {
     V_1_19(759), V_1_19_1(760), V_1_19_2(760), V_1_19_3(761), V_1_19_4(762),
     //1.20 and 1.20.1 have the same protocol version. 1.20.3 and 1.20.4 have the same protocol version. 1.20.5 and 1.20.6 have the same protocol version
     V_1_20(763), V_1_20_1(763), V_1_20_2(764), V_1_20_3(765), V_1_20_4(765), V_1_20_5(766), V_1_20_6(766),
-    //1.21 and 1.21.1 have the same protocol version. 1.21.2 and 1.21.3 have the same protocol version
-    V_1_21(767), V_1_21_1(767), V_1_21_2(768), V_1_21_3(768), V_1_21_4(769), V_1_21_5(770), V_1_21_6(771), V_1_21_7(772),
+    //1.21 and 1.21.1 have the same protocol version. 1.21.2 and 1.21.3 have the same protocol version. 1.21.7 and 1.21.8 have the same protocol version. 1.21.9 and 1.21.10 have the same protocol version
+    V_1_21(767), V_1_21_1(767), V_1_21_2(768), V_1_21_3(768), V_1_21_4(769), V_1_21_5(770), V_1_21_6(771), V_1_21_7(772), V_1_21_8(772), V_1_21_9(773), V_1_21_10(773), V_1_21_11(774),
     //TODO UPDATE Add server version constant
     ERROR(-1, true);
 

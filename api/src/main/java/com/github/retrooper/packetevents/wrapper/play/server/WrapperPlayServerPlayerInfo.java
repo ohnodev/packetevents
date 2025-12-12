@@ -71,7 +71,7 @@ public class WrapperPlayServerPlayerInfo extends PacketWrapper<WrapperPlayServer
 
     @Override
     public void read() {
-        if (serverVersion == ServerVersion.V_1_7_10) {
+        if (this.serverVersion.isOlderThanOrEquals(ServerVersion.V_1_7_10)) {
             playerDataList = new ArrayList<>(1);
             //Only one player data
             String rawUsername = readString();
@@ -145,7 +145,7 @@ public class WrapperPlayServerPlayerInfo extends PacketWrapper<WrapperPlayServer
 
     @Override
     public void write() {
-        if (serverVersion == ServerVersion.V_1_7_10) {
+        if (this.serverVersion.isOlderThanOrEquals(ServerVersion.V_1_7_10)) {
             //Only one player data can be sent
             PlayerData data = playerDataList.get(0);
             //We must convert the component string to a normal one
@@ -250,11 +250,11 @@ public class WrapperPlayServerPlayerInfo extends PacketWrapper<WrapperPlayServer
             this(displayName, userProfile, gameMode, null, ping);
         }
 
-        public UserProfile getUserProfile() {
+        public @Nullable UserProfile getUserProfile() {
             return userProfile;
         }
 
-        public void setUserProfile(UserProfile userProfile) {
+        public void setUserProfile(@Nullable UserProfile userProfile) {
             this.userProfile = userProfile;
         }
 
@@ -266,11 +266,18 @@ public class WrapperPlayServerPlayerInfo extends PacketWrapper<WrapperPlayServer
             this.signatureData = signatureData;
         }
 
-        @Nullable
-        public UserProfile getUser() {
-            return userProfile;
+        /**
+         * @deprecated duplicate, use {@link #getUserProfile()} instead
+         */
+        @Deprecated
+        public @Nullable UserProfile getUser() {
+            return this.userProfile;
         }
 
+        /**
+         * @deprecated duplicate, use {@link #setUserProfile(UserProfile)} instead
+         */
+        @Deprecated
         public void setUser(@Nullable UserProfile userProfile) {
             this.userProfile = userProfile;
         }

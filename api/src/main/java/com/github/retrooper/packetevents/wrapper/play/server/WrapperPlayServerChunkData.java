@@ -194,8 +194,13 @@ public class WrapperPlayServerChunkData extends PacketWrapper<WrapperPlayServerC
             // verify the full chunk has been read
             int readerIndex = ByteBufHelper.readerIndex(this.buffer);
             if (expectedReaderIndex != readerIndex) {
-                throw new RuntimeException("Error while decoding chunk at " + chunkX + " " + chunkZ
-                        + "; expected reader index " + expectedReaderIndex + ", got " + readerIndex);
+                if (expectedReaderIndex < readerIndex) {
+                    // we advanced too far, error
+                    throw new RuntimeException("Error while decoding chunk at " + chunkX + " " + chunkZ
+                            + "; expected reader index " + expectedReaderIndex + ", got " + readerIndex);
+                }
+                // we didn't read the whole buffer, skip the rest
+                ByteBufHelper.readerIndex(this.buffer, expectedReaderIndex);
             }
         } finally {
             // change buffer back if it has been switched
@@ -329,7 +334,8 @@ public class WrapperPlayServerChunkData extends PacketWrapper<WrapperPlayServerC
             this.buffer = originalBuffer;
 
             // write the same amount of zero bytes mojang also writes
-            if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_5)) {
+            if (this.serverVersion.isOlderThan(ServerVersion.V_1_21_6)
+                    && this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_5)) {
                 int zeroBytes = ChunkReader_v1_18.getMojangZeroByteSuffixLength(chunks);
                 int newWriterIndex = ByteBufHelper.writerIndex(dataBuffer) + zeroBytes;
                 // allocate enough space for the zeros

@@ -29,6 +29,9 @@ java {
 
 tasks {
     withType<JavaCompile> {
+        options.compilerArgs.add("-parameters")
+        options.compilerArgs.add("-g")
+
         sequenceOf("unchecked", "deprecation", "removal")
             .forEach { options.compilerArgs.add("-Xlint:$it") }
 
@@ -59,6 +62,12 @@ tasks {
         archiveClassifier = "default"
     }
 
+    sequenceOf("sourcesJar", "javadocJar").forEach {
+        named<Jar>(it) {
+            destinationDirectory = rootProject.layout.buildDirectory.dir("libs")
+        }
+    }
+
     defaultTasks("build")
 }
 
@@ -74,7 +83,7 @@ publishing {
 
                 val allDependencies = project.provider {
                     project.configurations.getByName("shadow").allDependencies
-                        .filter { it is ProjectDependency || it !is SelfResolvingDependency }
+                        .filter { it is ProjectDependency || it !is FileCollectionDependency }
                 }
 
                 pom {

@@ -20,6 +20,7 @@ package io.github.retrooper.packetevents.util;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
@@ -39,13 +40,21 @@ import com.github.retrooper.packetevents.protocol.world.dimension.DimensionTypes
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.SimpleTypesBuilderData;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pose;
 import org.bukkit.inventory.MainHand;
 import org.jetbrains.annotations.Nullable;
 
-public class SpigotConversionUtil {
+import java.util.List;
+
+public final class SpigotConversionUtil {
+
+    private SpigotConversionUtil() {
+    }
+
     public static Location fromBukkitLocation(org.bukkit.Location location) {
         return new Location(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
@@ -173,10 +182,10 @@ public class SpigotConversionUtil {
             Object nbt = SpigotReflectionUtil.convertWorldServerDimensionToNMSNbt(serverLevel);
 
             NBTCompound peNbt = SpigotReflectionUtil.fromMinecraftNBT(nbt);
-            ResourceLocation dimensionName = new ResourceLocation(SpigotReflectionUtil.getDimensionKey(serverLevel));
-            int dimensionId = SpigotReflectionUtil.getDimensionId(serverLevel);
-            return DimensionType.decode(peNbt, version.toClientVersion(),
-                    new SimpleTypesBuilderData(dimensionName, dimensionId));
+            ResourceLocation dimensionTypeName = new ResourceLocation(SpigotReflectionUtil.getDimensionKey(serverLevel));
+            int dimensionTypeId = SpigotReflectionUtil.getDimensionId(serverLevel);
+            return DimensionType.CODEC.decode(peNbt, PacketWrapper.createDummyWrapper(version.toClientVersion()))
+                    .copy(new SimpleTypesBuilderData(dimensionTypeName, dimensionTypeId));
         }
     }
 
@@ -232,5 +241,17 @@ public class SpigotConversionUtil {
 
     public static MainHand toBukkitHand(HumanoidArm arm) {
         return MainHand.values()[arm.ordinal()];
+    }
+
+    /**
+     * Retrieves the metadata of a given Bukkit {@link org.bukkit.entity.Entity},
+     * returned as a list of {@link com.github.retrooper.packetevents.protocol.entity.data.EntityData}
+     * compatible with PacketEvents.
+     *
+     * @param entity the Bukkit entity to extract metadata from
+     * @return a list of the entity's metadata values
+     */
+    public static List<EntityData<?>> getEntityMetadata(Entity entity) {
+        return SpigotReflectionUtil.getEntityMetadata(entity);
     }
 }

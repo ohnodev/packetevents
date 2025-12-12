@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.protocol.nbt;
 
+import com.github.retrooper.packetevents.protocol.util.NbtCodecException;
 import com.github.retrooper.packetevents.protocol.util.NbtDecoder;
 import com.github.retrooper.packetevents.protocol.util.NbtEncoder;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -31,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class NBTCompound extends NBT {
 
@@ -45,6 +47,10 @@ public class NBTCompound extends NBT {
         return tags.isEmpty();
     }
 
+    public boolean contains(String key) {
+        return this.tags.containsKey(key);
+    }
+
     public Set<String> getTagNames() {
         return Collections.unmodifiableSet(tags.keySet());
     }
@@ -57,10 +63,10 @@ public class NBTCompound extends NBT {
         return tags.size();
     }
 
-    public NBT getTagOrThrow(String key) {
+    public NBT getTagOrThrow(String key) throws NbtCodecException {
         NBT tag = getTagOrNull(key);
         if (tag == null) {
-            throw new IllegalStateException(MessageFormat.format("NBT {0} does not exist", key));
+            throw new NbtCodecException("Tag " + key + " doesn't exist");
         }
         return tag;
     }
@@ -70,12 +76,12 @@ public class NBTCompound extends NBT {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends NBT> T getTagOfTypeOrThrow(String key, Class<T> type) {
+    public <T extends NBT> T getTagOfTypeOrThrow(String key, Class<T> type) throws NbtCodecException {
         NBT tag = getTagOrThrow(key);
         if (type.isInstance(tag)) {
             return (T) tag;
         } else {
-            throw new IllegalStateException(MessageFormat.format("NBT {0} has unexpected type, expected {1}, but got {2}", key, type, tag.getClass()));
+            throw new NbtCodecException(MessageFormat.format("NBT {0} has unexpected type, expected {1}, but got {2}", key, type, tag.getClass()));
         }
     }
 
@@ -89,10 +95,10 @@ public class NBTCompound extends NBT {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends NBT> NBTList<T> getTagListOfTypeOrThrow(String key, Class<T> type) {
+    public <T extends NBT> NBTList<T> getTagListOfTypeOrThrow(String key, Class<T> type) throws NbtCodecException {
         NBTList<? extends NBT> list = getTagOfTypeOrThrow(key, NBTList.class);
         if (!type.isAssignableFrom(list.getTagsType().getNBTClass())) {
-            throw new IllegalStateException(MessageFormat.format("NBTList {0} tags type has unexpected type, expected {1}, but got {2}", key, type, list.getTagsType().getNBTClass()));
+            throw new NbtCodecException(MessageFormat.format("NBTList {0} tags type has unexpected type, expected {1}, but got {2}", key, type, list.getTagsType().getNBTClass()));
         }
         return (NBTList<T>) list;
     }
@@ -235,10 +241,20 @@ public class NBTCompound extends NBT {
         return nbtByte != null ? nbtByte.getAsByte() != 0 : defaultValue;
     }
 
+    public boolean getBooleanOrThrow(String string) {
+        return this.getTagOfTypeOrThrow(string, NBTNumber.class).getAsByte() != 0;
+    }
+
     @Contract("_, _, !null, _ -> !null")
     public <T> @Nullable T getOr(String key, NbtDecoder<T> decoder, @Nullable T def, PacketWrapper<?> wrapper) {
         NBT tag = this.getTagOrNull(key);
         return tag != null ? decoder.decode(tag, wrapper) : def;
+    }
+
+    @Contract("_, _, !null, _ -> !null")
+    public <T> @Nullable T getOrSupply(String key, NbtDecoder<T> decoder, Supplier<@Nullable T> def, PacketWrapper<?> wrapper) {
+        NBT tag = this.getTagOrNull(key);
+        return tag != null ? decoder.decode(tag, wrapper) : def.get();
     }
 
     public <T> @Nullable T getOrNull(String key, NbtDecoder<T> decoder, PacketWrapper<?> wrapper) {
@@ -284,7 +300,7 @@ public class NBTCompound extends NBT {
         if (list == null) {
             throw new IllegalStateException(MessageFormat.format("NBT {0} does not exist", key));
         }
-        return null;
+        return list;
     }
 
     public <T> void set(String key, T value, NbtEncoder<T> encoder, PacketWrapper<?> wrapper) {
@@ -297,10 +313,11 @@ public class NBTCompound extends NBT {
         } else {
             // determine list type using first value in list
             NBT firstVal = encoder.encode(wrapper, value.get(0));
-            NBTList<?> list = new NBTList<>(firstVal.getType(), value.size());
+            int size = value.size();
+            NBTList<?> list = new NBTList<>(firstVal.getType(), size);
             list.addTagUnsafe(firstVal);
             // add remaining list entries
-            for (int i = 1; i < value.size(); i++) {
+            for (int i = 1; i < size; i++) {
                 list.addTagUnsafe(encoder.encode(wrapper, value.get(i)));
             }
             this.setTag(key, list);

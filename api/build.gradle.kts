@@ -2,6 +2,7 @@ import com.github.retrooper.compression.strategy.dir.JsonBase64DataDirStrategy
 import com.github.retrooper.compression.strategy.dir.JsonRegistryCompressionDirStrategy
 import com.github.retrooper.compression.strategy.dir.JsonToNbtDirStrategy
 import com.github.retrooper.excludeAdventure
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     packetevents.`shadow-conventions`
@@ -36,6 +37,7 @@ dependencies {
     testImplementation(libs.adventure.text.serializer.legacy)
     testImplementation(project(":netty-common"))
     testImplementation(testlibs.mockbukkit)
+    testImplementation(testlibs.paper.api)
     testImplementation(testlibs.slf4j)
     testImplementation(testlibs.bundles.junit)
     testImplementation(libs.netty)
@@ -88,6 +90,9 @@ tasks {
 
     test {
         useJUnitPlatform()
+        testLogging {
+            exceptionFormat = TestExceptionFormat.FULL
+        }
     }
 
     shadowJar {
