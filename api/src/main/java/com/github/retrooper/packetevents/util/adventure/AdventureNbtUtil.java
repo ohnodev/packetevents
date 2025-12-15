@@ -50,13 +50,32 @@ public final class AdventureNbtUtil {
         BinaryTagTypes.BYTE.id(); // initialize types
 
         // there is no way to get all registered types...
-        List<BinaryTagType<? extends BinaryTag>> types;
+        List<BinaryTagType<? extends BinaryTag>> types = null;
+
+        // Smarter Reflection: Scan for the field instead of looking up by name "TYPES"
         try {
-            Field typesField = BinaryTagType.class.getDeclaredField("TYPES");
-            typesField.setAccessible(true);
-            types = (List<BinaryTagType<? extends BinaryTag>>) typesField.get(null);
-        } catch (ReflectiveOperationException exception) {
-            throw new RuntimeException("Error while accessing registered binary tag types", exception);
+            for (Field field : BinaryTagType.class.getDeclaredFields()) {
+                // We are looking for a 'static List' field
+                if (java.lang.reflect.Modifier.isStatic(field.getModifiers())
+                        && List.class.isAssignableFrom(field.getType())) {
+
+                    field.setAccessible(true);
+                    Object value = field.get(null);
+
+                    // Validation: Ensure this list actually contains NBT types
+                    // This prevents us from grabbing some other random cache list
+                    if (value instanceof List && ((List<?>) value).contains(BinaryTagTypes.BYTE)) {
+                        types = (List<BinaryTagType<? extends BinaryTag>>) value;
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error scanning for Adventure NBT registry", e);
+        }
+
+        if (types == null) {
+            throw new RuntimeException("Could not locate Adventure NBT registry field (mapping mismatch?)");
         }
 
         // accessing by array is a lot faster than looping through a list
