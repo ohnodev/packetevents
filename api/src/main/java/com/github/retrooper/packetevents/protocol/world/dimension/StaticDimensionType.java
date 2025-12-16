@@ -192,8 +192,7 @@ public class StaticDimensionType extends AbstractMappedEntity implements Dimensi
 
     @Override
     public void doResolve(PacketWrapper<?> wrapper) {
-        IRegistry<Timeline> registry = wrapper.replaceRegistry(Timelines.getRegistry());
-        this.timelines = this.timelinesRef.resolve(wrapper, registry);
+        this.timelines = this.timelinesRef.resolve(wrapper, Timelines.getRegistry());
     }
 
     @Override
