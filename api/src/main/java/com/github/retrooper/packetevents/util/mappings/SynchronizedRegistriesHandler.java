@@ -75,6 +75,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.configuration.server.WrapperConfigServerRegistryData.RegistryElement;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +84,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+@NullMarked
 @ApiStatus.Internal
 public final class SynchronizedRegistriesHandler {
 
@@ -138,7 +140,7 @@ public final class SynchronizedRegistriesHandler {
             User user, PacketWrapper<?> wrapper,
             ResourceLocation registryName,
             List<RegistryElement> elements,
-            Object cacheKey
+            @Nullable Object cacheKey
     ) {
         RegistryEntry<?> registryData = REGISTRY_KEYS.get(registryName);
         if (registryData == null) {
