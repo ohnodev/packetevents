@@ -54,7 +54,6 @@ import com.github.retrooper.packetevents.protocol.item.trimpattern.TrimPatterns;
 import com.github.retrooper.packetevents.protocol.mapper.CopyableEntity;
 import com.github.retrooper.packetevents.protocol.mapper.DeepComparableEntity;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
-import com.github.retrooper.packetevents.protocol.mapper.ResolvableEntity;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTList;
@@ -76,6 +75,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.configuration.server.WrapperConfigServerRegistryData.RegistryElement;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +84,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+@NullMarked
 @ApiStatus.Internal
 public final class SynchronizedRegistriesHandler {
 
@@ -139,7 +140,7 @@ public final class SynchronizedRegistriesHandler {
             User user, PacketWrapper<?> wrapper,
             ResourceLocation registryName,
             List<RegistryElement> elements,
-            Object cacheKey
+            @Nullable Object cacheKey
     ) {
         RegistryEntry<?> registryData = REGISTRY_KEYS.get(registryName);
         if (registryData == null) {
@@ -153,13 +154,6 @@ public final class SynchronizedRegistriesHandler {
                     registryData.createFromElements(elements, wrapper));
         }
         user.putRegistry(syncedRegistry);
-        // do some resolving stuff for registry entries which may
-        // reference the same registry they are in
-        for (MappedEntity entry : syncedRegistry.getEntries()) {
-            if (entry instanceof ResolvableEntity) {
-                ((ResolvableEntity) entry).doResolve(wrapper);
-            }
-        }
     }
 
     public static void handleLegacyRegistries(
