@@ -217,6 +217,10 @@ public class Vector3i {
         return add(face.getModX(), face.getModY(), face.getModZ());
     }
 
+    public Vector3i offset(BlockFace face, int i) {
+        return i == 0 ? this : add(face.getModX() * i, face.getModY() * i, face.getModZ() * i);
+    }
+
     public Vector3i subtract(int x, int y, int z) {
         return new Vector3i(this.x - x, this.y - y, this.z - z);
     }
