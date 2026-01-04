@@ -189,6 +189,10 @@ public class Vector3d {
         return add(face.getModX(), face.getModY(), face.getModZ());
     }
 
+    public Vector3d offset(BlockFace face, int i) {
+        return i == 0 ? this : add(face.getModX() * i, face.getModY() * i, face.getModZ() * i);
+    }
+
     public Vector3d subtract(double x, double y, double z) {
         return new Vector3d(this.x - x, this.y - y, this.z - z);
     }
