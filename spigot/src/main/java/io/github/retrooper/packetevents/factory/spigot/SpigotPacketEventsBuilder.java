@@ -114,9 +114,7 @@ public class SpigotPacketEventsBuilder {
                         throw new IllegalStateException(ex);
                     }
 
-                    if (!PacketType.isPrepared()) {
-                        PacketType.prepare();
-                    }
+                    PacketType.prepare();
 
                     //Server hasn't bound to the port yet.
                     lateBind = !injector.isServerBound();

@@ -93,9 +93,7 @@ public class TestPacketEventsBuilder {
                     PacketEvents.SERVER_CHANNEL_HANDLER_NAME = "pe-connection-initializer-" + id;
                     PacketEvents.TIMEOUT_HANDLER_NAME = "pe-timeout-handler-" + id;
 
-                    if (!PacketType.isPrepared()) {
-                        PacketType.prepare();
-                    }
+                    PacketType.prepare();
 
                     loaded = true;
                 }

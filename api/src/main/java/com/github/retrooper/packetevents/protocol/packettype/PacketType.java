@@ -438,6 +438,10 @@ public final class PacketType {
             ClientVersion.V_1_21_6,
             ClientVersion.V_1_21_9);
 
+    private PacketType() {
+    }
+
+    @ApiStatus.Internal
     public static void prepare() {
         if (PREPARED) {
             return;
@@ -457,6 +461,7 @@ public final class PacketType {
         }
     }
 
+    @ApiStatus.Internal
     public static boolean isPrepared() {
         return PREPARED;
     }
