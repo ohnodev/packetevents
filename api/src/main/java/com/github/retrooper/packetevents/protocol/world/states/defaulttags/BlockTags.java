@@ -388,21 +388,13 @@ public class BlockTags {
      */
     public static final BlockTags GLASS_PANES = bind("glass_panes");
     /**
-     * Unofficial tag for all dead coral plants
-     */
-    public static final BlockTags DEAD_CORAL_PLANTS = bind("dead_coral_plants");
-    /**
-     * Unofficial tag for all dead coral plants
-     */
-    public static final BlockTags DEAD_CORALS = bind("dead_corals");
-    /**
      * Unofficial tag for all coral plants
      */
     public static final BlockTags ALL_CORAL_PLANTS = bind("alive_coral_plants");
     /**
-     * Unofficial tag for all corals
+     * Unofficial tag for all dead coral plants
      */
-    public static final BlockTags ALL_CORALS = bind("all_corals");
+    public static final BlockTags DEAD_CORAL_PLANTS = bind("dead_coral_plants");
 
     /**
      * Unofficial tag for all blocks added in 1.20.5
@@ -652,10 +644,8 @@ public class BlockTags {
         // Unofficial blocks to help packetevents users
         BlockTags.GLASS_BLOCKS.add(StateTypes.GLASS, StateTypes.WHITE_STAINED_GLASS, StateTypes.ORANGE_STAINED_GLASS, StateTypes.MAGENTA_STAINED_GLASS, StateTypes.LIGHT_BLUE_STAINED_GLASS, StateTypes.YELLOW_STAINED_GLASS, StateTypes.LIME_STAINED_GLASS, StateTypes.PINK_STAINED_GLASS, StateTypes.GRAY_STAINED_GLASS, StateTypes.LIGHT_GRAY_STAINED_GLASS, StateTypes.CYAN_STAINED_GLASS, StateTypes.PURPLE_STAINED_GLASS, StateTypes.BLUE_STAINED_GLASS, StateTypes.BROWN_STAINED_GLASS, StateTypes.GREEN_STAINED_GLASS, StateTypes.RED_STAINED_GLASS, StateTypes.BLACK_STAINED_GLASS, StateTypes.TINTED_GLASS);
         BlockTags.GLASS_PANES.add(StateTypes.GLASS_PANE, StateTypes.WHITE_STAINED_GLASS_PANE, StateTypes.ORANGE_STAINED_GLASS_PANE, StateTypes.MAGENTA_STAINED_GLASS_PANE, StateTypes.LIGHT_BLUE_STAINED_GLASS_PANE, StateTypes.YELLOW_STAINED_GLASS_PANE, StateTypes.LIME_STAINED_GLASS_PANE, StateTypes.PINK_STAINED_GLASS_PANE, StateTypes.GRAY_STAINED_GLASS_PANE, StateTypes.LIGHT_GRAY_STAINED_GLASS_PANE, StateTypes.CYAN_STAINED_GLASS_PANE, StateTypes.PURPLE_STAINED_GLASS_PANE, StateTypes.BLUE_STAINED_GLASS_PANE, StateTypes.BROWN_STAINED_GLASS_PANE, StateTypes.GREEN_STAINED_GLASS_PANE, StateTypes.RED_STAINED_GLASS_PANE, StateTypes.BLACK_STAINED_GLASS_PANE);
+        BlockTags.ALL_CORAL_PLANTS.add(StateTypes.TUBE_CORAL, StateTypes.BRAIN_CORAL, StateTypes.BUBBLE_CORAL, StateTypes.FIRE_CORAL, StateTypes.HORN_CORAL, StateTypes.DEAD_TUBE_CORAL, StateTypes.DEAD_BRAIN_CORAL, StateTypes.DEAD_BUBBLE_CORAL, StateTypes.DEAD_FIRE_CORAL, StateTypes.DEAD_HORN_CORAL);
         BlockTags.DEAD_CORAL_PLANTS.add(StateTypes.DEAD_TUBE_CORAL, StateTypes.DEAD_BRAIN_CORAL, StateTypes.DEAD_BUBBLE_CORAL, StateTypes.DEAD_FIRE_CORAL, StateTypes.DEAD_HORN_CORAL);
-        BlockTags.DEAD_CORALS.addTag(DEAD_CORAL_PLANTS).add(StateTypes.DEAD_TUBE_CORAL_FAN, StateTypes.DEAD_BRAIN_CORAL_FAN, StateTypes.DEAD_BUBBLE_CORAL_FAN, StateTypes.DEAD_FIRE_CORAL_FAN, StateTypes.DEAD_HORN_CORAL_FAN);
-        BlockTags.ALL_CORAL_PLANTS.addTag(CORAL_PLANTS).addTag(DEAD_CORAL_PLANTS);
-        BlockTags.ALL_CORALS.addTag(CORALS).addTag(DEAD_CORALS);
         BlockTags.V_1_20_5.add(StateTypes.VAULT, StateTypes.HEAVY_CORE);
         BlockTags.V_1_21_2.add(StateTypes.PALE_OAK_WOOD, StateTypes.PALE_OAK_PLANKS, StateTypes.PALE_OAK_SAPLING, StateTypes.PALE_OAK_LOG, StateTypes.STRIPPED_PALE_OAK_LOG, StateTypes.STRIPPED_PALE_OAK_WOOD, StateTypes.PALE_OAK_LEAVES, StateTypes.CREAKING_HEART, StateTypes.PALE_OAK_SIGN, StateTypes.PALE_OAK_WALL_SIGN, StateTypes.PALE_OAK_HANGING_SIGN, StateTypes.PALE_OAK_WALL_HANGING_SIGN, StateTypes.PALE_OAK_PRESSURE_PLATE, StateTypes.PALE_OAK_TRAPDOOR, StateTypes.POTTED_PALE_OAK_SAPLING, StateTypes.PALE_OAK_BUTTON, StateTypes.PALE_OAK_STAIRS, StateTypes.PALE_OAK_SLAB, StateTypes.PALE_OAK_FENCE_GATE, StateTypes.PALE_OAK_FENCE, StateTypes.PALE_OAK_DOOR, StateTypes.PALE_MOSS_BLOCK, StateTypes.PALE_MOSS_CARPET, StateTypes.PALE_HANGING_MOSS);
         BlockTags.V_1_21_4.add(StateTypes.RESIN_CLUMP, StateTypes.RESIN_BLOCK, StateTypes.RESIN_BRICKS, StateTypes.RESIN_BRICK_STAIRS, StateTypes.RESIN_BRICK_SLAB, StateTypes.RESIN_BRICK_WALL, StateTypes.CHISELED_RESIN_BRICKS, StateTypes.OPEN_EYEBLOSSOM, StateTypes.CLOSED_EYEBLOSSOM, StateTypes.POTTED_OPEN_EYEBLOSSOM, StateTypes.POTTED_CLOSED_EYEBLOSSOM);
