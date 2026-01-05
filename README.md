@@ -11,7 +11,7 @@
 <h3>Resources</h3>
 
 - [Read documentation](https://docs.packetevents.com/)
-    - [Getting Started](https://docs.packetevents.com/getting-started)
+    - [Getting Started](https://docs.packetevents.com/development-setup)
     - [JavaDocs](https://javadocs.packetevents.com)
 - [Releases](https://github.com/retrooper/packetevents/releases/)
     - [Modrinth](https://modrinth.com/plugin/packetevents)
