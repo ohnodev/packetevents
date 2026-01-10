@@ -234,8 +234,13 @@ public class VelocityPacketEventsBuilder {
             @Override
             public void terminate() {
                 if (initialized) {
-                    // Uninject the injector
-                    injector.uninject();
+                    // try to uninject the injector
+                    try {
+                        this.injector.uninject();
+                    } catch (Exception exception) {
+                        this.logManager.warn("Failed to uninject from initializer");
+                        exception.printStackTrace();
+                    }
                     // Remove handlers for players
                     for (User user : this.protocolManager.getUsers()) {
                         Channel channel = (Channel) user.getChannel();
