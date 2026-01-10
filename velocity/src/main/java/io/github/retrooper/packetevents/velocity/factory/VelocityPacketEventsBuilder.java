@@ -234,7 +234,7 @@ public class VelocityPacketEventsBuilder {
             @Override
             public void terminate() {
                 if (initialized) {
-                    // Eject the injector
+                    // Uninject the injector
                     injector.uninject();
                     // Remove handlers for players
                     for (User user : this.protocolManager.getUsers()) {
