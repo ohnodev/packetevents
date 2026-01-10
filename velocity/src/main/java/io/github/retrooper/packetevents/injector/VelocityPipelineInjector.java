@@ -82,9 +82,11 @@ public class VelocityPipelineInjector implements ChannelInjector {
         if (wrapper instanceof VelocityChannelInitializer) {
             try {
                 SET_SERVER_INTIIALIZER.invoke(initializerHolder, ((VelocityChannelInitializer) wrapper).getWrappedInitializer());
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+            } catch (IllegalAccessException | InvocationTargetException exception) {
+                throw new RuntimeException("Failed to uninject from frontend pipeline", exception);
             }
+        } else {
+            throw new IllegalStateException("Failed to uninject from frontend pipeline: can't unwrap foreign channel initializer");
         }
     }
 
