@@ -46,6 +46,7 @@ import io.github.retrooper.packetevents.impl.netty.manager.protocol.ProtocolMana
 import io.github.retrooper.packetevents.impl.netty.manager.server.ServerManagerAbstract;
 import io.github.retrooper.packetevents.injector.VelocityPipelineInjector;
 import io.github.retrooper.packetevents.manager.PlayerManagerImpl;
+import io.netty.channel.Channel;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -233,8 +234,18 @@ public class VelocityPacketEventsBuilder {
             @Override
             public void terminate() {
                 if (initialized) {
-                    // Eject the injector if needed(depends on the injector implementation)
+                    // Uninject the injector
                     injector.uninject();
+                    // Remove handlers for players
+                    for (User user : this.protocolManager.getUsers()) {
+                        Channel channel = (Channel) user.getChannel();
+                        if (channel.pipeline().get(PacketEvents.ENCODER_NAME) != null) {
+                            channel.pipeline().remove(PacketEvents.ENCODER_NAME);
+                        }
+                        if (channel.pipeline().get(PacketEvents.DECODER_NAME) != null) {
+                            channel.pipeline().remove(PacketEvents.DECODER_NAME);
+                        }
+                    }
                     // Unregister all our listeners
                     getEventManager().unregisterAllListeners();
                     initialized = false;
