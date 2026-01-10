@@ -38,7 +38,7 @@ public class WrapperPlayServerChatMessage extends PacketWrapper<WrapperPlayServe
 
     static {
         CHAT_V1_7_PROCESSOR = new ChatMessageProcessor_v1_7();
-        CHAT_V1_8_PROCESSOR = new ChatMessageProcessor_v1_8();
+        CHAT_V1_8_PROCESSOR = new ChatMessageProcessorLegacy();
         CHAT_V1_16_PROCESSOR = new ChatMessageProcessor_v1_16();
         CHAT_V1_19_PROCESSOR = new ChatMessageProcessor_v1_19();
         CHAT_V1_19_1_PROCESSOR = new ChatMessageProcessor_v1_19_1();

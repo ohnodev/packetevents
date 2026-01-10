@@ -27,7 +27,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-public class ChatMessageProcessor_v1_8 implements ChatMessageProcessor {
+public class ChatMessageProcessorLegacy implements ChatMessageProcessor {
     @Override
     public ChatMessage readChatMessage(@NotNull PacketWrapper<?> wrapper) {
         Component chatContent = wrapper.readComponent();
