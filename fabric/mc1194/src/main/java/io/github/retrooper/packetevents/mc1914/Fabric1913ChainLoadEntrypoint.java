@@ -10,6 +10,7 @@ import io.github.retrooper.packetevents.mc1140.manager.registry.Fabric1140ItemRe
 import io.github.retrooper.packetevents.mc1914.factory.fabric.Fabric1190ServerPlayerManager;
 import io.github.retrooper.packetevents.mc1914.manager.registry.Fabric1193ItemRegistry;
 import io.github.retrooper.packetevents.util.LazyHolder;
+import net.minecraft.network.ClientConnection;
 
 public class Fabric1913ChainLoadEntrypoint implements ChainLoadEntryPoint {
 

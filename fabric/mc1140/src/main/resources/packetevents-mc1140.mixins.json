@@ -8,6 +8,7 @@
     "MixinClientConnectionChInit"
   ],
   "mixins": [
+    "MixinClientConnectionCompression",
     "MixinServerNetworkIoChInit",
     "PlayerManagerMixin",
     "PlayerManagerRespawnMixin"

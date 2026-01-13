@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.PacketEventsAPI;
 import com.github.retrooper.packetevents.event.UserConnectEvent;
 import com.github.retrooper.packetevents.event.UserLoginEvent;
 import com.github.retrooper.packetevents.manager.protocol.ProtocolManager;
+import com.github.retrooper.packetevents.netty.channel.ChannelHelper;
 import com.github.retrooper.packetevents.protocol.ConnectionState;
 import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
@@ -72,8 +73,7 @@ public class FabricInjectionUtil {
 
     // Shared method to reorder handlers after ViaVersion
     // Note that we do not need to reorder pre-via listeners as via-version orders itself in front of the vanilla encoder/decoders
-    public static void reorderHandlers(ChannelHandlerContext ctx, PacketSide side) {
-        ChannelPipeline pipeline = ctx.pipeline();
+    public static void reorderHandlers(ChannelPipeline pipeline, PacketSide side) {
 
         // Re-inject decoder handler
         ChannelHandler decoder = pipeline.get(PacketEvents.DECODER_NAME);
