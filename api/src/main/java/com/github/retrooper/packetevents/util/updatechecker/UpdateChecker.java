@@ -42,6 +42,7 @@ import java.util.function.Consumer;
  * @author retrooper
  * @since 1.6.9
  */
+@ApiStatus.Internal
 public class UpdateChecker {
     @ApiStatus.Internal
     public String checkLatestReleasedVersion() {
