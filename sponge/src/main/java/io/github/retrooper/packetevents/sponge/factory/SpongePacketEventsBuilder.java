@@ -46,6 +46,8 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.plugin.PluginContainer;
 
+import java.util.Locale;
+
 public class SpongePacketEventsBuilder {
 
     private static PacketEventsAPI<PluginContainer> API_INSTANCE;
@@ -91,7 +93,7 @@ public class SpongePacketEventsBuilder {
                 if (loaded) return;
 
                 //Resolve server version and cache
-                String id = plugin.metadata().id().toLowerCase();
+                String id = plugin.metadata().id().toLowerCase(Locale.ROOT);
                 PacketEvents.IDENTIFIER = "pe-" + id;
                 PacketEvents.ENCODER_NAME = "pe-encoder-" + id;
                 PacketEvents.DECODER_NAME = "pe-decoder-" + id;

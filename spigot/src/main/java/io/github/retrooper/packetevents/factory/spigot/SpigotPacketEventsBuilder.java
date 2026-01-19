@@ -57,6 +57,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 
@@ -103,7 +104,7 @@ public class SpigotPacketEventsBuilder {
             public void load() {
                 if (!loaded) {
                     //Resolve server version and cache
-                    String id = plugin.getName().toLowerCase();
+                    String id = plugin.getName().toLowerCase(Locale.ROOT);
                     PacketEvents.IDENTIFIER = "pe-" + id;
                     PacketEvents.ENCODER_NAME = "pe-encoder-" + id;
                     PacketEvents.DECODER_NAME = "pe-decoder-" + id;
