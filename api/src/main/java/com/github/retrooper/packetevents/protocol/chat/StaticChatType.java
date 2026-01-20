@@ -63,9 +63,9 @@ public class StaticChatType extends AbstractMappedEntity implements ChatType {
     @ApiStatus.Internal
     public StaticChatType(
             @Nullable TypesBuilderData data,
-            @UnknownNullability("only nullable for 1.19") ChatTypeDecoration chatDecoration,
+            @Nullable ChatTypeDecoration chatDecoration,
             @Nullable ChatTypeDecoration overlayDecoration,
-            @UnknownNullability("only nullable for 1.19") ChatTypeDecoration narrationDecoration,
+            @Nullable ChatTypeDecoration narrationDecoration,
             @Nullable NarrationPriority narrationPriority
     ) {
         super(data);
