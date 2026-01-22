@@ -30,6 +30,7 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import com.github.retrooper.packetevents.util.LogManager;
+import com.github.retrooper.packetevents.util.mappings.SynchronizedRegistriesHandler;
 import io.github.retrooper.packetevents.sponge.injector.SpongeChannelInjector;
 import io.github.retrooper.packetevents.sponge.injector.connection.ServerConnectionInitializer;
 import io.github.retrooper.packetevents.sponge.manager.protocol.ProtocolManagerImpl;
@@ -104,6 +105,7 @@ public class SpongePacketEventsBuilder {
                     SpongeReflectionUtil.init();
                     CustomPipelineUtil.init();
                     WrappedBlockState.ensureLoad();
+                    SynchronizedRegistriesHandler.init();
                 } catch (Exception ex) {
                     throw new IllegalStateException(ex);
                 }
