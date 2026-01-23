@@ -17,7 +17,14 @@ public class ViaVersionAccessorImpl implements ViaVersionAccessor {
         try {
             Object viaEncoder = ((Channel) user.getChannel()).pipeline().get("via-encoder");
             if (CONNECTION_FIELD == null) {
-                CONNECTION_FIELD = Reflection.getField(viaEncoder.getClass(), "info");
+                // in ViaFabric 0.4.21+134-main UserConnection field get renamed from info → connection
+                Field newConnectionField = Reflection.getField(viaEncoder.getClass(), "connection");
+                if (newConnectionField == null) {
+                    // Support old field name
+                    CONNECTION_FIELD = Reflection.getField(viaEncoder.getClass(), "info");
+                } else {
+                    CONNECTION_FIELD = newConnectionField;
+                }
             }
             UserConnection connection = (UserConnection) CONNECTION_FIELD.get(viaEncoder);
             return connection.getProtocolInfo().getProtocolVersion();
