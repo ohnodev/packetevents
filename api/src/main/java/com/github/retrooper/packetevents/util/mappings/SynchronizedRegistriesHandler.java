@@ -122,6 +122,13 @@ public final class SynchronizedRegistriesHandler {
     private SynchronizedRegistriesHandler() {
     }
 
+    public static void init() {
+        // check this class has been fully loaded
+        if (REGISTRY_KEYS.isEmpty()) {
+            throw new AssertionError();
+        }
+    }
+
     public static @Nullable RegistryEntry<?> getRegistryEntry(ResourceLocation registryKey) {
         return REGISTRY_KEYS.get(registryKey);
     }

@@ -32,6 +32,7 @@ import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState
 import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import com.github.retrooper.packetevents.util.LogManager;
 import com.github.retrooper.packetevents.util.PEVersion;
+import com.github.retrooper.packetevents.util.mappings.SynchronizedRegistriesHandler;
 import com.github.retrooper.packetevents.util.updatechecker.UpdateChecker;
 import io.github.retrooper.packetevents.bukkit.InternalBukkitListener;
 import io.github.retrooper.packetevents.bukkit.InternalBukkitLoginListener;
@@ -115,6 +116,7 @@ public class SpigotPacketEventsBuilder {
                         SpigotReflectionUtil.init();
                         CustomPipelineUtil.init();
                         WrappedBlockState.ensureLoad();
+                        SynchronizedRegistriesHandler.init();
                     } catch (Exception ex) {
                         throw new IllegalStateException(ex);
                     }
