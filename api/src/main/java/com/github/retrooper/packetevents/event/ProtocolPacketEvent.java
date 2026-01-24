@@ -75,7 +75,7 @@ public abstract class ProtocolPacketEvent extends PacketEvent implements PlayerE
         if(autoProtocolTranslation || user.getClientVersion() == null) {
             this.serverVersion = PacketEvents.getAPI().getServerManager().getVersion();
         } else {
-            this.serverVersion = user.getPacketVersion().toServerVersion();
+            this.serverVersion = user.getClientVersion().toServerVersion();
         }
 
         this.byteBuf = byteBuf;
