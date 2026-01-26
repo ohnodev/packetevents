@@ -7,6 +7,8 @@ Again, huge thanks to all users who have donated their hard-earned money to Pack
 
 Recent donors: PebbleHost, SSomar1607, ipavdev, Suleyman Abulkhasan, frap
 
+Also, thanks to the contributors that made this update possible.
+
 If you intend on donating and do not wish to be mentioned, please add such a note on your donation.
 
 # Announcement 📢⚠️
