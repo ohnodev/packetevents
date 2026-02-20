@@ -1,6 +1,6 @@
 /*
  * This file is part of packetevents - https://github.com/retrooper/packetevents
- * Copyright (C) 2025 retrooper and contributors
+ * Copyright (C) 2026 retrooper and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.retrooper.packetevents.protocol.util;
+package com.github.retrooper.packetevents.protocol.entity.cow;
 
-import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
-import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.protocol.mapper.CopyableEntity;
+import com.github.retrooper.packetevents.protocol.mapper.DeepComparableEntity;
+import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.protocol.util.NbtCodec;
 import org.jspecify.annotations.NullMarked;
 
+/**
+ * @versions 26.1
+ */
 @NullMarked
-@FunctionalInterface
-public interface NbtMapDecoder<T> {
+public interface CowSoundVariant extends MappedEntity, CopyableEntity<CowSoundVariant>, DeepComparableEntity {
 
-    T decode(NBTCompound tag, PacketWrapper<?> wrapper) throws NbtCodecException;
+    NbtCodec<CowSoundVariant> CODEC = CowSoundSet.CODEC
+            .apply(StaticCowSoundVariant::new, CowSoundVariant::getSounds);
+
+    CowSoundSet getSounds();
 }

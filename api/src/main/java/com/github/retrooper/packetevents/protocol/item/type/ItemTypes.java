@@ -1921,6 +1921,10 @@ public final class ItemTypes {
      * @versions 1.21.11+
      */
     public static final ItemType COPPER_NAUTILUS_ARMOR = builder("copper_nautilus_armor").setMaxAmount(1).build();
+    /**
+     * @versions 26.1+
+     */
+    public static final ItemType GOLDEN_DANDELION = builder("golden_dandelion").setMaxAmount(64).setPlacedType(StateTypes.GOLDEN_DANDELION).build();
 
     /**
      * @deprecated Burning furnace shows up as a missing texture, removed in 1.9
@@ -2055,6 +2059,7 @@ public final class ItemTypes {
                 ClientVersion.V_1_20_5, ClientVersion.V_1_21, ClientVersion.V_1_21_2,
                 ClientVersion.V_1_21_4, ClientVersion.V_1_21_5, ClientVersion.V_1_21_6,
                 ClientVersion.V_1_21_7, ClientVersion.V_1_21_9, ClientVersion.V_1_21_11,
+                ClientVersion.V_26_1,
         };
         for (ClientVersion version : versions) {
             parseAllComponents(version);

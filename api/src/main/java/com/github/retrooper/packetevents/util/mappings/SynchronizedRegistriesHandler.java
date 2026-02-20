@@ -23,16 +23,24 @@ import com.github.retrooper.packetevents.protocol.chat.ChatType;
 import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
 import com.github.retrooper.packetevents.protocol.dialog.Dialogs;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatSoundVariants;
 import com.github.retrooper.packetevents.protocol.entity.cat.CatVariant;
 import com.github.retrooper.packetevents.protocol.entity.cat.CatVariants;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenSoundVariants;
 import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenVariant;
 import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenVariants;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowSoundVariants;
 import com.github.retrooper.packetevents.protocol.entity.cow.CowVariant;
 import com.github.retrooper.packetevents.protocol.entity.cow.CowVariants;
 import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariant;
 import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariants;
 import com.github.retrooper.packetevents.protocol.entity.nautilus.ZombieNautilusVariant;
 import com.github.retrooper.packetevents.protocol.entity.nautilus.ZombieNautilusVariants;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigSoundVariants;
 import com.github.retrooper.packetevents.protocol.entity.pig.PigVariant;
 import com.github.retrooper.packetevents.protocol.entity.pig.PigVariants;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
@@ -115,7 +123,11 @@ public final class SynchronizedRegistriesHandler {
                 new RegistryEntry<>(JukeboxSongs.getRegistry(), (NbtEntryDecoder<IJukeboxSong>) IJukeboxSong::decode),
                 new RegistryEntry<>(Instruments.getRegistry(), (NbtEntryDecoder<Instrument>) Instrument::decode),
                 new RegistryEntry<>(Dialogs.getRegistry(), Dialog::decodeDirect),
-                new RegistryEntry<>(Timelines.getRegistry(), Timeline.CODEC)
+                new RegistryEntry<>(Timelines.getRegistry(), Timeline.CODEC),
+                new RegistryEntry<>(PigSoundVariants.getRegistry(), PigSoundVariant.CODEC),
+                new RegistryEntry<>(CatSoundVariants.getRegistry(), CatSoundVariant.CODEC),
+                new RegistryEntry<>(CowSoundVariants.getRegistry(), CowSoundVariant.CODEC),
+                new RegistryEntry<>(ChickenSoundVariants.getRegistry(), ChickenSoundVariant.CODEC)
         ).forEach(entry -> REGISTRY_KEYS.put(entry.getRegistryKey(), entry));
     }
 
