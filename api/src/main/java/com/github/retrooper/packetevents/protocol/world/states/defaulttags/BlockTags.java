@@ -213,12 +213,6 @@ public class BlockTags {
     public static final BlockTags CONVERTABLE_TO_MUD = bind("convertable_to_mud");
     public static final BlockTags MANGROVE_LOGS_CAN_GROW_THROUGH = bind("mangrove_logs_can_grow_through");
     public static final BlockTags MANGROVE_ROOTS_CAN_GROW_THROUGH = bind("mangrove_roots_can_grow_through");
-    public static final BlockTags DRY_VEGETATION_MAY_PLACE_ON = bind("dry_vegetation_may_place_on");
-    /**
-     * Renamed to {@link #DRY_VEGETATION_MAY_PLACE_ON} in 1.21.5
-     */
-    @Deprecated
-    public static final BlockTags DEAD_BUSH_MAY_PLACE_ON = DRY_VEGETATION_MAY_PLACE_ON;
     public static final BlockTags SNAPS_GOAT_HORN = bind("snaps_goat_horn");
     public static final BlockTags REPLACEABLE_BY_TREES = bind("replaceable_by_trees");
     public static final BlockTags INVALID_SPAWN_INSIDE = bind("invalid_spawn_inside");
@@ -625,6 +619,11 @@ public class BlockTags {
      */
     @VisibleForTesting @ApiStatus.Internal
     public static final BlockTags V_1_21_9 = bind("v_1_21_9");
+    /**
+     * Unofficial tag for all blocks added in 26.1
+     */
+    @VisibleForTesting @ApiStatus.Internal
+    public static final BlockTags V_26_1 = bind("v_26_1");
 
     /**
      * @versions IDK-1.21.11
@@ -656,6 +655,16 @@ public class BlockTags {
      */
     @Deprecated
     public static final BlockTags SNOW_LAYER_CAN_SURVIVE_ON = SUPPORT_OVERRIDE_SNOW_LAYER;
+    /**
+     * @versions 1.21.5-1.21.11
+     */
+    @Deprecated
+    public static final BlockTags DRY_VEGETATION_MAY_PLACE_ON = SUPPORTS_DRY_VEGETATION;
+    /**
+     * @versions IDK-1.21.4
+     */
+    @Deprecated
+    public static final BlockTags DEAD_BUSH_MAY_PLACE_ON = DRY_VEGETATION_MAY_PLACE_ON;
 
     static {
         // auto-generated, do not edit manually!
@@ -927,6 +936,7 @@ public class BlockTags {
         BlockTags.V_1_21_5.add(StateTypes.BUSH, StateTypes.FIREFLY_BUSH, StateTypes.SHORT_DRY_GRASS, StateTypes.TALL_DRY_GRASS, StateTypes.WILDFLOWERS, StateTypes.LEAF_LITTER, StateTypes.CACTUS_FLOWER, StateTypes.TEST_BLOCK, StateTypes.TEST_INSTANCE_BLOCK);
         BlockTags.V_1_21_6.add(StateTypes.DRIED_GHAST);
         BlockTags.V_1_21_9.add(StateTypes.ACACIA_SHELF, StateTypes.BAMBOO_SHELF, StateTypes.BIRCH_SHELF, StateTypes.CHERRY_SHELF, StateTypes.CRIMSON_SHELF, StateTypes.DARK_OAK_SHELF, StateTypes.JUNGLE_SHELF, StateTypes.MANGROVE_SHELF, StateTypes.OAK_SHELF, StateTypes.PALE_OAK_SHELF, StateTypes.SPRUCE_SHELF, StateTypes.WARPED_SHELF, StateTypes.COPPER_TORCH, StateTypes.COPPER_WALL_TORCH, StateTypes.COPPER_BARS, StateTypes.EXPOSED_COPPER_BARS, StateTypes.WEATHERED_COPPER_BARS, StateTypes.OXIDIZED_COPPER_BARS, StateTypes.WAXED_COPPER_BARS, StateTypes.WAXED_EXPOSED_COPPER_BARS, StateTypes.WAXED_WEATHERED_COPPER_BARS, StateTypes.WAXED_OXIDIZED_COPPER_BARS, StateTypes.IRON_CHAIN, StateTypes.COPPER_CHAIN, StateTypes.EXPOSED_COPPER_CHAIN, StateTypes.WEATHERED_COPPER_CHAIN, StateTypes.OXIDIZED_COPPER_CHAIN, StateTypes.WAXED_COPPER_CHAIN, StateTypes.WAXED_EXPOSED_COPPER_CHAIN, StateTypes.WAXED_WEATHERED_COPPER_CHAIN, StateTypes.WAXED_OXIDIZED_COPPER_CHAIN, StateTypes.COPPER_LANTERN, StateTypes.EXPOSED_COPPER_LANTERN, StateTypes.WEATHERED_COPPER_LANTERN, StateTypes.OXIDIZED_COPPER_LANTERN, StateTypes.WAXED_COPPER_LANTERN, StateTypes.WAXED_EXPOSED_COPPER_LANTERN, StateTypes.WAXED_WEATHERED_COPPER_LANTERN, StateTypes.WAXED_OXIDIZED_COPPER_LANTERN, StateTypes.COPPER_CHEST, StateTypes.EXPOSED_COPPER_CHEST, StateTypes.WEATHERED_COPPER_CHEST, StateTypes.OXIDIZED_COPPER_CHEST, StateTypes.WAXED_COPPER_CHEST, StateTypes.WAXED_EXPOSED_COPPER_CHEST, StateTypes.WAXED_WEATHERED_COPPER_CHEST, StateTypes.WAXED_OXIDIZED_COPPER_CHEST, StateTypes.COPPER_GOLEM_STATUE, StateTypes.EXPOSED_COPPER_GOLEM_STATUE, StateTypes.WEATHERED_COPPER_GOLEM_STATUE, StateTypes.OXIDIZED_COPPER_GOLEM_STATUE, StateTypes.WAXED_COPPER_GOLEM_STATUE, StateTypes.WAXED_EXPOSED_COPPER_GOLEM_STATUE, StateTypes.WAXED_WEATHERED_COPPER_GOLEM_STATUE, StateTypes.WAXED_OXIDIZED_COPPER_GOLEM_STATUE, StateTypes.EXPOSED_LIGHTNING_ROD, StateTypes.WEATHERED_LIGHTNING_ROD, StateTypes.OXIDIZED_LIGHTNING_ROD, StateTypes.WAXED_LIGHTNING_ROD, StateTypes.WAXED_EXPOSED_LIGHTNING_ROD, StateTypes.WAXED_WEATHERED_LIGHTNING_ROD, StateTypes.WAXED_OXIDIZED_LIGHTNING_ROD);
+        BlockTags.V_26_1.add(StateTypes.GOLDEN_DANDELION, StateTypes.POTTED_GOLDEN_DANDELION);
     }
 
     TagKey name;

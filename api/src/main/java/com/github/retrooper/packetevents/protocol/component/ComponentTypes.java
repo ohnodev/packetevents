@@ -34,6 +34,7 @@ import com.github.retrooper.packetevents.protocol.component.builtin.LlamaVariant
 import com.github.retrooper.packetevents.protocol.component.builtin.MooshroomVariantComponent;
 import com.github.retrooper.packetevents.protocol.component.builtin.PaintingVariantComponent;
 import com.github.retrooper.packetevents.protocol.component.builtin.ParrotVariantComponent;
+import com.github.retrooper.packetevents.protocol.component.builtin.PigSoundVariantComponent;
 import com.github.retrooper.packetevents.protocol.component.builtin.PigVariantComponent;
 import com.github.retrooper.packetevents.protocol.component.builtin.RabbitVariantComponent;
 import com.github.retrooper.packetevents.protocol.component.builtin.SalmonSizeComponent;
@@ -110,7 +111,6 @@ import com.github.retrooper.packetevents.protocol.component.builtin.item.Suspici
 import com.github.retrooper.packetevents.protocol.component.builtin.item.WritableBookContent;
 import com.github.retrooper.packetevents.protocol.component.builtin.item.WrittenBookContent;
 import com.github.retrooper.packetevents.protocol.item.instrument.Instrument;
-import com.github.retrooper.packetevents.protocol.mapper.MaybeMappedEntity;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
@@ -275,8 +275,7 @@ public final class ComponentTypes {
             ItemInstrument::read, ItemInstrument::write);
     @Deprecated
     public static final ComponentType<Instrument> INSTRUMENT = ITEM_INSTRUMENT.legacyMap(
-            inst -> inst.getInstrument().getValue(),
-            inst -> new ItemInstrument(new MaybeMappedEntity<>(inst)));
+            inst -> inst.getInstrument().getValue(), ItemInstrument::new);
     public static final ComponentType<Integer> OMINOUS_BOTTLE_AMPLIFIER = define("ominous_bottle_amplifier",
             PacketWrapper::readVarInt, PacketWrapper::writeVarInt);
     public static final ComponentType<ItemRecipes> RECIPES = define("recipes",
@@ -557,6 +556,11 @@ public final class ComponentTypes {
      */
     public static final ComponentType<CowSoundVariantComponent> COW_SOUND_VARIANT = define("cow/sound_variant",
             CowSoundVariantComponent::read, CowSoundVariantComponent::write);
+    /**
+     * @versions 26.1+
+     */
+    public static final ComponentType<PigSoundVariantComponent> PIG_SOUND_VARIANT = define("pig/sound_variant",
+            PigSoundVariantComponent::read, PigSoundVariantComponent::write);
 
     /**
      * Returns an immutable view of the component types.
