@@ -74,7 +74,7 @@ public final class PigSoundSet {
         Sound ambientSound = soundRegistry.getByNameOrThrow(soundPrefix + "ambient");
         Sound hurtSound = soundRegistry.getByNameOrThrow(soundPrefix + "hurt");
         Sound deathSound = soundRegistry.getByNameOrThrow(soundPrefix + "death");
-        Sound stepSound = soundRegistry.getByNameOrThrow(soundPrefix + "step");
+        Sound stepSound = Sounds.ENTITY_PIG_STEP; // lazy mojang didn't make separate sounds for this
         return new PigSoundSet(ambientSound, hurtSound, deathSound, stepSound);
     }
 
