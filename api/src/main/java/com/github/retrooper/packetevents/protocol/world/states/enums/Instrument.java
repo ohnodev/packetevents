@@ -41,5 +41,6 @@ public enum Instrument {
     DRAGON,
     WITHER_SKELETON,
     PIGLIN,
-    CUSTOM_HEAD
+    CUSTOM_HEAD,
+    TRUMPET,
 }
