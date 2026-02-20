@@ -72,6 +72,8 @@ import com.github.retrooper.packetevents.protocol.world.attributes.timelines.Tim
 import com.github.retrooper.packetevents.protocol.world.attributes.timelines.Timelines;
 import com.github.retrooper.packetevents.protocol.world.biome.Biome;
 import com.github.retrooper.packetevents.protocol.world.biome.Biomes;
+import com.github.retrooper.packetevents.protocol.world.clock.WorldClock;
+import com.github.retrooper.packetevents.protocol.world.clock.WorldClocks;
 import com.github.retrooper.packetevents.protocol.world.damagetype.DamageType;
 import com.github.retrooper.packetevents.protocol.world.damagetype.DamageTypes;
 import com.github.retrooper.packetevents.protocol.world.dimension.DimensionType;
@@ -127,7 +129,8 @@ public final class SynchronizedRegistriesHandler {
                 new RegistryEntry<>(PigSoundVariants.getRegistry(), PigSoundVariant.CODEC),
                 new RegistryEntry<>(CatSoundVariants.getRegistry(), CatSoundVariant.CODEC),
                 new RegistryEntry<>(CowSoundVariants.getRegistry(), CowSoundVariant.CODEC),
-                new RegistryEntry<>(ChickenSoundVariants.getRegistry(), ChickenSoundVariant.CODEC)
+                new RegistryEntry<>(ChickenSoundVariants.getRegistry(), ChickenSoundVariant.CODEC),
+                new RegistryEntry<>(WorldClocks.getRegistry(), WorldClock.DIRECT_CODEC)
         ).forEach(entry -> REGISTRY_KEYS.put(entry.getRegistryKey(), entry));
     }
 
