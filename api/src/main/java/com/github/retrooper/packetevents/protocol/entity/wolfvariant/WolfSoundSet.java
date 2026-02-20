@@ -33,7 +33,7 @@ import org.jspecify.annotations.NullMarked;
 import java.util.Objects;
 
 /**
- * @versions 26.1
+ * @versions 1.21.5+
  */
 @NullMarked
 public final class WolfSoundSet {
@@ -66,29 +66,11 @@ public final class WolfSoundSet {
         }
     }.codec();
 
-    /**
-     * @versions 1.21.5+
-     */
     private final Sound ambientSound;
-    /**
-     * @versions 1.21.5+
-     */
     private final Sound deathSound;
-    /**
-     * @versions 1.21.5+
-     */
     private final Sound growlSound;
-    /**
-     * @versions 1.21.5+
-     */
     private final Sound hurtSound;
-    /**
-     * @versions 1.21.5+
-     */
     private final Sound pantSound;
-    /**
-     * @versions 1.21.5+
-     */
     private final Sound whineSound;
     /**
      * @versions 26.1+
@@ -120,44 +102,26 @@ public final class WolfSoundSet {
         return new WolfSoundSet(ambientSound, deathSound, growlSound, hurtSound, pantSound, whineSound, stepSound);
     }
 
-    /**
-     * @versions 1.21.5+
-     */
     public Sound getAmbientSound() {
         return this.ambientSound;
     }
 
-    /**
-     * @versions 1.21.5+
-     */
     public Sound getDeathSound() {
         return this.deathSound;
     }
 
-    /**
-     * @versions 1.21.5+
-     */
     public Sound getGrowlSound() {
         return this.growlSound;
     }
 
-    /**
-     * @versions 1.21.5+
-     */
     public Sound getHurtSound() {
         return this.hurtSound;
     }
 
-    /**
-     * @versions 1.21.5+
-     */
     public Sound getPantSound() {
         return this.pantSound;
     }
 
-    /**
-     * @versions 1.21.5+
-     */
     public Sound getWhineSound() {
         return this.whineSound;
     }
