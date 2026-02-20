@@ -31,6 +31,7 @@ dependencies {
         excludeAdventure()
     }
     compileOnly(libs.gson)
+    compileOnly(libs.checkerqual)
 
     testImplementation(libs.bundles.adventure)
     testImplementation(project(":patch:adventure-text-serializer-gson"))

@@ -1478,6 +1478,14 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         return entity;
     }
 
+    public <Z extends MappedEntity> Z replaceRegistry(IRegistry<Z> registry, Z entity) {
+        IRegistry<Z> replacedRegistry = this.replaceRegistry(registry);
+        if (replacedRegistry != registry) {
+            return replacedRegistry.getByNameOrThrow(this.serverVersion.toClientVersion(), entity.getName());
+        }
+        return entity;
+    }
+
     public <Z extends MappedEntity> IRegistry<Z> replaceRegistry(IRegistry<Z> registry) {
         return this.getRegistryHolder().getRegistryOr(registry, this.serverVersion.toClientVersion());
     }
