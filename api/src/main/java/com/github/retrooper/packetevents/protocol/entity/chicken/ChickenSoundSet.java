@@ -69,12 +69,11 @@ public final class ChickenSoundSet {
     }
 
     @ApiStatus.Internal
-    public static ChickenSoundSet getOrThrow(String soundPrefix) {
+    public static ChickenSoundSet getOrThrow(String soundPrefix, Sound stepSound) {
         VersionedRegistry<Sound> soundRegistry = Sounds.getRegistry();
         Sound ambientSound = soundRegistry.getByNameOrThrow(soundPrefix + "ambient");
         Sound hurtSound = soundRegistry.getByNameOrThrow(soundPrefix + "hurt");
         Sound deathSound = soundRegistry.getByNameOrThrow(soundPrefix + "death");
-        Sound stepSound = Sounds.ENTITY_CHICKEN_STEP; // lazy mojang didn't make separate sounds for this
         return new ChickenSoundSet(ambientSound, hurtSound, deathSound, stepSound);
     }
 

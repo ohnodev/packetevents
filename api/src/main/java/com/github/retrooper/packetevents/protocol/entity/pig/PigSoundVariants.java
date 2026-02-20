@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.protocol.entity.pig;
 
+import com.github.retrooper.packetevents.protocol.sound.Sounds;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
@@ -32,8 +33,8 @@ public final class PigSoundVariants {
 
     @ApiStatus.Internal
     private static PigSoundVariant define(String name, String soundId) {
-        PigSoundSet adultSounds = PigSoundSet.getOrThrow("entity." + soundId + ".");
-        PigSoundSet babySounds = PigSoundSet.getOrThrow("entity.baby_pig.");
+        PigSoundSet adultSounds = PigSoundSet.getOrThrow("entity." + soundId + ".", Sounds.ENTITY_PIG_STEP);
+        PigSoundSet babySounds = PigSoundSet.getOrThrow("entity.baby_pig.", Sounds.ENTITY_BABY_PIG_STEP);
         return REGISTRY.define(name, data ->
                 new StaticPigSoundVariant(data, adultSounds, babySounds));
     }
