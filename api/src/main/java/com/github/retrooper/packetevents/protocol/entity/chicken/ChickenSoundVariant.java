@@ -49,6 +49,14 @@ public interface ChickenSoundVariant extends MappedEntity, CopyableEntity<Chicke
         }
     }.codec();
 
+    static ChickenSoundVariant read(PacketWrapper<?> wrapper) {
+        return wrapper.readMappedEntity(ChickenSoundVariants.getRegistry());
+    }
+
+    static void write(PacketWrapper<?> wrapper, ChickenSoundVariant variant) {
+        wrapper.writeMappedEntity(variant);
+    }
+
     ChickenSoundSet getAdultSounds();
 
     ChickenSoundSet getBabySounds();

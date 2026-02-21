@@ -49,6 +49,14 @@ public interface PigSoundVariant extends MappedEntity, CopyableEntity<PigSoundVa
         }
     }.codec();
 
+    static PigSoundVariant read(PacketWrapper<?> wrapper) {
+        return wrapper.readMappedEntity(PigSoundVariants.getRegistry());
+    }
+
+    static void write(PacketWrapper<?> wrapper, PigSoundVariant variant) {
+        wrapper.writeMappedEntity(variant);
+    }
+
     PigSoundSet getAdultSounds();
 
     PigSoundSet getBabySounds();

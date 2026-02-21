@@ -49,6 +49,14 @@ public interface CatSoundVariant extends MappedEntity, CopyableEntity<CatSoundVa
         }
     }.codec();
 
+    static CatSoundVariant read(PacketWrapper<?> wrapper) {
+        return wrapper.readMappedEntity(CatSoundVariants.getRegistry());
+    }
+
+    static void write(PacketWrapper<?> wrapper, CatSoundVariant variant) {
+        wrapper.writeMappedEntity(variant);
+    }
+
     CatSoundSet getAdultSounds();
 
     CatSoundSet getBabySounds();

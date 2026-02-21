@@ -43,4 +43,7 @@ public enum Instrument {
     PIGLIN,
     CUSTOM_HEAD,
     TRUMPET,
+    TRUMPET_EXPOSED,
+    TRUMPET_OXIDIZED,
+    TRUMPET_WEATHERED,
 }
