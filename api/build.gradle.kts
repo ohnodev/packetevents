@@ -70,6 +70,7 @@ tasks {
 
     javadoc {
         val options = options as StandardJavadocDocletOptions
+        options.use(true)
         options.tags("versions:A:Minecraft Versions:")
         mustRunAfter(generateVersionsFile)
     }
