@@ -557,6 +557,10 @@ public class BlockTags {
     /**
      * @versions 26.1+
      */
+    public static final BlockTags PREVENTS_NEARBY_LEAF_DECAY = bind("prevents_nearby_leaf_decay");
+    /**
+     * @versions 26.1+
+     */
     public static final BlockTags SUPPORTS_MANGROVE_PROPAGULE = bind("supports_mangrove_propagule");
     /**
      * @versions 26.1+
@@ -898,6 +902,7 @@ public class BlockTags {
         copy(BlockTags.SUPPORTS_PUMPKIN_STEM, BlockTags.SUPPORTS_MELON_STEM);
         BlockTags.SUPPORTS_SUGAR_CANE.addTag(BlockTags.SUBSTRATE_OVERWORLD).addTag(BlockTags.SAND);
         BlockTags.SUPPORTS_BAMBOO.addTag(BlockTags.SAND).addTag(BlockTags.SUBSTRATE_OVERWORLD).add(StateTypes.BAMBOO, StateTypes.BAMBOO_SAPLING, StateTypes.GRAVEL, StateTypes.SUSPICIOUS_GRAVEL);
+        BlockTags.PREVENTS_NEARBY_LEAF_DECAY.addTag(BlockTags.LOGS);
         BlockTags.COMPLETES_FIND_TREE_TUTORIAL.addTag(BlockTags.LOGS).addTag(BlockTags.LEAVES).addTag(BlockTags.WART_BLOCKS);
         BlockTags.MINEABLE_AXE.addTag(BlockTags.BANNERS).addTag(BlockTags.FENCE_GATES).addTag(BlockTags.LOGS).addTag(BlockTags.PLANKS).addTag(BlockTags.SIGNS).addTag(BlockTags.WOODEN_BUTTONS).addTag(BlockTags.WOODEN_DOORS).addTag(BlockTags.WOODEN_FENCES).addTag(BlockTags.WOODEN_PRESSURE_PLATES).addTag(BlockTags.WOODEN_SLABS).addTag(BlockTags.WOODEN_STAIRS).addTag(BlockTags.WOODEN_TRAPDOORS).addTag(BlockTags.ALL_HANGING_SIGNS).addTag(BlockTags.BAMBOO_BLOCKS).addTag(BlockTags.WOODEN_SHELVES).add(StateTypes.NOTE_BLOCK, StateTypes.BAMBOO, StateTypes.BARREL, StateTypes.BEE_NEST, StateTypes.BEEHIVE, StateTypes.BIG_DRIPLEAF_STEM, StateTypes.BIG_DRIPLEAF, StateTypes.BOOKSHELF, StateTypes.BROWN_MUSHROOM_BLOCK, StateTypes.CAMPFIRE, StateTypes.CARTOGRAPHY_TABLE, StateTypes.CARVED_PUMPKIN, StateTypes.CHEST, StateTypes.CHORUS_FLOWER, StateTypes.CHORUS_PLANT, StateTypes.COCOA, StateTypes.COMPOSTER, StateTypes.CRAFTING_TABLE, StateTypes.DAYLIGHT_DETECTOR, StateTypes.FLETCHING_TABLE, StateTypes.GLOW_LICHEN, StateTypes.JACK_O_LANTERN, StateTypes.JUKEBOX, StateTypes.LADDER, StateTypes.LECTERN, StateTypes.LOOM, StateTypes.MELON, StateTypes.MUSHROOM_STEM, StateTypes.PUMPKIN, StateTypes.RED_MUSHROOM_BLOCK, StateTypes.SMITHING_TABLE, StateTypes.SOUL_CAMPFIRE, StateTypes.TRAPPED_CHEST, StateTypes.VINE, StateTypes.MANGROVE_ROOTS, StateTypes.BAMBOO_MOSAIC, StateTypes.BAMBOO_MOSAIC_SLAB, StateTypes.BAMBOO_MOSAIC_STAIRS, StateTypes.CHISELED_BOOKSHELF, StateTypes.CREAKING_HEART);
         BlockTags.LAVA_POOL_STONE_CANNOT_REPLACE.addTag(BlockTags.FEATURES_CANNOT_REPLACE).addTag(BlockTags.LEAVES).addTag(BlockTags.LOGS);
