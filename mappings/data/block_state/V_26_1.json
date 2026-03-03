@@ -33130,7 +33130,7 @@
   },
   {
     "type": "oak_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -33264,7 +33264,7 @@
   },
   {
     "type": "spruce_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -33398,7 +33398,7 @@
   },
   {
     "type": "birch_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -33532,7 +33532,7 @@
   },
   {
     "type": "acacia_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -33666,7 +33666,7 @@
   },
   {
     "type": "cherry_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -33800,7 +33800,7 @@
   },
   {
     "type": "jungle_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -33934,7 +33934,7 @@
   },
   {
     "type": "dark_oak_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -34068,7 +34068,7 @@
   },
   {
     "type": "pale_oak_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -34202,7 +34202,7 @@
   },
   {
     "type": "mangrove_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -34336,7 +34336,7 @@
   },
   {
     "type": "bamboo_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -35914,7 +35914,7 @@
   },
   {
     "type": "oak_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -36240,7 +36240,7 @@
   },
   {
     "type": "spruce_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -36566,7 +36566,7 @@
   },
   {
     "type": "birch_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -36892,7 +36892,7 @@
   },
   {
     "type": "acacia_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -37218,7 +37218,7 @@
   },
   {
     "type": "cherry_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -37544,7 +37544,7 @@
   },
   {
     "type": "jungle_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -37870,7 +37870,7 @@
   },
   {
     "type": "dark_oak_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -38196,7 +38196,7 @@
   },
   {
     "type": "pale_oak_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -38522,7 +38522,7 @@
   },
   {
     "type": "crimson_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -38848,7 +38848,7 @@
   },
   {
     "type": "warped_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -39174,7 +39174,7 @@
   },
   {
     "type": "mangrove_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -39500,7 +39500,7 @@
   },
   {
     "type": "bamboo_hanging_sign",
-    "def": 33,
+    "def": 49,
     "entries": [
       {
         "attached": true,
@@ -81562,7 +81562,7 @@
   },
   {
     "type": "white_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -81616,7 +81616,7 @@
   },
   {
     "type": "orange_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -81670,7 +81670,7 @@
   },
   {
     "type": "magenta_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -81724,7 +81724,7 @@
   },
   {
     "type": "light_blue_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -81778,7 +81778,7 @@
   },
   {
     "type": "yellow_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -81832,7 +81832,7 @@
   },
   {
     "type": "lime_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -81886,7 +81886,7 @@
   },
   {
     "type": "pink_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -81940,7 +81940,7 @@
   },
   {
     "type": "gray_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -81994,7 +81994,7 @@
   },
   {
     "type": "light_gray_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -82048,7 +82048,7 @@
   },
   {
     "type": "cyan_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -82102,7 +82102,7 @@
   },
   {
     "type": "purple_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -82156,7 +82156,7 @@
   },
   {
     "type": "blue_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -82210,7 +82210,7 @@
   },
   {
     "type": "brown_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -82264,7 +82264,7 @@
   },
   {
     "type": "green_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -82318,7 +82318,7 @@
   },
   {
     "type": "red_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -82372,7 +82372,7 @@
   },
   {
     "type": "black_banner",
-    "def": 0,
+    "def": 8,
     "entries": [
       {
         "rotation": 0
@@ -142069,7 +142069,7 @@
   },
   {
     "type": "crimson_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,
@@ -142203,7 +142203,7 @@
   },
   {
     "type": "warped_sign",
-    "def": 1,
+    "def": 17,
     "entries": [
       {
         "rotation": 0,

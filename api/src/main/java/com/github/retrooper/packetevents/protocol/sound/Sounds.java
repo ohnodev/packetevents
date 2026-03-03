@@ -2971,11 +2971,19 @@ public final class Sounds {
     /**
      * @versions 26.1+
      */
+    public static final Sound ENTITY_BABY_PIG_EAT = define("entity.baby_pig.eat");
+    /**
+     * @versions 26.1+
+     */
     public static final Sound ENTITY_BABY_PIG_HURT = define("entity.baby_pig.hurt");
     /**
      * @versions 26.1+
      */
     public static final Sound ENTITY_BABY_PIG_DEATH = define("entity.baby_pig.death");
+    /**
+     * @versions 26.1+
+     */
+    public static final Sound ENTITY_PIG_EAT = define("entity.pig.eat");
     /**
      * @versions 26.1+
      */
@@ -2991,6 +2999,10 @@ public final class Sounds {
     /**
      * @versions 26.1+
      */
+    public static final Sound ENTITY_PIG_MINI_EAT = define("entity.pig_mini.eat");
+    /**
+     * @versions 26.1+
+     */
     public static final Sound ENTITY_PIG_BIG_AMBIENT = define("entity.pig_big.ambient");
     /**
      * @versions 26.1+
@@ -3000,6 +3012,10 @@ public final class Sounds {
      * @versions 26.1+
      */
     public static final Sound ENTITY_PIG_BIG_DEATH = define("entity.pig_big.death");
+    /**
+     * @versions 26.1+
+     */
+    public static final Sound ENTITY_PIG_BIG_EAT = define("entity.pig_big.eat");
     /**
      * @versions 26.1+
      */
