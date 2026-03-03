@@ -44,7 +44,8 @@ public final class PigSoundSet {
             Sound hurtSound = tag.getOrThrow("hurt_sound", Sound.CODEC, wrapper);
             Sound deathSound = tag.getOrThrow("death_sound", Sound.CODEC, wrapper);
             Sound stepSound = tag.getOrThrow("step_sound", Sound.CODEC, wrapper);
-            return new PigSoundSet(ambientSound, hurtSound, deathSound, stepSound);
+            Sound eatSound = tag.getOrThrow("eat_sound", Sound.CODEC, wrapper);
+            return new PigSoundSet(ambientSound, hurtSound, deathSound, stepSound, eatSound);
         }
 
         @Override
@@ -53,6 +54,7 @@ public final class PigSoundSet {
             tag.set("hurt_sound", value.hurtSound, Sound.CODEC, wrapper);
             tag.set("death_sound", value.deathSound, Sound.CODEC, wrapper);
             tag.set("step_sound", value.stepSound, Sound.CODEC, wrapper);
+            tag.set("eat_sound", value.eatSound, Sound.CODEC, wrapper);
         }
     }.codec();
 
@@ -60,12 +62,14 @@ public final class PigSoundSet {
     private final Sound hurtSound;
     private final Sound deathSound;
     private final Sound stepSound;
+    private final Sound eatSound;
 
-    public PigSoundSet(Sound ambientSound, Sound hurtSound, Sound deathSound, Sound stepSound) {
+    public PigSoundSet(Sound ambientSound, Sound hurtSound, Sound deathSound, Sound stepSound, Sound eatSound) {
         this.ambientSound = ambientSound;
         this.hurtSound = hurtSound;
         this.deathSound = deathSound;
         this.stepSound = stepSound;
+        this.eatSound = eatSound;
     }
 
     @ApiStatus.Internal
@@ -74,7 +78,8 @@ public final class PigSoundSet {
         Sound ambientSound = soundRegistry.getByNameOrThrow(soundPrefix + "ambient");
         Sound hurtSound = soundRegistry.getByNameOrThrow(soundPrefix + "hurt");
         Sound deathSound = soundRegistry.getByNameOrThrow(soundPrefix + "death");
-        return new PigSoundSet(ambientSound, hurtSound, deathSound, stepSound);
+        Sound eatSound = soundRegistry.getByNameOrThrow(soundPrefix + "eat");
+        return new PigSoundSet(ambientSound, hurtSound, deathSound, stepSound, eatSound);
     }
 
     public Sound getAmbientSound() {
@@ -93,18 +98,23 @@ public final class PigSoundSet {
         return this.stepSound;
     }
 
+    public Sound getEatSound() {
+        return this.eatSound;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof PigSoundSet)) return false;
+        if (obj == null || this.getClass() != obj.getClass()) return false;
         PigSoundSet that = (PigSoundSet) obj;
         if (!this.ambientSound.equals(that.ambientSound)) return false;
         if (!this.hurtSound.equals(that.hurtSound)) return false;
         if (!this.deathSound.equals(that.deathSound)) return false;
-        return this.stepSound.equals(that.stepSound);
+        if (!this.stepSound.equals(that.stepSound)) return false;
+        return this.eatSound.equals(that.eatSound);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.ambientSound, this.hurtSound, this.deathSound, this.stepSound);
+        return Objects.hash(this.ambientSound, this.hurtSound, this.deathSound, this.stepSound, this.eatSound);
     }
 }
