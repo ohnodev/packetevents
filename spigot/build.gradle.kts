@@ -9,9 +9,8 @@ plugins {
 }
 
 repositories {
-    maven("https://jitpack.io")
-    maven("https://repo.viaversion.com/")
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.viaversion.com/everything/")
 }
 
 dependencies {
@@ -23,7 +22,6 @@ dependencies {
 
     compileOnly(libs.paper)
     compileOnly(libs.via.version)
-    compileOnly(libs.protocol.support)
 }
 
 tasks {
