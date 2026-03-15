@@ -21,7 +21,7 @@ package com.github.retrooper.packetevents.wrapper.play.server;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.protocol.world.clock.ClockState;
+import com.github.retrooper.packetevents.protocol.world.clock.ClockNetworkState;
 import com.github.retrooper.packetevents.protocol.world.clock.WorldClock;
 import com.github.retrooper.packetevents.protocol.world.clock.WorldClocks;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -40,13 +40,13 @@ import java.util.Map;
 @NullMarked
 public class WrapperPlayServerTimeUpdate extends PacketWrapper<WrapperPlayServerTimeUpdate> {
 
-    private static final ClockState FALLBACK_CLOCK = new ClockState(0L, true);
+    private static final ClockNetworkState FALLBACK_CLOCK = new ClockNetworkState(0L, true);
 
     private long gameTime;
     /**
      * Changed with 26.1+.
      */
-    private @MonotonicNonNull Map<WorldClock, ClockState> clockUpdates;
+    private @MonotonicNonNull Map<WorldClock, ClockNetworkState> clockUpdates;
 
     public WrapperPlayServerTimeUpdate(PacketSendEvent event) {
         super(event);
@@ -66,13 +66,13 @@ public class WrapperPlayServerTimeUpdate extends PacketWrapper<WrapperPlayServer
     @ApiStatus.Obsolete
     public WrapperPlayServerTimeUpdate(long gameTime, long timeOfDay, boolean tickTime) {
         this(gameTime, Collections.emptyMap());
-        this.clockUpdates.put(WorldClocks.OVERWORLD, new ClockState(timeOfDay, tickTime));
+        this.clockUpdates.put(WorldClocks.OVERWORLD, new ClockNetworkState(timeOfDay, tickTime));
     }
 
     /**
      * @versions 26.1+
      */
-    public WrapperPlayServerTimeUpdate(long gameTime, Map<WorldClock, ClockState> clockUpdates) {
+    public WrapperPlayServerTimeUpdate(long gameTime, Map<WorldClock, ClockNetworkState> clockUpdates) {
         super(PacketType.Play.Server.TIME_UPDATE);
         this.gameTime = gameTime;
         this.clockUpdates = new HashMap<>(clockUpdates);
@@ -82,10 +82,10 @@ public class WrapperPlayServerTimeUpdate extends PacketWrapper<WrapperPlayServer
     public void read() {
         this.gameTime = this.readLong();
         if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_26_1)) {
-            this.clockUpdates = this.readMap(WorldClock::read, ClockState::read);
+            this.clockUpdates = this.readMap(WorldClock::read, ClockNetworkState::read);
         } else {
             this.clockUpdates = new HashMap<>(1);
-            this.clockUpdates.put(WorldClocks.OVERWORLD, ClockState.read(this));
+            this.clockUpdates.put(WorldClocks.OVERWORLD, ClockNetworkState.read(this));
         }
     }
 
@@ -93,10 +93,10 @@ public class WrapperPlayServerTimeUpdate extends PacketWrapper<WrapperPlayServer
     public void write() {
         this.writeLong(this.gameTime);
         if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_26_1)) {
-            this.writeMap(this.clockUpdates, WorldClock::write, ClockState::write);
+            this.writeMap(this.clockUpdates, WorldClock::write, ClockNetworkState::write);
         } else {
-            ClockState state = this.clockUpdates.getOrDefault(WorldClocks.OVERWORLD, FALLBACK_CLOCK);
-            ClockState.write(this, state);
+            ClockNetworkState state = this.clockUpdates.getOrDefault(WorldClocks.OVERWORLD, FALLBACK_CLOCK);
+            ClockNetworkState.write(this, state);
         }
     }
 
@@ -114,19 +114,19 @@ public class WrapperPlayServerTimeUpdate extends PacketWrapper<WrapperPlayServer
         this.gameTime = gameTime;
     }
 
-    public Map<WorldClock, ClockState> getClockUpdates() {
+    public Map<WorldClock, ClockNetworkState> getClockUpdates() {
         return this.clockUpdates;
     }
 
-    public void setClockUpdates(Map<WorldClock, ClockState> clockUpdates) {
+    public void setClockUpdates(Map<WorldClock, ClockNetworkState> clockUpdates) {
         this.clockUpdates = clockUpdates;
     }
 
-    public @Nullable ClockState getClockState(WorldClock clock) {
+    public @Nullable ClockNetworkState getClockState(WorldClock clock) {
         return this.clockUpdates.get(this.replaceRegistry(WorldClocks.getRegistry(), clock));
     }
 
-    public void setClockState(WorldClock clock, ClockState state) {
+    public void setClockState(WorldClock clock, ClockNetworkState state) {
         this.clockUpdates.put(this.replaceRegistry(WorldClocks.getRegistry(), clock), state);
     }
 
@@ -134,7 +134,7 @@ public class WrapperPlayServerTimeUpdate extends PacketWrapper<WrapperPlayServer
      * @versions -1.21.11
      */
     @ApiStatus.Obsolete
-    public ClockState getClockState() {
+    public ClockNetworkState getClockState() {
         WorldClock clock = this.replaceRegistry(WorldClocks.getRegistry(), WorldClocks.OVERWORLD);
         return this.clockUpdates.computeIfAbsent(clock, __ -> FALLBACK_CLOCK);
     }
@@ -143,7 +143,7 @@ public class WrapperPlayServerTimeUpdate extends PacketWrapper<WrapperPlayServer
      * @versions -1.21.11
      */
     @ApiStatus.Obsolete
-    public void setClockState(ClockState state) {
+    public void setClockState(ClockNetworkState state) {
         WorldClock clock = this.replaceRegistry(WorldClocks.getRegistry(), WorldClocks.OVERWORLD);
         this.clockUpdates.put(clock, state);
     }

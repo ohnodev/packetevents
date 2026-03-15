@@ -22,6 +22,9 @@ import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
+/**
+ * @versions 26.1+
+ */
 @NullMarked
 public final class WorldClocks {
 
