@@ -22,6 +22,7 @@ import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.netty.buffer.UnpooledByteBufAllocationHelper;
 import com.github.retrooper.packetevents.protocol.component.ComponentType;
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes;
+import com.github.retrooper.packetevents.protocol.component.ComponentValueRef;
 import com.github.retrooper.packetevents.protocol.component.StaticComponentMap;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTByteArray;
@@ -1972,6 +1973,8 @@ public final class ItemTypes {
     private ItemTypes() {
     }
 
+    private static final byte[] ZERO_BYTE_ARRAY = new byte[0];
+
     @SuppressWarnings("unchecked")
     private static StaticComponentMap.Builder parseComponents(
             ClientVersion version,
@@ -1987,8 +1990,23 @@ public final class ItemTypes {
         PacketWrapper<?> wrapper = PacketWrapper.createUniversalPacketWrapper(byteBuf, version.toServerVersion());
 
         for (Map.Entry<String, NBT> entry : nbt) {
-            ComponentType<?> compType = ComponentTypes.getByName(entry.getKey());
+            String compName = entry.getKey();
+            boolean ref = false;
+            if (compName.charAt(0) == '?') {
+                ref = true;
+                compName = compName.substring(1);
+            }
+
+            ComponentType<?> compType = ComponentTypes.getByName(compName);
             if (compType == null) {
+                continue;
+            }
+
+            // some components require registry context, so don't immediately decode them
+            // and save a reference to them in the map instead
+            if (ref) {
+                byte[] valueBytes = entry.getValue() instanceof NBTByteArray ? ((NBTByteArray) entry.getValue()).getValue() : ZERO_BYTE_ARRAY;
+                components.set((ComponentType<Object>) compType, ComponentValueRef.ofBytes(compType, valueBytes, version));
                 continue;
             }
 

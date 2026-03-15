@@ -143,6 +143,7 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     // For sending chunk data packets, which need this data
     @Nullable
     protected User user;
+    protected IRegistryHolder registries = GlobalRegistryHolder.INSTANCE;
 
     private static final int MODERN_MESSAGE_LENGTH = 262144;
     private static final int LEGACY_MESSAGE_LENGTH = 32767;
@@ -1494,7 +1495,12 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         // workaround to make packet wrappers work without user context on spigot/fabric servers
         // this will not work for bungee or velocity, as we need to have some reference to get
         // the actual cache key
-        return this.user != null ? this.user : GlobalRegistryHolder.INSTANCE;
+        return this.user != null ? this.user : this.registries;
+    }
+
+    @ApiStatus.Internal
+    public void setRegistryHolder(IRegistryHolder registries) {
+        this.registries = registries;
     }
 
     public <Z extends MappedEntity> Z readMappedEntityOrDirect(

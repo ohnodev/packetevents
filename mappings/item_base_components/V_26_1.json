@@ -99,7 +99,7 @@
     "item_name": "CggACXRyYW5zbGF0ZQAgYmxvY2subWluZWNyYWZ0LmFtZXRoeXN0X2NsdXN0ZXIA"
   },
   "ancient_debris": {
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "item_model": "GG1pbmVjcmFmdDphbmNpZW50X2RlYnJpcw==",
     "item_name": "CggACXRyYW5zbGF0ZQAeYmxvY2subWluZWNyYWZ0LmFuY2llbnRfZGVicmlzAA=="
   },
@@ -2363,7 +2363,7 @@
     "item_name": "CggACXRyYW5zbGF0ZQAhYmxvY2subWluZWNyYWZ0Lm5ldGhlcl93YXJ0X2Jsb2NrAA=="
   },
   "netherite_block": {
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "item_model": "GW1pbmVjcmFmdDpuZXRoZXJpdGVfYmxvY2s=",
     "item_name": "CggACXRyYW5zbGF0ZQAfYmxvY2subWluZWNyYWZ0Lm5ldGhlcml0ZV9ibG9jawA="
   },
@@ -4475,7 +4475,7 @@
     "item_model": "KW1pbmVjcmFmdDpib3JkdXJlX2luZGVudGVkX2Jhbm5lcl9wYXR0ZXJu",
     "item_name": "CggACXRyYW5zbGF0ZQAuaXRlbS5taW5lY3JhZnQuYm9yZHVyZV9pbmRlbnRlZF9iYW5uZXJfcGF0dGVybgA=",
     "max_stack_size": "AQ==",
-    "provides_banner_patterns": "J21pbmVjcmFmdDpwYXR0ZXJuX2l0ZW0vYm9yZHVyZV9pbmRlbnRlZA=="
+    "?provides_banner_patterns": "ACdtaW5lY3JhZnQ6cGF0dGVybl9pdGVtL2JvcmR1cmVfaW5kZW50ZWQ="
   },
   "bow": {
     "damage": "AA==",
@@ -4902,7 +4902,7 @@
     "enchantable": "DQ==",
     "item_model": "Fm1pbmVjcmFmdDpjb3BwZXJfc3BlYXI=",
     "item_name": "CggACXRyYW5zbGF0ZQAbaXRlbS5taW5lY3JhZnQuY29wcGVyX3NwZWFyAA==",
-    "kinetic_weapon": "Cg0BUEEQAAAAAAAAAaUBQKMzMwAAAAAB+gEAAAAAQJMzMz7Cj1w/UeuFAfMLAfQL",
+    "kinetic_weapon": "Cg0BUEFAAAAAAAAAAaUBQKMzMwAAAAAB+gEAAAAAQJMzMz7Cj1w/UeuFAfMLAfQL",
     "max_damage": "vgE=",
     "max_stack_size": "AQ==",
     "minimum_attack_charge": "P4AAAA==",
@@ -4938,7 +4938,7 @@
     "item_model": "IG1pbmVjcmFmdDpjcmVlcGVyX2Jhbm5lcl9wYXR0ZXJu",
     "item_name": "CggACXRyYW5zbGF0ZQAlaXRlbS5taW5lY3JhZnQuY3JlZXBlcl9iYW5uZXJfcGF0dGVybgA=",
     "max_stack_size": "AQ==",
-    "provides_banner_patterns": "Hm1pbmVjcmFmdDpwYXR0ZXJuX2l0ZW0vY3JlZXBlcg==",
+    "?provides_banner_patterns": "AB5taW5lY3JhZnQ6cGF0dGVybl9pdGVtL2NyZWVwZXI=",
     "rarity": "AQ=="
   },
   "creeper_spawn_egg": {
@@ -5114,7 +5114,7 @@
     "enchantable": "Cg==",
     "item_model": "F21pbmVjcmFmdDpkaWFtb25kX3NwZWFy",
     "item_name": "CggACXRyYW5zbGF0ZQAcaXRlbS5taW5lY3JhZnQuZGlhbW9uZF9zcGVhcgA=",
-    "kinetic_weapon": "CgoBPEDwAAAAAAAAAYIBQKMzMwAAAAAByAEAAAAAQJMzMz7Cj1w/iZmaAfMLAfQL",
+    "kinetic_weapon": "CgoBPEEgAAAAAAAAAYIBQKMzMwAAAAAByAEAAAAAQJMzMz7Cj1w/iZmaAfMLAfQL",
     "max_damage": "mQw=",
     "max_stack_size": "AQ==",
     "minimum_attack_charge": "P4AAAA==",
@@ -5283,7 +5283,7 @@
     "item_model": "Jm1pbmVjcmFmdDpmaWVsZF9tYXNvbmVkX2Jhbm5lcl9wYXR0ZXJu",
     "item_name": "CggACXRyYW5zbGF0ZQAraXRlbS5taW5lY3JhZnQuZmllbGRfbWFzb25lZF9iYW5uZXJfcGF0dGVybgA=",
     "max_stack_size": "AQ==",
-    "provides_banner_patterns": "JG1pbmVjcmFmdDpwYXR0ZXJuX2l0ZW0vZmllbGRfbWFzb25lZA=="
+    "?provides_banner_patterns": "ACRtaW5lY3JhZnQ6cGF0dGVybl9pdGVtL2ZpZWxkX21hc29uZWQ="
   },
   "filled_map": {
     "item_model": "FG1pbmVjcmFmdDpmaWxsZWRfbWFw",
@@ -5332,7 +5332,7 @@
     "item_model": "HW1pbmVjcmFmdDpmbG93X2Jhbm5lcl9wYXR0ZXJu",
     "item_name": "CggACXRyYW5zbGF0ZQAiaXRlbS5taW5lY3JhZnQuZmxvd19iYW5uZXJfcGF0dGVybgA=",
     "max_stack_size": "AQ==",
-    "provides_banner_patterns": "G21pbmVjcmFmdDpwYXR0ZXJuX2l0ZW0vZmxvdw==",
+    "?provides_banner_patterns": "ABttaW5lY3JhZnQ6cGF0dGVybl9pdGVtL2Zsb3c=",
     "rarity": "Ag=="
   },
   "flow_pottery_sherd": {
@@ -5344,7 +5344,7 @@
     "item_model": "H21pbmVjcmFmdDpmbG93ZXJfYmFubmVyX3BhdHRlcm4=",
     "item_name": "CggACXRyYW5zbGF0ZQAkaXRlbS5taW5lY3JhZnQuZmxvd2VyX2Jhbm5lcl9wYXR0ZXJuAA==",
     "max_stack_size": "AQ==",
-    "provides_banner_patterns": "HW1pbmVjcmFmdDpwYXR0ZXJuX2l0ZW0vZmxvd2Vy"
+    "?provides_banner_patterns": "AB1taW5lY3JhZnQ6cGF0dGVybl9pdGVtL2Zsb3dlcg=="
   },
   "fox_spawn_egg": {
     "entity_data": "NgoA",
@@ -5387,7 +5387,7 @@
     "item_model": "Hm1pbmVjcmFmdDpnbG9iZV9iYW5uZXJfcGF0dGVybg==",
     "item_name": "CggACXRyYW5zbGF0ZQAjaXRlbS5taW5lY3JhZnQuZ2xvYmVfYmFubmVyX3BhdHRlcm4A",
     "max_stack_size": "AQ==",
-    "provides_banner_patterns": "HG1pbmVjcmFmdDpwYXR0ZXJuX2l0ZW0vZ2xvYmU="
+    "?provides_banner_patterns": "ABxtaW5lY3JhZnQ6cGF0dGVybl9pdGVtL2dsb2Jl"
   },
   "glow_berries": {
     "consumable": "P8zMzQG5BQEA",
@@ -5413,7 +5413,7 @@
     "item_name": "CggACXRyYW5zbGF0ZQAdaXRlbS5taW5lY3JhZnQuZ2xvd3N0b25lX2R1c3QA"
   },
   "goat_horn": {
-    "instrument": "BQ==",
+    "?instrument": "BQ==",
     "item_model": "E21pbmVjcmFmdDpnb2F0X2hvcm4=",
     "item_name": "CggACXRyYW5zbGF0ZQAYaXRlbS5taW5lY3JhZnQuZ29hdF9ob3JuAA==",
     "max_stack_size": "AQ==",
@@ -5559,7 +5559,7 @@
     "enchantable": "Fg==",
     "item_model": "Fm1pbmVjcmFmdDpnb2xkZW5fc3BlYXI=",
     "item_name": "CggACXRyYW5zbGF0ZQAbaXRlbS5taW5lY3JhZnQuZ29sZGVuX3NwZWFyAA==",
-    "kinetic_weapon": "Cg4BRkEgAAAAAAAAAaoBQKMzMwAAAAABkwIAAAAAQJMzMz7Cj1w/MzMzAfMLAfQL",
+    "kinetic_weapon": "Cg4BRkFQAAAAAAAAAaoBQKMzMwAAAAABkwIAAAAAQJMzMz7Cj1w/MzMzAfMLAfQL",
     "max_damage": "IA==",
     "max_stack_size": "AQ==",
     "minimum_attack_charge": "P4AAAA==",
@@ -5628,7 +5628,7 @@
     "item_model": "H21pbmVjcmFmdDpndXN0ZXJfYmFubmVyX3BhdHRlcm4=",
     "item_name": "CggACXRyYW5zbGF0ZQAkaXRlbS5taW5lY3JhZnQuZ3VzdGVyX2Jhbm5lcl9wYXR0ZXJuAA==",
     "max_stack_size": "AQ==",
-    "provides_banner_patterns": "HW1pbmVjcmFmdDpwYXR0ZXJuX2l0ZW0vZ3VzdGVy",
+    "?provides_banner_patterns": "AB1taW5lY3JhZnQ6cGF0dGVybl9pdGVtL2d1c3Rlcg==",
     "rarity": "Ag=="
   },
   "guster_pottery_sherd": {
@@ -5830,7 +5830,7 @@
     "enchantable": "Dg==",
     "item_model": "FG1pbmVjcmFmdDppcm9uX3NwZWFy",
     "item_name": "CggACXRyYW5zbGF0ZQAZaXRlbS5taW5lY3JhZnQuaXJvbl9zcGVhcgA=",
-    "kinetic_weapon": "CgwBMkEAAAAAAAAAAYcBQKMzMwAAAAAB4QEAAAAAQJMzMz7Cj1w/czMzAfMLAfQL",
+    "kinetic_weapon": "CgwBMkEwAAAAAAAAAYcBQKMzMwAAAAAB4QEAAAAAQJMzMz7Cj1w/czMzAfMLAfQL",
     "max_damage": "+gE=",
     "max_stack_size": "AQ==",
     "minimum_attack_charge": "P4AAAA==",
@@ -6089,7 +6089,7 @@
     "item_model": "H21pbmVjcmFmdDptb2phbmdfYmFubmVyX3BhdHRlcm4=",
     "item_name": "CggACXRyYW5zbGF0ZQAkaXRlbS5taW5lY3JhZnQubW9qYW5nX2Jhbm5lcl9wYXR0ZXJuAA==",
     "max_stack_size": "AQ==",
-    "provides_banner_patterns": "HW1pbmVjcmFmdDpwYXR0ZXJuX2l0ZW0vbW9qYW5n",
+    "?provides_banner_patterns": "AB1taW5lY3JhZnQ6cGF0dGVybl9pdGVtL21vamFuZw==",
     "rarity": "Ag=="
   },
   "mooshroom_spawn_egg": {
@@ -6118,147 +6118,147 @@
   "music_disc_11": {
     "item_model": "F21pbmVjcmFmdDptdXNpY19kaXNjXzEx",
     "item_name": "CggACXRyYW5zbGF0ZQAcaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY18xMQA=",
-    "jukebox_playable": "AQ==",
+    "?jukebox_playable": "AQ==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_13": {
     "item_model": "F21pbmVjcmFmdDptdXNpY19kaXNjXzEz",
     "item_name": "CggACXRyYW5zbGF0ZQAcaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY18xMwA=",
-    "jukebox_playable": "Ag==",
+    "?jukebox_playable": "Ag==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_5": {
     "item_model": "Fm1pbmVjcmFmdDptdXNpY19kaXNjXzU=",
     "item_name": "CggACXRyYW5zbGF0ZQAbaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY181AA==",
-    "jukebox_playable": "Aw==",
+    "?jukebox_playable": "Aw==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_blocks": {
     "item_model": "G21pbmVjcmFmdDptdXNpY19kaXNjX2Jsb2Nrcw==",
     "item_name": "CggACXRyYW5zbGF0ZQAgaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19ibG9ja3MA",
-    "jukebox_playable": "BA==",
+    "?jukebox_playable": "BA==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_cat": {
     "item_model": "GG1pbmVjcmFmdDptdXNpY19kaXNjX2NhdA==",
     "item_name": "CggACXRyYW5zbGF0ZQAdaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19jYXQA",
-    "jukebox_playable": "BQ==",
+    "?jukebox_playable": "BQ==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_chirp": {
     "item_model": "Gm1pbmVjcmFmdDptdXNpY19kaXNjX2NoaXJw",
     "item_name": "CggACXRyYW5zbGF0ZQAfaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19jaGlycAA=",
-    "jukebox_playable": "Bg==",
+    "?jukebox_playable": "Bg==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_creator": {
     "item_model": "HG1pbmVjcmFmdDptdXNpY19kaXNjX2NyZWF0b3I=",
     "item_name": "CggACXRyYW5zbGF0ZQAhaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19jcmVhdG9yAA==",
-    "jukebox_playable": "Bw==",
+    "?jukebox_playable": "Bw==",
     "max_stack_size": "AQ==",
     "rarity": "Ag=="
   },
   "music_disc_creator_music_box": {
     "item_model": "Jm1pbmVjcmFmdDptdXNpY19kaXNjX2NyZWF0b3JfbXVzaWNfYm94",
     "item_name": "CggACXRyYW5zbGF0ZQAraXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19jcmVhdG9yX211c2ljX2JveAA=",
-    "jukebox_playable": "CA==",
+    "?jukebox_playable": "CA==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_far": {
     "item_model": "GG1pbmVjcmFmdDptdXNpY19kaXNjX2Zhcg==",
     "item_name": "CggACXRyYW5zbGF0ZQAdaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19mYXIA",
-    "jukebox_playable": "CQ==",
+    "?jukebox_playable": "CQ==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_lava_chicken": {
     "item_model": "IW1pbmVjcmFmdDptdXNpY19kaXNjX2xhdmFfY2hpY2tlbg==",
     "item_name": "CggACXRyYW5zbGF0ZQAmaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19sYXZhX2NoaWNrZW4A",
-    "jukebox_playable": "Cg==",
+    "?jukebox_playable": "Cg==",
     "max_stack_size": "AQ==",
     "rarity": "Ag=="
   },
   "music_disc_mall": {
     "item_model": "GW1pbmVjcmFmdDptdXNpY19kaXNjX21hbGw=",
     "item_name": "CggACXRyYW5zbGF0ZQAeaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19tYWxsAA==",
-    "jukebox_playable": "Cw==",
+    "?jukebox_playable": "Cw==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_mellohi": {
     "item_model": "HG1pbmVjcmFmdDptdXNpY19kaXNjX21lbGxvaGk=",
     "item_name": "CggACXRyYW5zbGF0ZQAhaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19tZWxsb2hpAA==",
-    "jukebox_playable": "DA==",
+    "?jukebox_playable": "DA==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_otherside": {
     "item_model": "Hm1pbmVjcmFmdDptdXNpY19kaXNjX290aGVyc2lkZQ==",
     "item_name": "CggACXRyYW5zbGF0ZQAjaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19vdGhlcnNpZGUA",
-    "jukebox_playable": "DQ==",
+    "?jukebox_playable": "DQ==",
     "max_stack_size": "AQ==",
     "rarity": "Ag=="
   },
   "music_disc_pigstep": {
     "item_model": "HG1pbmVjcmFmdDptdXNpY19kaXNjX3BpZ3N0ZXA=",
     "item_name": "CggACXRyYW5zbGF0ZQAhaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19waWdzdGVwAA==",
-    "jukebox_playable": "Dg==",
+    "?jukebox_playable": "Dg==",
     "max_stack_size": "AQ==",
     "rarity": "Ag=="
   },
   "music_disc_precipice": {
     "item_model": "Hm1pbmVjcmFmdDptdXNpY19kaXNjX3ByZWNpcGljZQ==",
     "item_name": "CggACXRyYW5zbGF0ZQAjaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19wcmVjaXBpY2UA",
-    "jukebox_playable": "Dw==",
+    "?jukebox_playable": "Dw==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_relic": {
     "item_model": "Gm1pbmVjcmFmdDptdXNpY19kaXNjX3JlbGlj",
     "item_name": "CggACXRyYW5zbGF0ZQAfaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19yZWxpYwA=",
-    "jukebox_playable": "EA==",
+    "?jukebox_playable": "EA==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_stal": {
     "item_model": "GW1pbmVjcmFmdDptdXNpY19kaXNjX3N0YWw=",
     "item_name": "CggACXRyYW5zbGF0ZQAeaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19zdGFsAA==",
-    "jukebox_playable": "EQ==",
+    "?jukebox_playable": "EQ==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_strad": {
     "item_model": "Gm1pbmVjcmFmdDptdXNpY19kaXNjX3N0cmFk",
     "item_name": "CggACXRyYW5zbGF0ZQAfaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY19zdHJhZAA=",
-    "jukebox_playable": "Eg==",
+    "?jukebox_playable": "Eg==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_tears": {
     "item_model": "Gm1pbmVjcmFmdDptdXNpY19kaXNjX3RlYXJz",
     "item_name": "CggACXRyYW5zbGF0ZQAfaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY190ZWFycwA=",
-    "jukebox_playable": "Ew==",
+    "?jukebox_playable": "Ew==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_wait": {
     "item_model": "GW1pbmVjcmFmdDptdXNpY19kaXNjX3dhaXQ=",
     "item_name": "CggACXRyYW5zbGF0ZQAeaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY193YWl0AA==",
-    "jukebox_playable": "FA==",
+    "?jukebox_playable": "FA==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
   "music_disc_ward": {
     "item_model": "GW1pbmVjcmFmdDptdXNpY19kaXNjX3dhcmQ=",
     "item_name": "CggACXRyYW5zbGF0ZQAeaXRlbS5taW5lY3JhZnQubXVzaWNfZGlzY193YXJkAA==",
-    "jukebox_playable": "FQ==",
+    "?jukebox_playable": "FQ==",
     "max_stack_size": "AQ==",
     "rarity": "AQ=="
   },
@@ -6287,7 +6287,7 @@
     "item_name": "CggACXRyYW5zbGF0ZQAbaXRlbS5taW5lY3JhZnQubmV0aGVyX2JyaWNrAA=="
   },
   "nether_star": {
-    "damage_resistant": "Fm1pbmVjcmFmdDppc19leHBsb3Npb24=",
+    "?damage_resistant": "ABZtaW5lY3JhZnQ6aXNfZXhwbG9zaW9u",
     "enchantment_glint_override": "AQ==",
     "item_model": "FW1pbmVjcmFmdDpuZXRoZXJfc3Rhcg==",
     "item_name": "CggACXRyYW5zbGF0ZQAaaXRlbS5taW5lY3JhZnQubmV0aGVyX3N0YXIA",
@@ -6300,7 +6300,7 @@
   "netherite_axe": {
     "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAiAAAAAAAAAAEABBttaW5lY3JhZnQ6YmFzZV9hdHRhY2tfc3BlZWTACAAAAAAAAAABAA==",
     "damage": "AA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "enchantable": "Dw==",
     "item_model": "F21pbmVjcmFmdDpuZXRoZXJpdGVfYXhl",
     "item_name": "CggACXRyYW5zbGF0ZQAcaXRlbS5taW5lY3JhZnQubmV0aGVyaXRlX2F4ZQA=",
@@ -6313,7 +6313,7 @@
   "netherite_boots": {
     "attribute_modifiers": "AwAVbWluZWNyYWZ0OmFybW9yLmJvb3RzQAgAAAAAAAAABAABFW1pbmVjcmFmdDphcm1vci5ib290c0AIAAAAAAAAAAQAEBVtaW5lY3JhZnQ6YXJtb3IuYm9vdHM/uZmZoAAAAAAEAA==",
     "damage": "AA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "enchantable": "Dw==",
     "equippable": "AUwBE21pbmVjcmFmdDpuZXRoZXJpdGUAAAEBAQAAoAs=",
     "item_model": "GW1pbmVjcmFmdDpuZXRoZXJpdGVfYm9vdHM=",
@@ -6325,7 +6325,7 @@
   "netherite_chestplate": {
     "attribute_modifiers": "AwAabWluZWNyYWZ0OmFybW9yLmNoZXN0cGxhdGVAIAAAAAAAAAAGAAEabWluZWNyYWZ0OmFybW9yLmNoZXN0cGxhdGVACAAAAAAAAAAGABAabWluZWNyYWZ0OmFybW9yLmNoZXN0cGxhdGU/uZmZoAAAAAAGAA==",
     "damage": "AA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "enchantable": "Dw==",
     "equippable": "A0wBE21pbmVjcmFmdDpuZXRoZXJpdGUAAAEBAQAAoAs=",
     "item_model": "Hm1pbmVjcmFmdDpuZXRoZXJpdGVfY2hlc3RwbGF0ZQ==",
@@ -6337,7 +6337,7 @@
   "netherite_helmet": {
     "attribute_modifiers": "AwAWbWluZWNyYWZ0OmFybW9yLmhlbG1ldEAIAAAAAAAAAAcAARZtaW5lY3JhZnQ6YXJtb3IuaGVsbWV0QAgAAAAAAAAABwAQFm1pbmVjcmFmdDphcm1vci5oZWxtZXQ/uZmZoAAAAAAHAA==",
     "damage": "AA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "enchantable": "Dw==",
     "equippable": "BEwBE21pbmVjcmFmdDpuZXRoZXJpdGUAAAEBAQAAoAs=",
     "item_model": "Gm1pbmVjcmFmdDpuZXRoZXJpdGVfaGVsbWV0",
@@ -6349,7 +6349,7 @@
   "netherite_hoe": {
     "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZQAAAAAAAAAAAAEABBttaW5lY3JhZnQ6YmFzZV9hdHRhY2tfc3BlZWQAAAAAAAAAAAABAA==",
     "damage": "AA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "enchantable": "Dw==",
     "item_model": "F21pbmVjcmFmdDpuZXRoZXJpdGVfaG9l",
     "item_name": "CggACXRyYW5zbGF0ZQAcaXRlbS5taW5lY3JhZnQubmV0aGVyaXRlX2hvZQA=",
@@ -6361,14 +6361,14 @@
   },
   "netherite_horse_armor": {
     "attribute_modifiers": "AwAUbWluZWNyYWZ0OmFybW9yLmJvZHlAMwAAAAAAAAAJAAEUbWluZWNyYWZ0OmFybW9yLmJvZHlACAAAAAAAAAAJABAUbWluZWNyYWZ0OmFybW9yLmJvZHk/uZmZoAAAAAAJAA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "equippable": "BtQGARNtaW5lY3JhZnQ6bmV0aGVyaXRlAAEAHm1pbmVjcmFmdDpjYW5fd2Vhcl9ob3JzZV9hcm1vcgEBAAAB1QY=",
     "item_model": "H21pbmVjcmFmdDpuZXRoZXJpdGVfaG9yc2VfYXJtb3I=",
     "item_name": "CggACXRyYW5zbGF0ZQAkaXRlbS5taW5lY3JhZnQubmV0aGVyaXRlX2hvcnNlX2FybW9yAA==",
     "max_stack_size": "AQ=="
   },
   "netherite_ingot": {
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "item_model": "GW1pbmVjcmFmdDpuZXRoZXJpdGVfaW5nb3Q=",
     "item_name": "CggACXRyYW5zbGF0ZQAeaXRlbS5taW5lY3JhZnQubmV0aGVyaXRlX2luZ290AA==",
     "provides_trim_material": "CA=="
@@ -6376,7 +6376,7 @@
   "netherite_leggings": {
     "attribute_modifiers": "AwAYbWluZWNyYWZ0OmFybW9yLmxlZ2dpbmdzQBgAAAAAAAAABQABGG1pbmVjcmFmdDphcm1vci5sZWdnaW5nc0AIAAAAAAAAAAUAEBhtaW5lY3JhZnQ6YXJtb3IubGVnZ2luZ3M/uZmZoAAAAAAFAA==",
     "damage": "AA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "enchantable": "Dw==",
     "equippable": "AkwBE21pbmVjcmFmdDpuZXRoZXJpdGUAAAEBAQAAoAs=",
     "item_model": "HG1pbmVjcmFmdDpuZXRoZXJpdGVfbGVnZ2luZ3M=",
@@ -6387,7 +6387,7 @@
   },
   "netherite_nautilus_armor": {
     "attribute_modifiers": "AwAUbWluZWNyYWZ0OmFybW9yLmJvZHlAMwAAAAAAAAAJAAEUbWluZWNyYWZ0OmFybW9yLmJvZHlACAAAAAAAAAAJABAUbWluZWNyYWZ0OmFybW9yLmJvZHk/uZmZoAAAAAAJAA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "equippable": "BlABE21pbmVjcmFmdDpuZXRoZXJpdGUAAQAhbWluZWNyYWZ0OmNhbl93ZWFyX25hdXRpbHVzX2FybW9yAQEAAQFR",
     "item_model": "Im1pbmVjcmFmdDpuZXRoZXJpdGVfbmF1dGlsdXNfYXJtb3I=",
     "item_name": "CggACXRyYW5zbGF0ZQAnaXRlbS5taW5lY3JhZnQubmV0aGVyaXRlX25hdXRpbHVzX2FybW9yAA==",
@@ -6396,7 +6396,7 @@
   "netherite_pickaxe": {
     "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAUAAAAAAAAAAEABBttaW5lY3JhZnQ6YmFzZV9hdHRhY2tfc3BlZWTABmZmYAAAAAABAA==",
     "damage": "AA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "enchantable": "Dw==",
     "item_model": "G21pbmVjcmFmdDpuZXRoZXJpdGVfcGlja2F4ZQ==",
     "item_name": "CggACXRyYW5zbGF0ZQAgaXRlbS5taW5lY3JhZnQubmV0aGVyaXRlX3BpY2theGUA",
@@ -6407,14 +6407,14 @@
     "weapon": "AgAAAAA="
   },
   "netherite_scrap": {
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "item_model": "GW1pbmVjcmFmdDpuZXRoZXJpdGVfc2NyYXA=",
     "item_name": "CggACXRyYW5zbGF0ZQAeaXRlbS5taW5lY3JhZnQubmV0aGVyaXRlX3NjcmFwAA=="
   },
   "netherite_shovel": {
     "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAWAAAAAAAAAAEABBttaW5lY3JhZnQ6YmFzZV9hdHRhY2tfc3BlZWTACAAAAAAAAAABAA==",
     "damage": "AA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "enchantable": "Dw==",
     "item_model": "Gm1pbmVjcmFmdDpuZXRoZXJpdGVfc2hvdmVs",
     "item_name": "CggACXRyYW5zbGF0ZQAfaXRlbS5taW5lY3JhZnQubmV0aGVyaXRlX3Nob3ZlbAA=",
@@ -6428,12 +6428,12 @@
     "attack_range": "QAAAAECQAABAAAAAQNAAAD4AAAA/AAAA",
     "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAQAAAAAAAAAAEABBttaW5lY3JhZnQ6YmFzZV9hdHRhY2tfc3BlZWTACQshYAAAAAABAA==",
     "damage": "AA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "damage_type": "JQ==",
     "enchantable": "Dw==",
     "item_model": "GW1pbmVjcmFmdDpuZXRoZXJpdGVfc3BlYXI=",
     "item_name": "CggACXRyYW5zbGF0ZQAeaXRlbS5taW5lY3JhZnQubmV0aGVyaXRlX3NwZWFyAA==",
-    "kinetic_weapon": "CggBMkDgAAAAAAAAAW5AozMzAAAAAAGvAQAAAABAkzMzPsKPXD+ZmZoB8wsB9As=",
+    "kinetic_weapon": "CggBMkEQAAAAAAAAAW5AozMzAAAAAAGvAQAAAABAkzMzPsKPXD+ZmZoB8wsB9As=",
     "max_damage": "7w8=",
     "max_stack_size": "AQ==",
     "minimum_attack_charge": "P4AAAA==",
@@ -6446,7 +6446,7 @@
   "netherite_sword": {
     "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAcAAAAAAAAAAEABBttaW5lY3JhZnQ6YmFzZV9hdHRhY2tfc3BlZWTAAzMzQAAAAAABAA==",
     "damage": "AA==",
-    "damage_resistant": "EW1pbmVjcmFmdDppc19maXJl",
+    "?damage_resistant": "ABFtaW5lY3JhZnQ6aXNfZmlyZQ==",
     "enchantable": "Dw==",
     "item_model": "GW1pbmVjcmFmdDpuZXRoZXJpdGVfc3dvcmQ=",
     "item_name": "CggACXRyYW5zbGF0ZQAeaXRlbS5taW5lY3JhZnQubmV0aGVyaXRlX3N3b3JkAA==",
@@ -6555,7 +6555,7 @@
     "item_model": "H21pbmVjcmFmdDpwaWdsaW5fYmFubmVyX3BhdHRlcm4=",
     "item_name": "CggACXRyYW5zbGF0ZQAkaXRlbS5taW5lY3JhZnQucGlnbGluX2Jhbm5lcl9wYXR0ZXJuAA==",
     "max_stack_size": "AQ==",
-    "provides_banner_patterns": "HW1pbmVjcmFmdDpwYXR0ZXJuX2l0ZW0vcGlnbGlu",
+    "?provides_banner_patterns": "AB1taW5lY3JhZnQ6cGF0dGVybl9pdGVtL3BpZ2xpbg==",
     "rarity": "AQ=="
   },
   "piglin_brute_spawn_egg": {
@@ -6862,7 +6862,7 @@
   },
   "shield": {
     "banner_patterns": "AA==",
-    "blocks_attacks": "PoAAAD+AAAABQrQAAAAAAAAAP4AAAEBAAAA/gAAAP4AAAAEZbWluZWNyYWZ0OmJ5cGFzc2VzX3NoaWVsZAGsCwGtCw==",
+    "?blocks_attacks": "PoAAAD+AAAABQrQAAAAAAAAAP4AAAEBAAAA/gAAAP4AAAAEAGW1pbmVjcmFmdDpieXBhc3Nlc19zaGllbGQBrAsBrQs=",
     "break_sound": "rQs=",
     "damage": "AA==",
     "equippable": "BUcAAAABAAEAAKAL",
@@ -6905,7 +6905,7 @@
     "item_model": "Hm1pbmVjcmFmdDpza3VsbF9iYW5uZXJfcGF0dGVybg==",
     "item_name": "CggACXRyYW5zbGF0ZQAjaXRlbS5taW5lY3JhZnQuc2t1bGxfYmFubmVyX3BhdHRlcm4A",
     "max_stack_size": "AQ==",
-    "provides_banner_patterns": "HG1pbmVjcmFmdDpwYXR0ZXJuX2l0ZW0vc2t1bGw=",
+    "?provides_banner_patterns": "ABxtaW5lY3JhZnQ6cGF0dGVybl9pdGVtL3NrdWxs",
     "rarity": "Ag=="
   },
   "skull_pottery_sherd": {
@@ -7053,7 +7053,7 @@
     "enchantable": "BQ==",
     "item_model": "FW1pbmVjcmFmdDpzdG9uZV9zcGVhcg==",
     "item_name": "CggACXRyYW5zbGF0ZQAaaXRlbS5taW5lY3JhZnQuc3RvbmVfc3BlYXIA",
-    "kinetic_weapon": "Cg4BWkEgAAAAAAAAAbQBQKMzMwAAAAABkwIAAAAAQJMzMz7Cj1w/UeuFAfMLAfQL",
+    "kinetic_weapon": "Cg4BWkFQAAAAAAAAAbQBQKMzMwAAAAABkwIAAAAAQJMzMz7Cj1w/UeuFAfMLAfQL",
     "max_damage": "gwE=",
     "max_stack_size": "AQ==",
     "minimum_attack_charge": "P4AAAA==",
