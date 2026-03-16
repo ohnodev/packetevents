@@ -34,7 +34,7 @@ include("bungeecord")
 include("velocity")
 include("sponge")
 include("fabric-common")
-include("fabric")
+include("fabric-official")
 //include("fabric-remap")
 // Patch modules
 include(":patch:adventure-text-serializer-gson")
