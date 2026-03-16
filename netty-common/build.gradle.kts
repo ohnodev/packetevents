@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(libs.netty)
+    compileOnlyApi(libs.netty)
     shadow(project(":api", "shadow"))
 }

@@ -8,9 +8,11 @@ paper = "1.21.9-rc1-R0.1-SNAPSHOT"
 bungeecord = "1.21-R0.1"
 velocity = "3.4.0-SNAPSHOT"
 fabric-loom = "1.15.5"
+fabric-loader = "0.18.4"
 spongeGradle = "2.3.0"
 classgraph = "4.8.184"
 checkerqual = "3.53.1"
+slf4j = "2.0.17"
 
 [libraries]
 adventure-api = { group = "net.kyori", name = "adventure-api", version.ref = "adventure" }
@@ -34,11 +36,13 @@ bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bunge
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
 classgraph = { group = "io.github.classgraph", name = "classgraph", version.ref = "classgraph" }
 checkerqual = { module = "org.checkerframework:checker-qual", version.ref = "checkerqual" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
 [bundles]
 adventure = ["adventure-api", "adventure-nbt", "adventure-key", "adventure-examination-api", "adventure-examination-string"]
 adventure-serializers = ["adventure-text-serializer-gson", "adventure-text-serializer-json-legacy", "adventure-text-serializer-legacy"]
 
 [plugins]
-fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "fabric-loom" }
+fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
 spongeGradle = { id = "org.spongepowered.gradle.plugin", version.ref = "spongeGradle" }

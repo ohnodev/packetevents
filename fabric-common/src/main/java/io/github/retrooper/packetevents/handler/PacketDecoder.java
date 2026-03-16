@@ -23,38 +23,32 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelOutboundHandlerAdapter;
-import io.netty.channel.ChannelPromise;
-import net.minecraft.world.entity.player.Player;
+import io.netty.handler.codec.MessageToMessageDecoder;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.List;
+
 @ApiStatus.Internal
-public class PacketEncoder extends ChannelOutboundHandlerAdapter {
+public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
 
     private final PacketSide side;
     public User user;
-    public Player player;
+    public Object player;
 
-    public PacketEncoder(PacketSide side, User user) {
-        this.side = side;
+    public PacketDecoder(PacketSide side, User user) {
+        this.side = side.getOpposite();
         this.user = user;
     }
 
     @Override
-    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        if (!(msg instanceof ByteBuf in)) {
-            ctx.write(msg, promise);
+    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+        if (!msg.isReadable()) {
             return;
         }
-        if (!in.isReadable()) {
-            in.release();
-            return;
-        }
-
-        PacketEventsImplHelper.handlePacket(ctx.channel(),
-                this.user, this.player, in, false, this.side);
-        if (in.isReadable()) {
-            ctx.write(in, promise);
+        PacketEventsImplHelper.handlePacket(ctx.channel(), this.user, this.player,
+                msg, false, this.side);
+        if (msg.isReadable()) {
+            out.add(msg.retain());
         }
     }
 }

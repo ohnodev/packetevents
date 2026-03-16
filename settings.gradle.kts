@@ -22,7 +22,7 @@ pluginManagement {
 }
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 rootProject.name = "packetevents"
@@ -33,6 +33,8 @@ include("spigot")
 include("bungeecord")
 include("velocity")
 include("sponge")
-include("fabric")
+include("fabric-common")
+//include("fabric")
+//include("fabric-remap")
 // Patch modules
 include(":patch:adventure-text-serializer-gson")
