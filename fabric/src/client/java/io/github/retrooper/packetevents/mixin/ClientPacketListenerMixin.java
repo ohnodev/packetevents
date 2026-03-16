@@ -1,6 +1,6 @@
 /*
  * This file is part of packetevents - https://github.com/retrooper/packetevents
- * Copyright (C) 2024 retrooper and contributors
+ * Copyright (C) 2026 retrooper and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import com.github.retrooper.packetevents.event.UserLoginEvent;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.FakeChannelUtil;
 import com.llamalad7.mixinextras.sugar.Local;
-import io.github.retrooper.packetevents.PacketEventsMod;
+import io.github.retrooper.packetevents.util.FabricUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -32,12 +32,14 @@ import net.minecraft.client.multiplayer.CommonListenerCookie;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NullMarked;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@NullMarked
 @Mixin(ClientPacketListener.class)
 public abstract class ClientPacketListenerMixin extends ClientCommonPacketListenerImpl {
 
@@ -50,7 +52,7 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
             at = @At(value = "HEAD")
     )
     private void preLoginPlayerThreadSwitch(CallbackInfo ci) {
-        if (PacketEventsMod.isOurConnection(this.connection)) {
+        if (FabricUtil.isOurConnection(this.connection)) {
             // pause reading until LocalPlayer instance has been constructed (see method below)
             this.connection.channel.config().setAutoRead(false);
         }
@@ -69,7 +71,7 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
             )
     )
     private void postLoginPlayerConstruct(CallbackInfo ci) {
-        if (PacketEventsMod.isOurConnection(this.connection)) {
+        if (FabricUtil.isOurConnection(this.connection)) {
             PacketEvents.getAPI().getInjector().setPlayer(this.connection.channel, this.minecraft.player);
             this.connection.channel.config().setAutoRead(true);
         }
@@ -83,7 +85,7 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
             at = @At("TAIL")
     )
     private void postLoginPacket(CallbackInfo ci) {
-        if (!PacketEventsMod.isOurConnection(this.connection)) {
+        if (!FabricUtil.isOurConnection(this.connection)) {
             return;
         }
 
@@ -109,22 +111,13 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
      */
     @Inject(
             method = "handleRespawn",
-            at = {
-                    @At(
-                            // inject immediately after new player instance has been created (pre 1.21.9)
-                            value = "INVOKE",
-                            target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;startWaitingForNewLevel(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/gui/screens/ReceivingLevelScreen$Reason;)V"
-                    ),
-                    @At(
-                            // inject immediately after new player instance has been created (post 1.21.9)
-                            value = "INVOKE",
-                            target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;startWaitingForNewLevel(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/gui/screens/LevelLoadingScreen$Reason;)V"
-                    )
-            },
-            expect = 1
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;startWaitingForNewLevel(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/gui/screens/LevelLoadingScreen$Reason;)V"
+            )
     )
-    private void postRespawnPlayerConstruct(CallbackInfo ci, @Local(ordinal = 1) LocalPlayer player) {
-        if (PacketEventsMod.isOurConnection(this.connection)) {
+    private void postRespawnPlayerConstruct(CallbackInfo ci, @Local(name = "newPlayer") LocalPlayer player) {
+        if (FabricUtil.isOurConnection(this.connection)) {
             PacketEvents.getAPI().getInjector().setPlayer(this.connection.channel, player);
         }
     }

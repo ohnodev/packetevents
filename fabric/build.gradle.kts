@@ -1,31 +1,40 @@
+/*
+ * This file is part of packetevents - https://github.com/retrooper/packetevents
+ * Copyright (C) 2026 retrooper and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import me.modmuss50.mpp.ModPublishExtension
 import net.fabricmc.loom.task.prod.ServerProductionRunTask
 
 plugins {
     packetevents.`library-conventions`
     packetevents.`publish-conventions`
-    alias(libs.plugins.fabric.loom)
+    net.fabricmc.`fabric-loom`
 }
 
 repositories {
-    maven("https://repo.codemc.io/repository/maven-snapshots/")
+    maven("https://maven.fabricmc.net/")
 }
 
-val minecraft_version: String by project
-val loader_version: String by project
-
 dependencies {
-    api(libs.bundles.adventure)
-    api(project(":api", "shadow"))
-    api(project(":netty-common"))
+    api(project(":fabric-common"))
+    include(project(":fabric-common"))
 
-    include(libs.bundles.adventure)
-    include(project(":api", "shadow"))
-    include(project(":netty-common"))
-
-    // To change the versions, see the gradle.properties file
-    minecraft("com.mojang:minecraft:$minecraft_version")
-    compileOnly("net.fabricmc:fabric-loader:$loader_version")
+    minecraft(libs.fabric.minecraft.official)
+    compileOnly(libs.fabric.loader)
 }
 
 tasks {

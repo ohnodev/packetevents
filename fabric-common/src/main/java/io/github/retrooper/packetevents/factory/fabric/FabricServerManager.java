@@ -23,18 +23,18 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.mappings.GlobalRegistryHolder;
 import io.github.retrooper.packetevents.impl.netty.manager.server.ServerManagerAbstract;
-import net.minecraft.SharedConstants;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class FabricServerManager extends ServerManagerAbstract {
 
-    static {
-        SharedConstants.tryDetectVersion();
+    private final ServerVersion version;
+
+    public FabricServerManager(String mcVersion) {
+        this.version = resolveVersion(mcVersion);
     }
 
-    private ServerVersion version;
-
-    private ServerVersion resolveVersion() {
-        String mcVersion = SharedConstants.getCurrentVersion().id();
+    private static ServerVersion resolveVersion(String mcVersion) {
         for (ServerVersion version : ServerVersion.reversedValues()) {
             if (mcVersion.contains(version.getReleaseName())) {
                 return version;
@@ -46,9 +46,6 @@ public class FabricServerManager extends ServerManagerAbstract {
 
     @Override
     public ServerVersion getVersion() {
-        if (this.version == null) {
-            this.version = this.resolveVersion();
-        }
         return this.version;
     }
 

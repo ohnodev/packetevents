@@ -23,19 +23,21 @@ import com.github.retrooper.packetevents.PacketEventsAPI;
 import com.github.retrooper.packetevents.event.UserLoginEvent;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.FakeChannelUtil;
-import io.github.retrooper.packetevents.PacketEventsMod;
+import io.github.retrooper.packetevents.util.FabricUtil;
 import io.netty.channel.Channel;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
+import org.jspecify.annotations.NullMarked;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+@NullMarked
 @Mixin(PlayerList.class)
 public class PlayerListMixin {
 
@@ -50,7 +52,7 @@ public class PlayerListMixin {
             Connection connection, ServerPlayer player,
             CommonListenerCookie cookie, CallbackInfo ci
     ) {
-        if (PacketEventsMod.isOurConnection(connection)) {
+        if (FabricUtil.isOurConnection(connection)) {
             PacketEvents.getAPI().getInjector().setPlayer(connection.channel, player);
         }
     }
@@ -70,7 +72,7 @@ public class PlayerListMixin {
             Connection connection, ServerPlayer player,
             CommonListenerCookie cookie, CallbackInfo ci
     ) {
-        if (!PacketEventsMod.isOurConnection(connection)) {
+        if (!FabricUtil.isOurConnection(connection)) {
             return;
         }
 
@@ -100,7 +102,7 @@ public class PlayerListMixin {
     )
     private void postRespawn(CallbackInfoReturnable<ServerPlayer> cir) {
         ServerPlayer player = cir.getReturnValue();
-        if (PacketEventsMod.isOurConnection(player.connection.connection)) {
+        if (FabricUtil.isOurConnection(player.connection.connection)) {
             Channel channel = player.connection.connection.channel;
             PacketEvents.getAPI().getInjector().setPlayer(channel, player);
         }

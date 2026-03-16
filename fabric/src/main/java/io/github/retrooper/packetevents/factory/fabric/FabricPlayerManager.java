@@ -16,29 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package io.github.retrooper.packetevents;
+package io.github.retrooper.packetevents.factory.fabric;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import io.github.retrooper.packetevents.factory.fabric.FabricClientPlayerManager;
-import io.github.retrooper.packetevents.factory.fabric.FabricPacketEventsAPI;
 import io.github.retrooper.packetevents.impl.netty.manager.player.PlayerManagerAbstract;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
+import net.minecraft.server.level.ServerPlayer;
+import org.jspecify.annotations.NullMarked;
 
-public class PacketEventsClientMod implements PreLaunchEntrypoint {
+@NullMarked
+public class FabricPlayerManager extends PlayerManagerAbstract {
 
-    public static FabricPacketEventsAPI constructApi(String modid) {
-        return new FabricPacketEventsAPI(modid, EnvType.CLIENT) {
-            @Override
-            protected PlayerManagerAbstract constructPlayerManager() {
-                return new FabricClientPlayerManager();
-            }
-        };
+    @Override
+    public int getPing(Object player) {
+        if (player instanceof ServerPlayer) {
+            return ((ServerPlayer) player).connection.latency();
+        }
+        throw new UnsupportedOperationException("Unsupported player implementation: " + player);
     }
 
     @Override
-    public void onPreLaunch() {
-        PacketEvents.setAPI(constructApi(PacketEventsMod.MOD_ID));
-        PacketEvents.getAPI().load();
+    public Object getChannel(Object player) {
+        if (player instanceof ServerPlayer) {
+            return ((ServerPlayer) player).connection.connection.channel;
+        }
+        throw new UnsupportedOperationException("Unsupported player implementation: " + player);
     }
 }

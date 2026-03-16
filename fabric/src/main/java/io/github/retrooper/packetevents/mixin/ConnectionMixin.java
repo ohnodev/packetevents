@@ -26,22 +26,25 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
-import io.github.retrooper.packetevents.PacketEventsMod;
 import io.github.retrooper.packetevents.handler.PacketDecoder;
 import io.github.retrooper.packetevents.handler.PacketEncoder;
+import io.github.retrooper.packetevents.util.FabricUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelPipeline;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.BandwidthDebugMonitor;
+import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
+import org.jspecify.annotations.NullMarked;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(net.minecraft.network.Connection.class)
+@NullMarked
+@Mixin(Connection.class)
 public class ConnectionMixin {
 
     // doesn't account for mods like ViaFabric
@@ -57,7 +60,7 @@ public class ConnectionMixin {
             ChannelPipeline pipeline, PacketFlow flow, boolean memoryOnly,
             BandwidthDebugMonitor bandwithDebugMonitor, CallbackInfo ci
     ) {
-        if (!PacketEventsMod.isOurConnection(flow)) {
+        if (!FabricUtil.isOurConnection(flow)) {
             // if pipeline side doesn't match api side, don't inject into
             // this pipeline - it probably means this is the pipeline from
             // integrated server to minecraft client, which is currently unsupported

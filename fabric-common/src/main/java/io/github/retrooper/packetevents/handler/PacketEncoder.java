@@ -26,13 +26,16 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 @ApiStatus.Internal
 public class PacketEncoder extends ChannelOutboundHandlerAdapter {
 
     private final PacketSide side;
     public User user;
-    public Object player;
+    public @Nullable Object player;
 
     public PacketEncoder(PacketSide side, User user) {
         this.side = side;

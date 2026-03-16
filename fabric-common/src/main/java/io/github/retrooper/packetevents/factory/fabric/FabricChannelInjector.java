@@ -26,10 +26,13 @@ import io.github.retrooper.packetevents.handler.PacketDecoder;
 import io.github.retrooper.packetevents.handler.PacketEncoder;
 import io.netty.channel.Channel;
 import net.fabricmc.api.EnvType;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import static com.github.retrooper.packetevents.PacketEvents.DECODER_NAME;
 import static com.github.retrooper.packetevents.PacketEvents.ENCODER_NAME;
 
+@NullMarked
 public class FabricChannelInjector implements ChannelInjector {
 
     private final PacketSide packetSide;
@@ -52,7 +55,7 @@ public class FabricChannelInjector implements ChannelInjector {
     }
 
     @Override
-    public boolean isPlayerSet(Object ch) {
+    public boolean isPlayerSet(@Nullable Object ch) {
         if (ch == null) return false;
         Channel channel = (Channel) ch;
         PacketEncoder encoder = (PacketEncoder) channel.pipeline().get(ENCODER_NAME);

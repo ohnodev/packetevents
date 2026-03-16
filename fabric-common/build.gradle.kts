@@ -26,6 +26,7 @@ repositories {
 
 dependencies {
     api(libs.bundles.adventure)
+    api(project(":api"))
     api(project(":api", "shadow"))
     api(project(":netty-common"))
 

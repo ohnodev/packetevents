@@ -25,15 +25,18 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+@NullMarked
 @ApiStatus.Internal
 public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
 
     private final PacketSide side;
     public User user;
-    public Object player;
+    public @Nullable Object player;
 
     public PacketDecoder(PacketSide side, User user) {
         this.side = side.getOpposite();

@@ -35,12 +35,14 @@ import io.github.retrooper.packetevents.impl.netty.NettyManagerImpl;
 import io.github.retrooper.packetevents.impl.netty.manager.player.PlayerManagerAbstract;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 
-public class FabricPacketEventsAPI extends PacketEventsAPI<FabricLoader> {
+@NullMarked
+public abstract class FabricPacketEventsAPI extends PacketEventsAPI<FabricLoader> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("PacketEvents");
 
@@ -74,13 +76,9 @@ public class FabricPacketEventsAPI extends PacketEventsAPI<FabricLoader> {
         this.injector = new FabricChannelInjector(environment);
     }
 
-    protected ServerManager constructServerManager() {
-        return new FabricServerManager();
-    }
+    protected abstract ServerManager constructServerManager();
 
-    protected PlayerManagerAbstract constructPlayerManager() {
-        return new FabricPlayerManager();
-    }
+    protected abstract PlayerManagerAbstract constructPlayerManager();
 
     @Override
     public void load() {

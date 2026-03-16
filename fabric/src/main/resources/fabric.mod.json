@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "packetevents-fabric-common",
+  "id": "packetevents",
   "version": "${version}",
-  "name": "PacketEvents Fabric Common",
+  "name": "PacketEvents",
   "description": "",
   "authors": [
     "retrooper",
@@ -16,30 +16,31 @@
   "icon": "assets/packetevents/icon.png",
   "environment": "*",
   "entrypoints": {
-    "preLaunch": [
-      "io.github.retrooper.packetevents.PacketEventsMod"
+    "pePreLaunchClient": [
+      "io.github.retrooper.packetevents.PacketEventsClientMod"
     ],
-    "main": [
-      "io.github.retrooper.packetevents.PacketEventsMod"
+    "pePreLaunchServer": [
+      "io.github.retrooper.packetevents.PacketEventsServerMod"
     ]
   },
+  "mixins": [
+    "packetevents.mixins.json"
+  ],
+  "accessWidener": "packetevents.accesswidener",
   "depends": {
-    "fabricloader": ">=0.15.11"
+    "fabricloader": ">=0.15.11",
+    "minecraft": ">1.21.11",
+    "java": ">=25"
   },
 
   "custom": {
     "modmenu": {
-      "badges": [
-        "library"
-      ],
       "links": {
         "modmenu.wiki": "https://docs.packetevents.com/",
         "modmenu.discord": "https://discord.gg/5h9DndYWpp",
         "modmenu.github_releases": "https://github.com/retrooper/packetevents/releases",
         "modmenu.modrinth": "https://modrinth.com/mod/packetevents"
-      },
-      "parent": "packetevents",
-      "update_checker": false
+      }
     }
   }
 }

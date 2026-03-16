@@ -21,11 +21,13 @@ package io.github.retrooper.packetevents.factory.fabric;
 import com.github.retrooper.packetevents.util.LogManager;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.event.Level;
 
 import java.util.Map;
 
+@NullMarked
 public class FabricLogger extends LogManager {
 
     private static final Map<java.util.logging.Level, Level> LEVEL_CONVERSION = Map.of(

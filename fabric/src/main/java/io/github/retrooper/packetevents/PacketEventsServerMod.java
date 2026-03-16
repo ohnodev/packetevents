@@ -19,14 +19,33 @@
 package io.github.retrooper.packetevents;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerManager;
 import io.github.retrooper.packetevents.factory.fabric.FabricPacketEventsAPI;
+import io.github.retrooper.packetevents.factory.fabric.FabricPlayerManager;
+import io.github.retrooper.packetevents.factory.fabric.FabricServerManager;
+import io.github.retrooper.packetevents.impl.netty.manager.player.PlayerManagerAbstract;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
+import net.minecraft.SharedConstants;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class PacketEventsServerMod implements PreLaunchEntrypoint {
 
     public static FabricPacketEventsAPI constructApi(String modid) {
-        return new FabricPacketEventsAPI(modid, EnvType.SERVER);
+        return new FabricPacketEventsAPI(modid, EnvType.SERVER) {
+            @Override
+            protected ServerManager constructServerManager() {
+                SharedConstants.tryDetectVersion();
+                String version = SharedConstants.getCurrentVersion().id();
+                return new FabricServerManager(version);
+            }
+
+            @Override
+            protected PlayerManagerAbstract constructPlayerManager() {
+                return new FabricPlayerManager();
+            }
+        };
     }
 
     @Override

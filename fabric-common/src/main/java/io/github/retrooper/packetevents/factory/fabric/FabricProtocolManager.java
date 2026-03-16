@@ -23,7 +23,9 @@ import com.github.retrooper.packetevents.protocol.ProtocolVersion;
 import io.github.retrooper.packetevents.impl.netty.manager.protocol.ProtocolManagerAbstract;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.api.EnvType;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class FabricProtocolManager extends ProtocolManagerAbstract {
 
     private final boolean invert;

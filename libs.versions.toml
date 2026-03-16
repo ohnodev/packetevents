@@ -7,8 +7,9 @@ bstats = "3.1.0"
 paper = "1.21.9-rc1-R0.1-SNAPSHOT"
 bungeecord = "1.21-R0.1"
 velocity = "3.4.0-SNAPSHOT"
-fabric-loom = "1.15.5"
 fabric-loader = "0.18.4"
+fabric-minecraft-remap = "1.21.11"
+fabric-minecraft-official = "26.1-pre-2"
 spongeGradle = "2.3.0"
 classgraph = "4.8.184"
 checkerqual = "3.53.1"
@@ -38,11 +39,12 @@ classgraph = { group = "io.github.classgraph", name = "classgraph", version.ref 
 checkerqual = { module = "org.checkerframework:checker-qual", version.ref = "checkerqual" }
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+fabric-minecraft-remap = { module = "com.mojang:minecraft", version.ref = "fabric-minecraft-remap" }
+fabric-minecraft-official = { module = "com.mojang:minecraft", version.ref = "fabric-minecraft-official" }
 
 [bundles]
 adventure = ["adventure-api", "adventure-nbt", "adventure-key", "adventure-examination-api", "adventure-examination-string"]
 adventure-serializers = ["adventure-text-serializer-gson", "adventure-text-serializer-json-legacy", "adventure-text-serializer-legacy"]
 
 [plugins]
-fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
 spongeGradle = { id = "org.spongepowered.gradle.plugin", version.ref = "spongeGradle" }
