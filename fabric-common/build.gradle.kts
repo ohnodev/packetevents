@@ -27,7 +27,6 @@ repositories {
 dependencies {
     api(libs.bundles.adventure)
     api(project(":api"))
-    api(project(":api", "shadow"))
     api(project(":netty-common"))
 
     compileOnly(libs.fabric.loader)
@@ -35,11 +34,11 @@ dependencies {
 }
 
 tasks.withType<JavaCompile> {
-    options.release = 25
+    options.release = 21
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }

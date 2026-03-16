@@ -16,40 +16,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import me.modmuss50.mpp.ModPublishExtension
+import net.fabricmc.loom.task.prod.ServerProductionRunTask
+
 plugins {
     packetevents.`library-conventions`
+    packetevents.`publish-conventions`
     net.fabricmc.`fabric-loom`
 }
 
-repositories {
-    maven("https://maven.fabricmc.net/")
-}
-
 dependencies {
-    api(project(":fabric-common"))
+    include(project(":fabric-common"))
+    include(project(":fabric-official"))
 
+    // dummy dependency
     minecraft(libs.fabric.minecraft.official)
-    compileOnly(libs.fabric.loader)
 }
 
-tasks.withType<JavaCompile> {
-    options.release = 25
+configure<ModPublishExtension> {
+    file = tasks.named<Jar>("jar").flatMap { it.archiveFile }
 }
 
-loom {
-    splitEnvironmentSourceSets()
-    mods {
-        register("packetevents") {
-            sourceSet(sourceSets.main.get())
-            sourceSet(sourceSets.maybeCreate("client"))
+tasks {
+    register<ServerProductionRunTask>("prodServer") {
+        javaLauncher = project.javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(25)
         }
     }
-    accessWidenerPath = sourceSets.main.get().resources.srcDirs.single()
-        .resolve("${rootProject.name}.accesswidener")
-}
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+    named<Jar>("jar") {
+        destinationDirectory = rootProject.layout.buildDirectory.dir("libs")
     }
 }
