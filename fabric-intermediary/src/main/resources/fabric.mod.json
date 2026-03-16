@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "packetevents-fabric-official",
+  "id": "packetevents-fabric-intermediary",
   "version": "${version}",
-  "name": "PacketEvents Fabric (Official Mappings)",
+  "name": "PacketEvents Fabric (Intermediary Mappings)",
   "description": "",
   "authors": [
     "retrooper",
@@ -29,8 +29,8 @@
   "accessWidener": "packetevents.accesswidener",
   "depends": {
     "fabricloader": ">=0.15.11",
-    "minecraft": ">1.21.11",
-    "java": ">=25",
+    "minecraft": "<=1.21.11",
+    "java": ">=21",
     "packetevents-fabric-common": "*"
   },
 

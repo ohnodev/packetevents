@@ -18,34 +18,26 @@
 
 package io.github.retrooper.packetevents.factory.fabric;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.PlayerInfo;
-import net.minecraft.client.player.LocalPlayer;
+import io.github.retrooper.packetevents.impl.netty.manager.player.PlayerManagerAbstract;
+import net.minecraft.server.level.ServerPlayer;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
-public class FabricClientPlayerManager extends FabricPlayerManager {
+public class FabricPlayerManager extends PlayerManagerAbstract {
 
     @Override
-    public int getPing(Object playerObj) {
-        if (playerObj instanceof LocalPlayer player) {
-            PlayerInfo info = player.connection.getPlayerInfo(player.getUUID());
-            if (info != null) {
-                return info.getLatency();
-            }
-            // if the server doesn't show the player info of
-            // the player itself, try to fall back to potential
-            // latency sampling data - which is often not present
-            return (int) Minecraft.getInstance().getDebugOverlay().getPingLogger().get(0);
+    public int getPing(Object player) {
+        if (player instanceof ServerPlayer) {
+            return ((ServerPlayer) player).connection.latency();
         }
-        return super.getPing(playerObj);
+        throw new UnsupportedOperationException("Unsupported player implementation: " + player);
     }
 
     @Override
     public Object getChannel(Object player) {
-        if (player instanceof LocalPlayer) {
-            return ((LocalPlayer) player).connection.getConnection().channel;
+        if (player instanceof ServerPlayer) {
+            return ((ServerPlayer) player).connection.connection.channel;
         }
-        return super.getChannel(player);
+        throw new UnsupportedOperationException("Unsupported player implementation: " + player);
     }
 }

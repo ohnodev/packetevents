@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "packetevents-fabric-common",
   "version": "${version}",
-  "name": "PacketEvents Fabric Common",
+  "name": "PacketEvents Fabric (Common)",
   "description": "",
   "authors": [
     "retrooper",

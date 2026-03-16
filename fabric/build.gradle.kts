@@ -28,6 +28,7 @@ plugins {
 dependencies {
     include(project(":fabric-common"))
     include(project(":fabric-official"))
+    include(project(":fabric-intermediary"))
 
     // dummy dependency
     minecraft(libs.fabric.minecraft.official)

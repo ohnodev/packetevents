@@ -36,6 +36,6 @@ include("sponge")
 include("fabric")
 include("fabric-common")
 include("fabric-official")
-//include("fabric-remap")
+include("fabric-intermediary")
 // Patch modules
 include(":patch:adventure-text-serializer-gson")
