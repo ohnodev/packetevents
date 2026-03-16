@@ -26,6 +26,12 @@ plugins {
 }
 
 dependencies {
+    // include dependencies
+    include(libs.bundles.adventure)
+    include(project(":api", "shadow"))
+    include(project(":netty-common"))
+
+    // include fabric-specific modules
     include(project(":fabric-common"))
     include(project(":fabric-official"))
     include(project(":fabric-intermediary"))
@@ -40,6 +46,10 @@ configure<ModPublishExtension> {
 
 tasks {
     register<ServerProductionRunTask>("prodServer") {
+        minecraftVersion = "26.1-pre-2"
+        loaderVersion = libs.versions.fabric.loader
+        runDir = project.layout.projectDirectory.dir("run").dir(minecraftVersion.get())
+
         javaLauncher = project.javaToolchains.launcherFor {
             languageVersion = JavaLanguageVersion.of(25)
         }
