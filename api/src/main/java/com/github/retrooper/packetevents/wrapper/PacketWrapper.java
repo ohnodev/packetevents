@@ -1517,13 +1517,11 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     }
 
     public <Z extends MappedEntity> Z readMappedEntity(IRegistry<Z> registry) {
-        IRegistry<Z> replacedRegistry = this.getRegistryHolder().getRegistryOr(registry, this.serverVersion.toClientVersion());
-        return this.readMappedEntity((BiFunction<ClientVersion, Integer, Z>) replacedRegistry);
+        return this.readMappedEntity((BiFunction<ClientVersion, Integer, Z>) this.replaceRegistry(registry));
     }
 
     public <Z extends MappedEntity> Z readMappedEntityOrDirect(IRegistry<Z> registry, Reader<Z> directReader) {
-        IRegistry<Z> replacedRegistry = this.getRegistryHolder().getRegistryOr(registry, this.serverVersion.toClientVersion());
-        return this.readMappedEntityOrDirect((BiFunction<ClientVersion, Integer, Z>) replacedRegistry, directReader);
+        return this.readMappedEntityOrDirect((BiFunction<ClientVersion, Integer, Z>) this.replaceRegistry(registry), directReader);
     }
 
     public void writeMappedEntity(MappedEntity entity) {

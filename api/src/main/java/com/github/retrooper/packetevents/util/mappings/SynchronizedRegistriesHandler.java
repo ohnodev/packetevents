@@ -168,14 +168,18 @@ public final class SynchronizedRegistriesHandler {
         if (registryData == null) {
             return;
         }
-        SimpleRegistry<?> syncedRegistry;
-        if (FORCE_PER_USER_REGISTRIES || cacheKey == null) {
-            syncedRegistry = registryData.createFromElements(elements, wrapper); // no caching
-        } else {
-            syncedRegistry = registryData.computeSyncedRegistry(cacheKey, () ->
-                    registryData.createFromElements(elements, wrapper));
+        try {
+            SimpleRegistry<?> syncedRegistry;
+            if (FORCE_PER_USER_REGISTRIES || cacheKey == null) {
+                syncedRegistry = registryData.createFromElements(elements, wrapper); // no caching
+            } else {
+                syncedRegistry = registryData.computeSyncedRegistry(cacheKey, () ->
+                        registryData.createFromElements(elements, wrapper));
+            }
+            user.putRegistry(syncedRegistry);
+        } catch (Exception exception) {
+            throw new IllegalStateException("Error while reading registry " + registryName + " for " + user, exception);
         }
-        user.putRegistry(syncedRegistry);
     }
 
     public static void handleLegacyRegistries(

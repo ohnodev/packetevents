@@ -48,9 +48,9 @@ public interface PigVariant extends MappedEntity, CopyableEntity<PigVariant>, De
         @Override
         public PigVariant decode(NBTCompound tag, PacketWrapper<?> wrapper) throws NbtCodecException {
             ModelType modelType = tag.getOr("model", ModelType.CODEC, ModelType.NORMAL, wrapper);
-            ResourceLocation assetId = tag.getOrThrow("assset_id", ResourceLocation.CODEC, wrapper);
+            ResourceLocation assetId = tag.getOrThrow("asset_id", ResourceLocation.CODEC, wrapper);
             ResourceLocation babyAssetId = wrapper.getServerVersion().isOlderThan(ServerVersion.V_26_1) ? assetId
-                    : tag.getOrThrow("baby_assset_id", ResourceLocation.CODEC, wrapper);
+                    : tag.getOrThrow("baby_asset_id", ResourceLocation.CODEC, wrapper);
             return new StaticPigVariant(modelType, assetId, babyAssetId);
         }
 

@@ -48,9 +48,9 @@ public interface CowVariant extends MappedEntity, CopyableEntity<CowVariant>, De
         @Override
         public CowVariant decode(NBTCompound tag, PacketWrapper<?> wrapper) throws NbtCodecException {
             ModelType modelType = tag.getOr("model", ModelType.CODEC, ModelType.NORMAL, wrapper);
-            ResourceLocation assetId = tag.getOrThrow("assset_id", ResourceLocation.CODEC, wrapper);
+            ResourceLocation assetId = tag.getOrThrow("asset_id", ResourceLocation.CODEC, wrapper);
             ResourceLocation babyAssetId = wrapper.getServerVersion().isOlderThan(ServerVersion.V_26_1) ? assetId
-                    : tag.getOrThrow("baby_assset_id", ResourceLocation.CODEC, wrapper);
+                    : tag.getOrThrow("baby_asset_id", ResourceLocation.CODEC, wrapper);
             return new StaticCowVariant(modelType, assetId, babyAssetId);
         }
 
