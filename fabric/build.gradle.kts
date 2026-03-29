@@ -6,7 +6,7 @@ import net.fabricmc.loom.task.prod.ServerProductionRunTask
 
 plugins {
     packetevents.`library-conventions`
-    alias(libs.plugins.fabric.loom)
+    net.fabricmc.`fabric-loom-remap`
 }
 
 repositories {

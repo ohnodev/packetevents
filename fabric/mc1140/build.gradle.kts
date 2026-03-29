@@ -2,7 +2,7 @@ val minecraft_version: String by project
 val yarn_mappings: String by project
 
 plugins {
-    alias(libs.plugins.fabric.loom)
+    net.fabricmc.`fabric-loom-remap`
 }
 
 repositories {

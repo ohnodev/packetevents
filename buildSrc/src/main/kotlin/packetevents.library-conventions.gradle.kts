@@ -90,7 +90,11 @@ tasks {
     }
 
     jar {
-        archiveClassifier = "default"
+        if (isShadow) {
+            archiveClassifier = "default"
+        } else {
+            destinationDirectory = rootProject.layout.buildDirectory.dir("libs")
+        }
     }
 
     sequenceOf("sourcesJar", "javadocJar").forEach {
