@@ -62,6 +62,9 @@ public class ItemContainerContents {
     private static ItemStack readItemStackTemplate(PacketWrapper<?> wrapper) {
         ItemType itemType = wrapper.readMappedEntity(ItemTypes.getRegistry());
         int count = wrapper.readVarInt();
+        if (count <= 0) {
+            throw new IllegalStateException("present item stack has non-positive count: " + count);
+        }
         PatchableComponentMap components = ComponentPatchCodec.readPatchMap(wrapper, itemType, false);
         if (components == null) {
             return ItemStack.builder().type(itemType).amount(count).wrapper(wrapper).build();

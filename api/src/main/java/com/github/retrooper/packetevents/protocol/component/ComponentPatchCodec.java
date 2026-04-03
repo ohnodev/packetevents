@@ -107,13 +107,17 @@ public final class ComponentPatchCodec {
                 Runnable writer = () -> castComponentType(patch.getKey()).write(wrapper, patch.getValue().get());
                 if (lengthPrefixed) {
                     Object originalBuffer = wrapper.buffer;
-                    wrapper.buffer = ByteBufHelper.allocateNewBuffer(originalBuffer);
-                    writer.run();
-                    Object componentBuffer = wrapper.buffer;
-                    wrapper.buffer = originalBuffer;
-                    wrapper.writeVarInt(ByteBufHelper.readableBytes(componentBuffer));
-                    ByteBufHelper.writeBytes(wrapper.buffer, componentBuffer);
-                    ByteBufHelper.release(componentBuffer);
+                    Object componentBuffer = ByteBufHelper.allocateNewBuffer(originalBuffer);
+                    try {
+                        wrapper.buffer = componentBuffer;
+                        writer.run();
+                        wrapper.buffer = originalBuffer;
+                        wrapper.writeVarInt(ByteBufHelper.readableBytes(componentBuffer));
+                        ByteBufHelper.writeBytes(wrapper.buffer, componentBuffer);
+                    } finally {
+                        wrapper.buffer = originalBuffer;
+                        ByteBufHelper.release(componentBuffer);
+                    }
                 } else {
                     writer.run();
                 }
