@@ -62,7 +62,6 @@ public class ItemContainerContents {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static ItemStack readItemStackTemplate(PacketWrapper<?> wrapper) {
         ItemType itemType = wrapper.readMappedEntity(ItemTypes.getRegistry());
         int count = wrapper.readVarInt();
@@ -90,7 +89,6 @@ public class ItemContainerContents {
         return ItemStack.builder().type(itemType).amount(count).components(components).wrapper(wrapper).build();
     }
 
-    @SuppressWarnings("unchecked")
     private static void writeItemStackTemplate(PacketWrapper<?> wrapper, ItemStack stack) {
         wrapper.writeMappedEntity(stack.getType());
         wrapper.writeVarInt(stack.getAmount());
