@@ -33,12 +33,26 @@ public class ItemContainerContents {
     }
 
     public static ItemContainerContents read(PacketWrapper<?> wrapper) {
-        List<ItemStack> items = wrapper.readList(PacketWrapper::readItemStack);
+        List<ItemStack> items;
+        if (wrapper.getServerVersion().isNewerThanOrEquals(com.github.retrooper.packetevents.manager.server.ServerVersion.V_26_1)) {
+            // 26.1 uses ItemStackTemplate optional entries for container slots.
+            items = wrapper.readList(w -> {
+                ItemStack stack = w.readOptional(PacketWrapper::readPresentItemStack);
+                return stack == null ? ItemStack.EMPTY : stack;
+            });
+        } else {
+            items = wrapper.readList(PacketWrapper::readItemStack);
+        }
         return new ItemContainerContents(items);
     }
 
     public static void write(PacketWrapper<?> wrapper, ItemContainerContents contents) {
-        wrapper.writeList(contents.items, PacketWrapper::writeItemStack);
+        if (wrapper.getServerVersion().isNewerThanOrEquals(com.github.retrooper.packetevents.manager.server.ServerVersion.V_26_1)) {
+            wrapper.writeList(contents.items, (w, item) ->
+                    w.writeOptional(item == null || item.isEmpty() ? null : item, PacketWrapper::writePresentItemStack));
+        } else {
+            wrapper.writeList(contents.items, PacketWrapper::writeItemStack);
+        }
     }
 
     public void addItem(ItemStack itemStack) {
