@@ -67,6 +67,15 @@ After a successful build, artifacts are written to:
 
 For Fabric servers, use `packetevents-fabric-<version>.jar` in your `mods/` folder.
 
+### Prebuilt artifact in this repo
+
+This branch also includes a prebuilt Fabric artifact for convenience:
+
+- `prebuilt/packetevents-fabric-2.12.0+04d9562d8-SNAPSHOT.jar`
+- `prebuilt/packetevents-fabric-2.12.0+04d9562d8-SNAPSHOT.zip`
+
+That lets teammates pull this branch and deploy directly without building first.
+
 ### Troubleshooting
 
 - If Gradle fails with Java version errors, set `JAVA_HOME` to your JDK 25 installation.
