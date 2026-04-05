@@ -66,7 +66,6 @@ public class WrapperPlayServerChunkData extends PacketWrapper<WrapperPlayServerC
         int chunkX = readInt();
         int chunkZ = readInt();
         int chunkSize = user.getTotalWorldHeight() >> 4;
-        int dataLength = this.readVarInt();
 
         NBTCompound heightmapsNbt = null;
         Map<HeightmapType, long[]> modernHeightmaps = null;
@@ -75,6 +74,7 @@ public class WrapperPlayServerChunkData extends PacketWrapper<WrapperPlayServerC
         } else {
             heightmapsNbt = this.readNBT();
         }
+        int dataLength = this.readVarInt();
 
         int expectedReaderIndex = ByteBufHelper.readerIndex(this.buffer) + dataLength;
         BaseChunk[] chunks = CHUNK_READER_V1_18.read(
@@ -125,6 +125,11 @@ public class WrapperPlayServerChunkData extends PacketWrapper<WrapperPlayServerC
         this.buffer = dataBuffer;
 
         for (BaseChunk chunk : chunks) {
+            if (!(chunk instanceof Chunk_v1_18)) {
+                throw new IllegalArgumentException(
+                        "Expected Chunk_v1_18 but got " + (chunk == null ? "null" : chunk.getClass().getName())
+                );
+            }
             Chunk_v1_18.write(this, (Chunk_v1_18) chunk);
         }
 
@@ -158,7 +163,9 @@ public class WrapperPlayServerChunkData extends PacketWrapper<WrapperPlayServerC
             writeNBT(tileEntity.getNBT());
         }
 
-        LightData.write(this, lightData);
+        if (lightData != null) {
+            LightData.write(this, lightData);
+        }
     }
 
     @Override
