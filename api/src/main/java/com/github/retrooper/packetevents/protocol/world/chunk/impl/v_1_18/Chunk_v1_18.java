@@ -23,15 +23,20 @@ import com.github.retrooper.packetevents.protocol.stream.NetStreamInput;
 import com.github.retrooper.packetevents.protocol.stream.NetStreamInputWrapper;
 import com.github.retrooper.packetevents.protocol.stream.NetStreamOutput;
 import com.github.retrooper.packetevents.protocol.stream.NetStreamOutputWrapper;
+import com.github.retrooper.packetevents.protocol.world.MaterialType;
 import com.github.retrooper.packetevents.protocol.world.chunk.BaseChunk;
 import com.github.retrooper.packetevents.protocol.world.chunk.palette.DataPalette;
 import com.github.retrooper.packetevents.protocol.world.chunk.palette.PaletteType;
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
+import com.github.retrooper.packetevents.protocol.world.states.type.StateValue;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.ApiStatus;
 
 public class Chunk_v1_18 implements BaseChunk {
 
     private static final int AIR = 0;
+    private static final int UNKNOWN_BLOCK_COUNT = -1;
+    private static final int UNKNOWN_FLUID_COUNT = -1;
 
     private int blockCount;
     /**
@@ -51,7 +56,7 @@ public class Chunk_v1_18 implements BaseChunk {
      */
     @ApiStatus.Obsolete
     public Chunk_v1_18(int blockCount, DataPalette chunkData, DataPalette biomeData) {
-        this(blockCount, 0, chunkData, biomeData);
+        this(blockCount, UNKNOWN_FLUID_COUNT, chunkData, biomeData);
     }
 
     /**
@@ -95,7 +100,7 @@ public class Chunk_v1_18 implements BaseChunk {
     @Deprecated
     public static Chunk_v1_18 read(NetStreamInput in, boolean paletteLengthPrefix, boolean hasFluidCount) {
         int blockCount = in.readShort();
-        int fluidCount = hasFluidCount ? in.readShort() : 0;
+        int fluidCount = hasFluidCount ? in.readShort() : UNKNOWN_FLUID_COUNT;
         DataPalette chunkPalette = DataPalette.read(in, PaletteType.CHUNK,
                 true, paletteLengthPrefix);
         DataPalette biomePalette = DataPalette.read(in, PaletteType.BIOME,
@@ -130,9 +135,9 @@ public class Chunk_v1_18 implements BaseChunk {
      */
     @Deprecated
     public static void write(NetStreamOutput out, Chunk_v1_18 section, boolean paletteLengthPrefix, boolean hasFluidCount) {
-        out.writeShort(section.blockCount);
+        out.writeShort(section.getOrComputeBlockCount());
         if (hasFluidCount) {
-            out.writeShort(section.fluidCount);
+            out.writeShort(section.getOrComputeFluidCount());
         }
         DataPalette.write(out, section.chunkData, paletteLengthPrefix);
         DataPalette.write(out, section.biomeData, paletteLengthPrefix);
@@ -145,20 +150,46 @@ public class Chunk_v1_18 implements BaseChunk {
 
     @Override
     public void set(int x, int y, int z, int state) {
+        if (this.blockCount == UNKNOWN_BLOCK_COUNT || this.fluidCount == UNKNOWN_FLUID_COUNT) {
+            recomputeCounts();
+        }
+
         int curr = this.chunkData.set(x, y, z, state);
         if (state != AIR && curr == AIR) {
             this.blockCount++;
         } else if (state == AIR && curr != AIR) {
             this.blockCount--;
         }
+
+        boolean newIsFluid = isFluidStateId(state);
+        boolean oldIsFluid = isFluidStateId(curr);
+        if (newIsFluid && !oldIsFluid) {
+            this.fluidCount++;
+        } else if (!newIsFluid && oldIsFluid) {
+            this.fluidCount--;
+        }
     }
 
     @Override
     public boolean isEmpty() {
-        return this.blockCount == 0 && this.fluidCount == 0;
+        if (this.blockCount == UNKNOWN_BLOCK_COUNT) {
+            recomputeCounts();
+        }
+        return this.blockCount == 0;
+    }
+
+    @Override
+    public boolean hasFluid() {
+        if (this.fluidCount == UNKNOWN_FLUID_COUNT) {
+            recomputeCounts();
+        }
+        return this.fluidCount > 0;
     }
 
     public int getBlockCount() {
+        if (this.blockCount == UNKNOWN_BLOCK_COUNT) {
+            recomputeCounts();
+        }
         return blockCount;
     }
 
@@ -170,6 +201,9 @@ public class Chunk_v1_18 implements BaseChunk {
      * @versions 26.1+
      */
     public int getFluidCount() {
+        if (this.fluidCount == UNKNOWN_FLUID_COUNT) {
+            recomputeCounts();
+        }
         return this.fluidCount;
     }
 
@@ -181,10 +215,70 @@ public class Chunk_v1_18 implements BaseChunk {
     }
 
     public DataPalette getChunkData() {
+        invalidateCounts();
         return chunkData;
     }
 
     public DataPalette getBiomeData() {
         return biomeData;
+    }
+
+    private int getOrComputeFluidCount() {
+        if (this.fluidCount == UNKNOWN_FLUID_COUNT || this.blockCount == UNKNOWN_BLOCK_COUNT) {
+            recomputeCounts();
+        }
+        return this.fluidCount;
+    }
+
+    private int getOrComputeBlockCount() {
+        if (this.blockCount == UNKNOWN_BLOCK_COUNT || this.fluidCount == UNKNOWN_FLUID_COUNT) {
+            recomputeCounts();
+        }
+        return this.blockCount;
+    }
+
+    private void invalidateCounts() {
+        this.blockCount = UNKNOWN_BLOCK_COUNT;
+        this.fluidCount = UNKNOWN_FLUID_COUNT;
+    }
+
+    private void recomputeCounts() {
+        int computedBlockCount = 0;
+        int computedFluidCount = 0;
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 16; y++) {
+                for (int z = 0; z < 16; z++) {
+                    int blockState = this.chunkData.get(x, y, z);
+                    if (blockState != AIR) {
+                        computedBlockCount++;
+                    }
+                    if (isFluidStateId(blockState)) {
+                        computedFluidCount++;
+                    }
+                }
+            }
+        }
+        this.blockCount = computedBlockCount;
+        this.fluidCount = computedFluidCount;
+    }
+
+    private static boolean isFluidStateId(int blockId) {
+        if (blockId == AIR) {
+            return false;
+        }
+        WrappedBlockState state = WrappedBlockState.getByGlobalId(blockId);
+        return hasNonEmptyFluidState(state);
+    }
+
+    private static boolean hasNonEmptyFluidState(WrappedBlockState state) {
+        MaterialType material = state.getType().getMaterialType();
+        if (material == MaterialType.WATER
+                || material == MaterialType.LAVA
+                || material == MaterialType.BUBBLE_COLUMN
+                || material == MaterialType.WATER_PLANT
+                || material == MaterialType.REPLACEABLE_WATER_PLANT) {
+            return true;
+        }
+        return state.hasProperty(StateValue.WATERLOGGED) && state.isWaterlogged();
     }
 }
