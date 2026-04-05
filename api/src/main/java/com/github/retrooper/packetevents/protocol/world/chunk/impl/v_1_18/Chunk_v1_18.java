@@ -156,11 +156,13 @@ public class Chunk_v1_18 implements BaseChunk {
             this.blockCount--;
         }
 
-        if (isFluidStateId(state) && !isFluidStateId(curr)) {
+        boolean newIsFluid = isFluidStateId(state);
+        boolean oldIsFluid = isFluidStateId(curr);
+        if (newIsFluid && !oldIsFluid) {
             if (this.fluidCount != UNKNOWN_FLUID_COUNT) {
                 this.fluidCount++;
             }
-        } else if (!isFluidStateId(state) && isFluidStateId(curr)) {
+        } else if (!newIsFluid && oldIsFluid) {
             if (this.fluidCount != UNKNOWN_FLUID_COUNT) {
                 this.fluidCount--;
             }
@@ -240,6 +242,10 @@ public class Chunk_v1_18 implements BaseChunk {
             return false;
         }
         WrappedBlockState state = WrappedBlockState.getByGlobalId(blockId);
+        return hasNonEmptyFluidState(state);
+    }
+
+    private static boolean hasNonEmptyFluidState(WrappedBlockState state) {
         MaterialType material = state.getType().getMaterialType();
         if (material == MaterialType.WATER
                 || material == MaterialType.LAVA
