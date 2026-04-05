@@ -23,11 +23,11 @@ import com.github.retrooper.packetevents.protocol.stream.NetStreamInput;
 import com.github.retrooper.packetevents.protocol.stream.NetStreamInputWrapper;
 import com.github.retrooper.packetevents.protocol.stream.NetStreamOutput;
 import com.github.retrooper.packetevents.protocol.stream.NetStreamOutputWrapper;
+import com.github.retrooper.packetevents.protocol.world.MaterialType;
 import com.github.retrooper.packetevents.protocol.world.chunk.BaseChunk;
 import com.github.retrooper.packetevents.protocol.world.chunk.palette.DataPalette;
 import com.github.retrooper.packetevents.protocol.world.chunk.palette.PaletteType;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
-import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateValue;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.ApiStatus;
@@ -169,7 +169,7 @@ public class Chunk_v1_18 implements BaseChunk {
 
     @Override
     public boolean isEmpty() {
-        return this.blockCount == 0 && !this.hasFluid();
+        return this.blockCount == 0;
     }
 
     @Override
@@ -240,7 +240,12 @@ public class Chunk_v1_18 implements BaseChunk {
             return false;
         }
         WrappedBlockState state = WrappedBlockState.getByGlobalId(blockId);
-        if (state.getType() == StateTypes.WATER || state.getType() == StateTypes.LAVA) {
+        MaterialType material = state.getType().getMaterialType();
+        if (material == MaterialType.WATER
+                || material == MaterialType.LAVA
+                || material == MaterialType.BUBBLE_COLUMN
+                || material == MaterialType.WATER_PLANT
+                || material == MaterialType.REPLACEABLE_WATER_PLANT) {
             return true;
         }
         return state.hasProperty(StateValue.WATERLOGGED) && state.isWaterlogged();
