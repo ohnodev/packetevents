@@ -169,7 +169,7 @@ public class Chunk_v1_18 implements BaseChunk {
 
     @Override
     public boolean hasFluid() {
-        return this.fluidCount > 0 || BaseChunk.super.hasFluid();
+        return this.fluidCount > 0;
     }
 
     public int getBlockCount() {
