@@ -35,6 +35,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class Chunk_v1_18 implements BaseChunk {
 
     private static final int AIR = 0;
+    private static final int UNKNOWN_BLOCK_COUNT = -1;
     private static final int UNKNOWN_FLUID_COUNT = -1;
 
     private int blockCount;
@@ -134,7 +135,7 @@ public class Chunk_v1_18 implements BaseChunk {
      */
     @Deprecated
     public static void write(NetStreamOutput out, Chunk_v1_18 section, boolean paletteLengthPrefix, boolean hasFluidCount) {
-        out.writeShort(section.blockCount);
+        out.writeShort(section.getOrComputeBlockCount());
         if (hasFluidCount) {
             out.writeShort(section.getOrComputeFluidCount());
         }
@@ -149,6 +150,10 @@ public class Chunk_v1_18 implements BaseChunk {
 
     @Override
     public void set(int x, int y, int z, int state) {
+        if (this.blockCount == UNKNOWN_BLOCK_COUNT || this.fluidCount == UNKNOWN_FLUID_COUNT) {
+            recomputeCounts();
+        }
+
         int curr = this.chunkData.set(x, y, z, state);
         if (state != AIR && curr == AIR) {
             this.blockCount++;
@@ -159,34 +164,32 @@ public class Chunk_v1_18 implements BaseChunk {
         boolean newIsFluid = isFluidStateId(state);
         boolean oldIsFluid = isFluidStateId(curr);
         if (newIsFluid && !oldIsFluid) {
-            if (this.fluidCount != UNKNOWN_FLUID_COUNT) {
-                this.fluidCount++;
-            }
+            this.fluidCount++;
         } else if (!newIsFluid && oldIsFluid) {
-            if (this.fluidCount != UNKNOWN_FLUID_COUNT) {
-                this.fluidCount--;
-            }
+            this.fluidCount--;
         }
     }
 
     @Override
     public boolean isEmpty() {
+        if (this.blockCount == UNKNOWN_BLOCK_COUNT) {
+            recomputeCounts();
+        }
         return this.blockCount == 0;
     }
 
     @Override
     public boolean hasFluid() {
-        if (this.fluidCount > 0) {
-            return true;
+        if (this.fluidCount == UNKNOWN_FLUID_COUNT) {
+            recomputeCounts();
         }
-        if (this.fluidCount == 0) {
-            return false;
-        }
-        this.fluidCount = countFluidStates();
         return this.fluidCount > 0;
     }
 
     public int getBlockCount() {
+        if (this.blockCount == UNKNOWN_BLOCK_COUNT) {
+            recomputeCounts();
+        }
         return blockCount;
     }
 
@@ -198,6 +201,9 @@ public class Chunk_v1_18 implements BaseChunk {
      * @versions 26.1+
      */
     public int getFluidCount() {
+        if (this.fluidCount == UNKNOWN_FLUID_COUNT) {
+            recomputeCounts();
+        }
         return this.fluidCount;
     }
 
@@ -209,6 +215,7 @@ public class Chunk_v1_18 implements BaseChunk {
     }
 
     public DataPalette getChunkData() {
+        invalidateCounts();
         return chunkData;
     }
 
@@ -217,24 +224,42 @@ public class Chunk_v1_18 implements BaseChunk {
     }
 
     private int getOrComputeFluidCount() {
-        if (this.fluidCount == UNKNOWN_FLUID_COUNT) {
-            this.fluidCount = countFluidStates();
+        if (this.fluidCount == UNKNOWN_FLUID_COUNT || this.blockCount == UNKNOWN_BLOCK_COUNT) {
+            recomputeCounts();
         }
         return this.fluidCount;
     }
 
-    private int countFluidStates() {
-        int count = 0;
+    private int getOrComputeBlockCount() {
+        if (this.blockCount == UNKNOWN_BLOCK_COUNT || this.fluidCount == UNKNOWN_FLUID_COUNT) {
+            recomputeCounts();
+        }
+        return this.blockCount;
+    }
+
+    private void invalidateCounts() {
+        this.blockCount = UNKNOWN_BLOCK_COUNT;
+        this.fluidCount = UNKNOWN_FLUID_COUNT;
+    }
+
+    private void recomputeCounts() {
+        int computedBlockCount = 0;
+        int computedFluidCount = 0;
         for (int x = 0; x < 16; x++) {
             for (int y = 0; y < 16; y++) {
                 for (int z = 0; z < 16; z++) {
-                    if (isFluidStateId(this.chunkData.get(x, y, z))) {
-                        count++;
+                    int blockState = this.chunkData.get(x, y, z);
+                    if (blockState != AIR) {
+                        computedBlockCount++;
+                    }
+                    if (isFluidStateId(blockState)) {
+                        computedFluidCount++;
                     }
                 }
             }
         }
-        return count;
+        this.blockCount = computedBlockCount;
+        this.fluidCount = computedFluidCount;
     }
 
     private static boolean isFluidStateId(int blockId) {
