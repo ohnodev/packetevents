@@ -121,7 +121,8 @@ public enum ClientVersion {
     V_1_21_9(773),
     V_1_21_11(774),
 
-    // 26.1 and 26.2 snapshots share protocol 775.
+    // Legacy alias kept for source compatibility; protocol 775 resolves to V_26_2 at runtime.
+    @Deprecated
     V_26_1(775),
     V_26_2(775),
     //TODO UPDATE Add new protocol version field
