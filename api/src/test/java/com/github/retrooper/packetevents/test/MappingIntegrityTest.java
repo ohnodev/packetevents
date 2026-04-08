@@ -43,6 +43,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -87,6 +88,8 @@ public class MappingIntegrityTest extends BaseDummyAPITest {
     @DisplayName("Test 26.2 alias ordering in client version comparison")
     public void testClientVersionAliasOrdering() {
         assertTrue(ClientVersion.V_26_2.isNewerThan(ClientVersion.V_26_1));
+        assertFalse(ClientVersion.V_26_1.isNewerThan(ClientVersion.V_26_2));
+        assertTrue(ClientVersion.V_26_1.isOlderThan(ClientVersion.V_26_2));
     }
 
     @Test

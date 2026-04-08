@@ -66,10 +66,9 @@ public final class StateTypes {
         return REGISTRY.getByName(blockKey);
     }
 
-    public static StateType getById(ClientVersion version, int id) {
+    public static @Nullable StateType getById(ClientVersion version, int id) {
         StateType.Mapped mapped = getMappedById(version, id);
-        // Snapshot mappings may briefly lag behind Mojang registries; never crash tag sync on unknown ids.
-        return mapped == null ? AIR : mapped.getStateType();
+        return mapped == null ? null : mapped.getStateType();
     }
 
     public static StateType.@Nullable Mapped getMappedById(ClientVersion version, int id) {

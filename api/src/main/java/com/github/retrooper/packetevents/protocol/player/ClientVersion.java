@@ -260,38 +260,38 @@ public enum ClientVersion {
 
     /**
      * Is this client version newer than or equal to the compared client version?
-     * This method simply checks if this client version's protocol version is newer than or equal to
-     * the compared client version's protocol version.
+     * This method compares enum declaration order to preserve ordering when multiple
+     * constants intentionally share the same protocol id.
      *
      * @param target Compared client version.
      * @return Is this client version newer than or equal to the compared client version.
      */
     public boolean isNewerThanOrEquals(ClientVersion target) {
-        return this.protocolVersion >= target.protocolVersion;
+        return this.ordinal() >= target.ordinal();
     }
 
     /**
      * Is this client version older than the compared client version?
-     * This method simply checks if this client version's protocol version is less than
-     * the compared client version's protocol version.
+     * This method compares enum declaration order to preserve ordering when multiple
+     * constants intentionally share the same protocol id.
      *
      * @param target Compared client version.
      * @return Is this client version older than the compared client version.
      */
     public boolean isOlderThan(ClientVersion target) {
-        return protocolVersion < target.protocolVersion;
+        return this.ordinal() < target.ordinal();
     }
 
     /**
      * Is this client version older than or equal to the compared client version?
-     * This method simply checks if this client version's protocol version is older than or equal to
-     * the compared client version's protocol version.
+     * This method compares enum declaration order to preserve ordering when multiple
+     * constants intentionally share the same protocol id.
      *
      * @param target Compared client version.
      * @return Is this client version older than or equal to the compared client version.
      */
     public boolean isOlderThanOrEquals(ClientVersion target) {
-        return this.protocolVersion <= target.protocolVersion;
+        return this.ordinal() <= target.ordinal();
     }
 
     /**
