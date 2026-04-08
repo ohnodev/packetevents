@@ -248,50 +248,59 @@ public enum ClientVersion {
 
     /**
      * Is this client version newer than the compared client version?
-     * This method compares enum declaration order to preserve ordering when multiple
-     * constants intentionally share the same protocol id (for example V_26_1 and V_26_2).
+     * This method compares protocol ids first, then enum declaration order as a tie-breaker
+     * when two constants intentionally share the same protocol id (for example V_26_1 and V_26_2).
      *
      * @param target Compared client version.
      * @return Is this client version newer than the compared client version.
      */
     public boolean isNewerThan(ClientVersion target) {
-        return ordinal() > target.ordinal();
+        return compareByProtocolThenOrdinal(target) > 0;
     }
 
     /**
      * Is this client version newer than or equal to the compared client version?
-     * This method compares enum declaration order to preserve ordering when multiple
-     * constants intentionally share the same protocol id.
+     * This method compares protocol ids first, then enum declaration order as a tie-breaker
+     * when two constants intentionally share the same protocol id.
      *
      * @param target Compared client version.
      * @return Is this client version newer than or equal to the compared client version.
      */
     public boolean isNewerThanOrEquals(ClientVersion target) {
-        return this.ordinal() >= target.ordinal();
+        return compareByProtocolThenOrdinal(target) >= 0;
     }
 
     /**
      * Is this client version older than the compared client version?
-     * This method compares enum declaration order to preserve ordering when multiple
-     * constants intentionally share the same protocol id.
+     * This method compares protocol ids first, then enum declaration order as a tie-breaker
+     * when two constants intentionally share the same protocol id.
      *
      * @param target Compared client version.
      * @return Is this client version older than the compared client version.
      */
     public boolean isOlderThan(ClientVersion target) {
-        return this.ordinal() < target.ordinal();
+        return compareByProtocolThenOrdinal(target) < 0;
     }
 
     /**
      * Is this client version older than or equal to the compared client version?
-     * This method compares enum declaration order to preserve ordering when multiple
-     * constants intentionally share the same protocol id.
+     * This method compares protocol ids first, then enum declaration order as a tie-breaker
+     * when two constants intentionally share the same protocol id.
      *
      * @param target Compared client version.
      * @return Is this client version older than or equal to the compared client version.
      */
     public boolean isOlderThanOrEquals(ClientVersion target) {
-        return this.ordinal() <= target.ordinal();
+        return compareByProtocolThenOrdinal(target) <= 0;
+    }
+
+    private int compareByProtocolThenOrdinal(ClientVersion target) {
+        int thisProtocol = protocolVersion < 0 ? Integer.MAX_VALUE : protocolVersion;
+        int targetProtocol = target.protocolVersion < 0 ? Integer.MAX_VALUE : target.protocolVersion;
+        if (thisProtocol != targetProtocol) {
+            return Integer.compare(thisProtocol, targetProtocol);
+        }
+        return Integer.compare(this.ordinal(), target.ordinal());
     }
 
     /**

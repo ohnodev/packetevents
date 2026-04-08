@@ -90,6 +90,8 @@ public class MappingIntegrityTest extends BaseDummyAPITest {
         assertTrue(ClientVersion.V_26_2.isNewerThan(ClientVersion.V_26_1));
         assertFalse(ClientVersion.V_26_1.isNewerThan(ClientVersion.V_26_2));
         assertTrue(ClientVersion.V_26_1.isOlderThan(ClientVersion.V_26_2));
+        assertTrue(ClientVersion.V_1_7_2.isOlderThan(ClientVersion.UNKNOWN));
+        assertFalse(ClientVersion.UNKNOWN.isOlderThan(ClientVersion.V_1_7_2));
     }
 
     @Test
