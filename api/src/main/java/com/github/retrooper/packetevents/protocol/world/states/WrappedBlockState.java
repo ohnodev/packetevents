@@ -66,13 +66,9 @@ import static com.github.retrooper.packetevents.util.adventure.AdventureIndexUti
  */
 public class WrappedBlockState {
 
-    // all versions where block state mappings were changed TODO UPDATE
+    // 26.2-only mapping path for this fork/runtime.
     private static final ClientVersion[] MAPPING_VERSION_STEPS = new ClientVersion[]{
-            ClientVersion.V_1_13, ClientVersion.V_1_13_2, ClientVersion.V_1_14, ClientVersion.V_1_15,
-            ClientVersion.V_1_16, ClientVersion.V_1_16_2, ClientVersion.V_1_17, ClientVersion.V_1_19,
-            ClientVersion.V_1_19_3, ClientVersion.V_1_19_4, ClientVersion.V_1_20, ClientVersion.V_1_20_2,
-            ClientVersion.V_1_20_3, ClientVersion.V_1_20_5, ClientVersion.V_1_21_2, ClientVersion.V_1_21_4,
-            ClientVersion.V_1_21_5, ClientVersion.V_1_21_6, ClientVersion.V_1_21_9, ClientVersion.V_26_2,
+            ClientVersion.V_26_2,
     };
     private static final byte[] MAPPING_INDEXES;
     private static final ClientVersion[] MAPPING_VERSIONS;
@@ -100,9 +96,12 @@ public class WrappedBlockState {
             MAPPING_INDEXES[version.ordinal()] = (byte) (LEGACY_MAPPING_INDEX + j);
             MAPPING_VERSIONS[version.ordinal()] = mappingVersion;
         }
-        // Deprecated alias: protocol 775 callers using V_26_1 must resolve to 26.2 mappings.
-        MAPPING_INDEXES[ClientVersion.V_26_1.ordinal()] = MAPPING_INDEXES[ClientVersion.V_26_2.ordinal()];
-        MAPPING_VERSIONS[ClientVersion.V_26_1.ordinal()] = MAPPING_VERSIONS[ClientVersion.V_26_2.ordinal()];
+        // Force a single mapping source for all callers in this 26.2-only runtime.
+        byte latestMappingIndex = MAPPING_INDEXES[ClientVersion.V_26_2.ordinal()];
+        for (ClientVersion version : versions) {
+            MAPPING_INDEXES[version.ordinal()] = latestMappingIndex;
+            MAPPING_VERSIONS[version.ordinal()] = ClientVersion.V_26_2;
+        }
         HIGHEST_MAPPING_INDEX = MAPPING_INDEXES[versions.length - 1];
     }
 
@@ -1618,16 +1617,7 @@ public class WrappedBlockState {
 
         {
             Map<Map<StateValue, Object>, StateCacheValue> cache = new HashMap<>();
-            boolean is26_2OnlyRuntime = true;
-            for (ClientVersion mappingVersion : MAPPING_VERSIONS) {
-                if (mappingVersion != ClientVersion.V_26_2) {
-                    is26_2OnlyRuntime = false;
-                    break;
-                }
-            }
-            if (!is26_2OnlyRuntime) {
-                loadLegacy(cache);
-            }
+            // Legacy mappings are intentionally disabled in this 26.2-only runtime.
             for (ClientVersion version : MAPPING_VERSION_STEPS) {
                 loadModern(cache, version);
             }
