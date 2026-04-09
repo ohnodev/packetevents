@@ -172,9 +172,13 @@ public class WrapperPlayServerMultiBlockChange extends PacketWrapper<WrapperPlay
         }
 
         if (sulfurChanges > 0) {
+            int chunkX = chunkPosition != null ? chunkPosition.getX() : 0;
+            int chunkZ = chunkPosition != null ? chunkPosition.getZ() : 0;
             PacketEvents.getAPI().getLogger().fine("[TRACE][multi-block-update]"
                     + " changes=" + sulfurChanges + "/" + blockData.length
-                    + " sample=" + sample);
+                    + " sample=" + sample
+                    + " chunkX=" + chunkX
+                    + " chunkZ=" + chunkZ);
         }
     }
 

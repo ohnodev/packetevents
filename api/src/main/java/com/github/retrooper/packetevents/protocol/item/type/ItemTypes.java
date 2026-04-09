@@ -2233,9 +2233,9 @@ public final class ItemTypes {
     }
 
     public static @Nullable ItemType getById(ClientVersion version, int id) {
-        ensureLatestOnlyVersion(version);
         ItemType itemType = REGISTRY.getById(version, id);
         if (itemType == null) {
+            ensureLatestOnlyVersion(version);
             itemType = getRuntimeItemRegistry().getById(id);
         }
         return itemType;

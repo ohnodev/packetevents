@@ -475,9 +475,8 @@ public class WrappedBlockState {
                         for (Map.Entry<String, NBT> props : dataContent) {
                             StateValue state = StateValue.byName(props.getKey());
                             if (state == null) {
-                                PacketEvents.getAPI().getLogger().severe("[CRITICAL] Could not find state value mapping for " + props.getKey()
+                                throw new IllegalStateException("[CRITICAL] Could not find state value mapping for " + props.getKey()
                                         + " while loading " + type.getName());
-                                continue;
                             }
 
                             NBT value = props.getValue();
@@ -489,9 +488,8 @@ public class WrappedBlockState {
                             } else if (value instanceof NBTString) {
                                 v = ((NBTString) value).getValue();
                             } else {
-                                PacketEvents.getAPI().getLogger().severe("[CRITICAL] Unknown NBT type in modern mapping: " + value.getClass().getSimpleName()
-                                        + " for " + type.getName());
-                                continue;
+                                throw new IllegalStateException("[CRITICAL] Unknown NBT type in modern mapping: "
+                                        + value.getClass().getSimpleName() + " for " + type.getName());
                             }
                             dataMap.put(state, state.getParser().apply(v.toString().toUpperCase(Locale.ROOT)));
                         }

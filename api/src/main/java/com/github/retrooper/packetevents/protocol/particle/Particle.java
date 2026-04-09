@@ -90,7 +90,7 @@ public class Particle<T extends ParticleData> {
         NBT typeTag = compound.getTagOrThrow("type");
         ParticleType<?> type = typeTag instanceof NBTNumber
                 ? ParticleTypes.getById(version, ((NBTNumber) typeTag).getAsInt())
-                : ParticleTypes.getByName(((NBTString) typeTag).getValue());
+                : ParticleTypes.getByName(version, ((NBTString) typeTag).getValue());
         if (type == null) {
             throw new IllegalStateException("Unknown particle type while decoding NBT for version " + version + ": " + typeTag);
         }

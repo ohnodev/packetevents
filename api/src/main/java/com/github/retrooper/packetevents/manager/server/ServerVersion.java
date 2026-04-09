@@ -108,11 +108,19 @@ public enum ServerVersion {
     //TODO Optimize
     @Deprecated
     public static ServerVersion getById(int protocolVersion) {
-        if (protocolVersion != ONLY_SUPPORTED_VERSION.protocolVersion) {
-            throw new IllegalStateException("Unsupported server protocol in latest-only mode: " + protocolVersion
-                    + " (expected " + ONLY_SUPPORTED_VERSION.protocolVersion + ")");
+        if (protocolVersion == ONLY_SUPPORTED_VERSION.protocolVersion) {
+            return ONLY_SUPPORTED_VERSION;
         }
-        return ONLY_SUPPORTED_VERSION;
+
+        ServerVersion match = null;
+        for (ServerVersion version : VALUES) {
+            if (version.protocolVersion == protocolVersion) {
+                if (match == null || compareByProtocolThenOrdinal(version, match) > 0) {
+                    match = version;
+                }
+            }
+        }
+        return match != null ? match : ERROR;
     }
 
     private static int compareByProtocolThenOrdinal(ServerVersion left, ServerVersion right) {
