@@ -61,6 +61,7 @@ public enum ServerVersion {
 
     private static final ServerVersion[] VALUES = values();
     private static final ServerVersion[] REVERSED_VALUES;
+    private static final ServerVersion ONLY_SUPPORTED_VERSION = V_26_2;
 
     static {
         REVERSED_VALUES = values();
@@ -107,16 +108,28 @@ public enum ServerVersion {
     //TODO Optimize
     @Deprecated
     public static ServerVersion getById(int protocolVersion) {
-        if (protocolVersion == V_26_2.protocolVersion) {
-            // Prefer latest snapshot when protocol id is shared.
-            return V_26_2;
+        if (protocolVersion == ONLY_SUPPORTED_VERSION.protocolVersion) {
+            return ONLY_SUPPORTED_VERSION;
         }
+
+        ServerVersion match = null;
         for (ServerVersion version : VALUES) {
             if (version.protocolVersion == protocolVersion) {
-                return version;
+                if (match == null || compareByProtocolThenOrdinal(version, match) > 0) {
+                    match = version;
+                }
             }
         }
-        return null;
+        return match != null ? match : ERROR;
+    }
+
+    private static int compareByProtocolThenOrdinal(ServerVersion left, ServerVersion right) {
+        int leftProtocol = left.protocolVersion < 0 ? Integer.MAX_VALUE : left.protocolVersion;
+        int rightProtocol = right.protocolVersion < 0 ? Integer.MAX_VALUE : right.protocolVersion;
+        if (leftProtocol != rightProtocol) {
+            return Integer.compare(leftProtocol, rightProtocol);
+        }
+        return Integer.compare(left.ordinal(), right.ordinal());
     }
 
     public ClientVersion toClientVersion() {

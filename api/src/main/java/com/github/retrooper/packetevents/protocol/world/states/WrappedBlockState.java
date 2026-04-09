@@ -85,19 +85,7 @@ public class WrappedBlockState {
         ClientVersion[] versions = ClientVersion.values();
         MAPPING_INDEXES = new byte[versions.length];
         MAPPING_VERSIONS = new ClientVersion[versions.length];
-
-        ClientVersion mappingVersion = versions[0];
-        for (int i = 0, j = 0; i < versions.length; i++) {
-            ClientVersion version = versions[i];
-            if (j < MAPPING_VERSION_STEPS.length && version == MAPPING_VERSION_STEPS[j]) {
-                j++;
-                mappingVersion = version;
-            }
-            MAPPING_INDEXES[version.ordinal()] = (byte) (LEGACY_MAPPING_INDEX + j);
-            MAPPING_VERSIONS[version.ordinal()] = mappingVersion;
-        }
-        // Force a single mapping source for all callers in this 26.2-only runtime.
-        byte latestMappingIndex = MAPPING_INDEXES[ClientVersion.V_26_2.ordinal()];
+        byte latestMappingIndex = (byte) (LEGACY_MAPPING_INDEX + MAPPING_VERSION_STEPS.length);
         for (ClientVersion version : versions) {
             MAPPING_INDEXES[version.ordinal()] = latestMappingIndex;
             MAPPING_VERSIONS[version.ordinal()] = ClientVersion.V_26_2;
@@ -464,9 +452,7 @@ public class WrappedBlockState {
                     type = StateTypes.getByName(typeString);
 
                     if (type == null) {
-                        PacketEvents.getAPI().getLogger().warning("Unknown block type: " + typeString);
-                        element.skip();
-                        continue;
+                        throw new IllegalStateException("[CRITICAL] Unknown block type in modern mapping (no legacy fallback): " + typeString);
                     }
                 }
 
@@ -489,8 +475,8 @@ public class WrappedBlockState {
                         for (Map.Entry<String, NBT> props : dataContent) {
                             StateValue state = StateValue.byName(props.getKey());
                             if (state == null) {
-                                PacketEvents.getAPI().getLogger().warning("Could not find value for " + props.getKey());
-                                continue;
+                                throw new IllegalStateException("[CRITICAL] Could not find state value mapping for " + props.getKey()
+                                        + " while loading " + type.getName());
                             }
 
                             NBT value = props.getValue();
@@ -502,8 +488,8 @@ public class WrappedBlockState {
                             } else if (value instanceof NBTString) {
                                 v = ((NBTString) value).getValue();
                             } else {
-                                PacketEvents.getAPI().getLogger().warning("Unknown NBT typeString in modern mapping: " + value.getClass().getSimpleName());
-                                continue;
+                                throw new IllegalStateException("[CRITICAL] Unknown NBT type in modern mapping: "
+                                        + value.getClass().getSimpleName() + " for " + type.getName());
                             }
                             dataMap.put(state, state.getParser().apply(v.toString().toUpperCase(Locale.ROOT)));
                         }

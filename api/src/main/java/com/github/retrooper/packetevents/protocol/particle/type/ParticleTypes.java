@@ -80,6 +80,14 @@ public final class ParticleTypes {
         return REGISTRY.getByName(name);
     }
 
+    public static ParticleType<?> getByName(ClientVersion version, String name) {
+        ParticleType<?> particleType = REGISTRY.getByName(version, name);
+        if (particleType == null) {
+            throw new IllegalStateException("Unknown particle type for version " + version + ": " + name);
+        }
+        return particleType;
+    }
+
     public static ParticleType<?> getById(ClientVersion version, int id) {
         return REGISTRY.getById(version, id);
     }

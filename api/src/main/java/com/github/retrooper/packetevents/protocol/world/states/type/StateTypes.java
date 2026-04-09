@@ -1489,7 +1489,7 @@ public final class StateTypes {
     /**
      * @versions 26.2+
      */
-    public static StateType SULFUR_SLAB = StateTypes.builder().name("SULFUR_SLAB").blastResistance(6.0f).hardness(2.0f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
+    public static StateType SULFUR_SLAB = StateTypes.builder().name("SULFUR_SLAB").blastResistance(6.0f).hardness(1.5f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
     /**
      * @versions 26.2+
      */
@@ -1505,7 +1505,7 @@ public final class StateTypes {
     /**
      * @versions 26.2+
      */
-    public static StateType POLISHED_SULFUR_SLAB = StateTypes.builder().name("POLISHED_SULFUR_SLAB").blastResistance(6.0f).hardness(2.0f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
+    public static StateType POLISHED_SULFUR_SLAB = StateTypes.builder().name("POLISHED_SULFUR_SLAB").blastResistance(6.0f).hardness(1.5f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
     /**
      * @versions 26.2+
      */
@@ -1521,7 +1521,7 @@ public final class StateTypes {
     /**
      * @versions 26.2+
      */
-    public static StateType SULFUR_BRICK_SLAB = StateTypes.builder().name("SULFUR_BRICK_SLAB").blastResistance(6.0f).hardness(2.0f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
+    public static StateType SULFUR_BRICK_SLAB = StateTypes.builder().name("SULFUR_BRICK_SLAB").blastResistance(6.0f).hardness(1.5f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
     /**
      * @versions 26.2+
      */
@@ -1541,7 +1541,7 @@ public final class StateTypes {
     /**
      * @versions 26.2+
      */
-    public static StateType CINNABAR_SLAB = StateTypes.builder().name("CINNABAR_SLAB").blastResistance(6.0f).hardness(2.0f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
+    public static StateType CINNABAR_SLAB = StateTypes.builder().name("CINNABAR_SLAB").blastResistance(6.0f).hardness(1.5f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
     /**
      * @versions 26.2+
      */
@@ -1557,7 +1557,7 @@ public final class StateTypes {
     /**
      * @versions 26.2+
      */
-    public static StateType POLISHED_CINNABAR_SLAB = StateTypes.builder().name("POLISHED_CINNABAR_SLAB").blastResistance(6.0f).hardness(2.0f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
+    public static StateType POLISHED_CINNABAR_SLAB = StateTypes.builder().name("POLISHED_CINNABAR_SLAB").blastResistance(6.0f).hardness(1.5f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
     /**
      * @versions 26.2+
      */
@@ -1573,7 +1573,7 @@ public final class StateTypes {
     /**
      * @versions 26.2+
      */
-    public static StateType CINNABAR_BRICK_SLAB = StateTypes.builder().name("CINNABAR_BRICK_SLAB").blastResistance(6.0f).hardness(2.0f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
+    public static StateType CINNABAR_BRICK_SLAB = StateTypes.builder().name("CINNABAR_BRICK_SLAB").blastResistance(6.0f).hardness(1.5f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
     /**
      * @versions 26.2+
      */
