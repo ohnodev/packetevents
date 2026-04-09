@@ -2224,32 +2224,34 @@ public final class ItemTypes {
                 maxAmount, maxDurability, craftRemainder, placedType, attributes));
     }
 
-    public static @Nullable ItemType getByName(String name) {
-        ItemType itemType = REGISTRY.getByName(name);
-        if (itemType == null) {
-            itemType = getRuntimeItemRegistry().getByName(name);
-        }
-        return itemType;
+    public static ItemType getByName(String name) {
+        return getByName(ONLY_SUPPORTED_VERSION, name);
     }
 
-    public static @Nullable ItemType getByName(ClientVersion version, String name) {
+    public static ItemType getByName(ClientVersion version, String name) {
         ItemType itemType = REGISTRY.getByName(version, name);
         if (itemType == null) {
             // Strict latest-only invariant: unsupported versions must fail fast.
             // Do not soften this to nullable fallback behavior.
             ensureLatestOnlyVersion(version);
             itemType = getRuntimeItemRegistry().getByName(name);
+            if (itemType == null) {
+                throw new IllegalStateException("Missing required item mapping for " + name + " in " + version);
+            }
         }
         return itemType;
     }
 
-    public static @Nullable ItemType getById(ClientVersion version, int id) {
+    public static ItemType getById(ClientVersion version, int id) {
         ItemType itemType = REGISTRY.getById(version, id);
         if (itemType == null) {
             // Strict latest-only invariant: unsupported versions must fail fast.
             // Do not soften this to nullable fallback behavior.
             ensureLatestOnlyVersion(version);
             itemType = getRuntimeItemRegistry().getById(id);
+            if (itemType == null) {
+                throw new IllegalStateException("Missing required item mapping id=" + id + " in " + version);
+            }
         }
         return itemType;
     }
