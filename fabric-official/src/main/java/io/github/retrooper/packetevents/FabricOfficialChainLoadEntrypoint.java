@@ -18,6 +18,7 @@ import io.github.retrooper.packetevents.util.LazyHolder;
 import org.jetbrains.annotations.Nullable;
 
 public class FabricOfficialChainLoadEntrypoint implements ChainLoadEntryPoint {
+    private static final ClientVersion TARGET_CLIENT_VERSION = ServerVersion.V_26_2.toClientVersion();
 
     protected LazyHolder<AbstractFabricPlayerManager> playerManagerHolder =
             LazyHolder.simple(() -> new FabricPlayerManager());
@@ -25,18 +26,18 @@ public class FabricOfficialChainLoadEntrypoint implements ChainLoadEntryPoint {
             LazyHolder.simple(() -> new FabricRegistryManager(new ItemRegistry() {
                 @Override
                 public @Nullable ItemType getByName(String name) {
-                    IRegistry<ItemType> registry = resolveSyncedItemRegistry();
+                    IRegistry<ItemType> registry = resolveSyncedItemRegistry(TARGET_CLIENT_VERSION);
                     return registry != null
-                            ? registry.getByName(ClientVersion.V_26_2, name)
-                            : ItemTypes.getRegistry().getByName(ClientVersion.V_26_2, name);
+                            ? registry.getByName(TARGET_CLIENT_VERSION, name)
+                            : ItemTypes.getRegistry().getByName(TARGET_CLIENT_VERSION, name);
                 }
 
                 @Override
                 public @Nullable ItemType getById(int id) {
-                    IRegistry<ItemType> registry = resolveSyncedItemRegistry();
+                    IRegistry<ItemType> registry = resolveSyncedItemRegistry(TARGET_CLIENT_VERSION);
                     return registry != null
-                            ? registry.getById(ClientVersion.V_26_2, id)
-                            : ItemTypes.getRegistry().getById(ClientVersion.V_26_2, id);
+                            ? registry.getById(TARGET_CLIENT_VERSION, id)
+                            : ItemTypes.getRegistry().getById(TARGET_CLIENT_VERSION, id);
                 }
             }));
 
@@ -53,12 +54,12 @@ public class FabricOfficialChainLoadEntrypoint implements ChainLoadEntryPoint {
     }
 
     @SuppressWarnings("unchecked")
-    private static @Nullable IRegistry<ItemType> resolveSyncedItemRegistry() {
+    private static @Nullable IRegistry<ItemType> resolveSyncedItemRegistry(ClientVersion version) {
         SynchronizedRegistriesHandler.RegistryEntry<?> entry =
                 SynchronizedRegistriesHandler.getRegistryEntry(ItemTypes.getRegistry().getRegistryKey());
         if (entry == null) {
             return null;
         }
-        return (IRegistry<ItemType>) entry.getSyncedRegistry(ClientVersion.V_26_2);
+        return (IRegistry<ItemType>) entry.getSyncedRegistry(version);
     }
 }

@@ -2255,7 +2255,11 @@ public final class ItemTypes {
         if (PacketEvents.getAPI().getRegistryManager() == null) {
             throw new IllegalStateException("PacketEvents registry manager is not initialized");
         }
-        return PacketEvents.getAPI().getRegistryManager().getItemRegistry();
+        ItemRegistry itemRegistry = PacketEvents.getAPI().getRegistryManager().getItemRegistry();
+        if (itemRegistry == null) {
+            throw new IllegalStateException("PacketEvents item registry is not initialized");
+        }
+        return itemRegistry;
     }
 
     public static ItemType getTypePlacingState(StateType type) {

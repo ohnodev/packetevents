@@ -80,7 +80,7 @@ public final class ParticleTypes {
         return REGISTRY.getByName(name);
     }
 
-    public static ParticleType<?> getByName(ClientVersion version, String name) {
+    public static @Nullable ParticleType<?> getByName(ClientVersion version, String name) {
         return REGISTRY.getByName(version, name);
     }
 
