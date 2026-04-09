@@ -72,6 +72,9 @@ public class Particle<T extends ParticleData> {
     @SuppressWarnings("unchecked") // will work on runtime
     public static Particle<?> read(PacketWrapper<?> wrapper) {
         ParticleType<?> type = wrapper.readMappedEntity(ParticleTypes::getById);
+        if (type == null) {
+            throw new IllegalStateException("Unknown particle type id for version " + wrapper.getServerVersion().toClientVersion());
+        }
         return new Particle<>((ParticleType<ParticleData>) type, type.readData(wrapper));
     }
 
@@ -88,6 +91,9 @@ public class Particle<T extends ParticleData> {
         ParticleType<?> type = typeTag instanceof NBTNumber
                 ? ParticleTypes.getById(version, ((NBTNumber) typeTag).getAsInt())
                 : ParticleTypes.getByName(((NBTString) typeTag).getValue());
+        if (type == null) {
+            throw new IllegalStateException("Unknown particle type while decoding NBT for version " + version + ": " + typeTag);
+        }
         ParticleData data = type.decodeData(compound, version);
         return new Particle<>((ParticleType<? super ParticleData>) type, data);
     }

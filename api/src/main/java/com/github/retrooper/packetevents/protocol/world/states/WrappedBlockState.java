@@ -452,9 +452,7 @@ public class WrappedBlockState {
                     type = StateTypes.getByName(typeString);
 
                     if (type == null) {
-                        PacketEvents.getAPI().getLogger().severe("[CRITICAL] Unknown block type in modern mapping (no legacy fallback): " + typeString);
-                        element.skip();
-                        continue;
+                        throw new IllegalStateException("[CRITICAL] Unknown block type in modern mapping (no legacy fallback): " + typeString);
                     }
                 }
 

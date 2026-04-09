@@ -55,6 +55,7 @@ public final class ItemTypes {
 
     private static final VersionedRegistry<ItemType> REGISTRY = new VersionedRegistry<>("item");
     private static final Map<StateType, ItemType> HELD_TO_PLACED_MAP = new HashMap<>();
+    private static final ClientVersion ONLY_SUPPORTED_VERSION = ClientVersion.V_26_2;
 
     // <editor-fold desc="item type definitions" defaultstate="collapsed">
     public static final ItemType GILDED_BLACKSTONE = builder("gilded_blackstone").setMaxAmount(64).setPlacedType(StateTypes.GILDED_BLACKSTONE).build();
@@ -2190,13 +2191,7 @@ public final class ItemTypes {
     }
 
     static {
-        // all versions where base components were changed TODO UPDATE
-        ClientVersion[] versions = new ClientVersion[]{
-                ClientVersion.V_1_20_5, ClientVersion.V_1_21, ClientVersion.V_1_21_2,
-                ClientVersion.V_1_21_4, ClientVersion.V_1_21_5, ClientVersion.V_1_21_6,
-                ClientVersion.V_1_21_7, ClientVersion.V_1_21_9, ClientVersion.V_1_21_11,
-                ClientVersion.V_26_1, ClientVersion.V_26_2,
-        };
+        ClientVersion[] versions = new ClientVersion[]{ONLY_SUPPORTED_VERSION};
         for (ClientVersion version : versions) {
             parseAllComponents(version);
         }
@@ -2238,11 +2233,19 @@ public final class ItemTypes {
     }
 
     public static @Nullable ItemType getById(ClientVersion version, int id) {
+        ensureLatestOnlyVersion(version);
         ItemType itemType = REGISTRY.getById(version, id);
         if (itemType == null) {
             itemType = getRuntimeItemRegistry().getById(id);
         }
         return itemType;
+    }
+
+    private static void ensureLatestOnlyVersion(@Nullable ClientVersion version) {
+        if (version == null || version != ONLY_SUPPORTED_VERSION) {
+            throw new IllegalStateException("Unsupported client version for latest-only item registry path: " + version
+                    + " (expected " + ONLY_SUPPORTED_VERSION + ")");
+        }
     }
 
     private static ItemRegistry getRuntimeItemRegistry() {

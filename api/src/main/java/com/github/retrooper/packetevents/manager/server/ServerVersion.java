@@ -61,6 +61,7 @@ public enum ServerVersion {
 
     private static final ServerVersion[] VALUES = values();
     private static final ServerVersion[] REVERSED_VALUES;
+    private static final ServerVersion ONLY_SUPPORTED_VERSION = V_26_2;
 
     static {
         REVERSED_VALUES = values();
@@ -107,15 +108,11 @@ public enum ServerVersion {
     //TODO Optimize
     @Deprecated
     public static ServerVersion getById(int protocolVersion) {
-        ServerVersion match = null;
-        for (ServerVersion version : VALUES) {
-            if (version.protocolVersion == protocolVersion) {
-                if (match == null || compareByProtocolThenOrdinal(version, match) > 0) {
-                    match = version;
-                }
-            }
+        if (protocolVersion != ONLY_SUPPORTED_VERSION.protocolVersion) {
+            throw new IllegalStateException("Unsupported server protocol in latest-only mode: " + protocolVersion
+                    + " (expected " + ONLY_SUPPORTED_VERSION.protocolVersion + ")");
         }
-        return match;
+        return ONLY_SUPPORTED_VERSION;
     }
 
     private static int compareByProtocolThenOrdinal(ServerVersion left, ServerVersion right) {

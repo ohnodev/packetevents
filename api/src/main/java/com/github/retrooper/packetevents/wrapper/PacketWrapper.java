@@ -906,7 +906,7 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
                 }
                 try {
                     list.add(new EntityData<>(index, (EntityDataType<Object>) type, type.read(this)));
-                } catch (Throwable decodeFailure) {
+                } catch (RuntimeException decodeFailure) {
                     throw new IllegalStateException(buildEntityMetadataDecodeError(
                             "Failed to decode entity metadata value for serializer " + type.getName()
                                     + " (id=" + typeID + ") version " + serverVersion.toClientVersion(),
@@ -1329,6 +1329,10 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
             Parser parser = this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_19)
                     ? this.readMappedEntity(Parsers::getById)
                     : Parsers.getByName(this.readIdentifier().toString());
+            if (parser == null) {
+                throw new IllegalStateException("Unknown command parser while decoding node '" + name
+                        + "' for version " + this.serverVersion.toClientVersion());
+            }
             List<Object> properties = parser.readProperties(this).orElse(null);
             ResourceLocation suggestionType = ((flags & 0x10) != 0) ? this.readIdentifier() : null;
             return new Node(flags, children, redirectNodeIndex, name, parser, properties, suggestionType);
