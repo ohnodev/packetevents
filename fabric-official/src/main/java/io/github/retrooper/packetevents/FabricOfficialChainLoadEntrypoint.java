@@ -29,7 +29,8 @@ public class FabricOfficialChainLoadEntrypoint implements ChainLoadEntryPoint {
                     IRegistry<ItemType> registry = resolveSyncedItemRegistry(TARGET_CLIENT_VERSION);
                     return registry != null
                             ? registry.getByName(TARGET_CLIENT_VERSION, name)
-                            : ItemTypes.getRegistry().getByName(TARGET_CLIENT_VERSION, name);
+                            // Keep strict ItemTypes runtime registry semantics; do not bypass with baked registry access.
+                            : ItemTypes.getByName(TARGET_CLIENT_VERSION, name);
                 }
 
                 @Override
@@ -37,7 +38,8 @@ public class FabricOfficialChainLoadEntrypoint implements ChainLoadEntryPoint {
                     IRegistry<ItemType> registry = resolveSyncedItemRegistry(TARGET_CLIENT_VERSION);
                     return registry != null
                             ? registry.getById(TARGET_CLIENT_VERSION, id)
-                            : ItemTypes.getRegistry().getById(TARGET_CLIENT_VERSION, id);
+                            // Keep strict ItemTypes runtime registry semantics; do not bypass with baked registry access.
+                            : ItemTypes.getById(TARGET_CLIENT_VERSION, id);
                 }
             }));
 
