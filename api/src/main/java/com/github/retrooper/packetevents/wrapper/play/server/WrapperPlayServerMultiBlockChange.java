@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.wrapper.play.server;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -79,6 +80,8 @@ public class WrapperPlayServerMultiBlockChange extends PacketWrapper<WrapperPlay
                 this.blockData[i] = new EncodedBlock(blockId, x, y, z);
             }
         }
+
+        logSulfurChanges();
     }
 
     @Override
@@ -140,6 +143,56 @@ public class WrapperPlayServerMultiBlockChange extends PacketWrapper<WrapperPlay
 
     public void setBlocks(EncodedBlock[] blocks) {
         this.blockData = blocks;
+    }
+
+    private void logSulfurChanges() {
+        if (blockData == null || blockData.length == 0) {
+            return;
+        }
+
+        int sulfurChanges = 0;
+        StringBuilder sample = new StringBuilder();
+        int sampleBudget = 3;
+        for (EncodedBlock encodedBlock : blockData) {
+            String stateName = getStateNameSafe(encodedBlock.getBlockId());
+            if (!isSulfurFamily(stateName)) {
+                continue;
+            }
+            sulfurChanges++;
+            if (sampleBudget-- > 0) {
+                if (sample.length() > 0) {
+                    sample.append("; ");
+                }
+                sample.append(encodedBlock.getX()).append(',').append(encodedBlock.getY()).append(',').append(encodedBlock.getZ())
+                        .append('=').append(stateName).append('#').append(encodedBlock.getBlockId());
+            }
+        }
+
+        if (sulfurChanges > 0) {
+            PacketEvents.getAPI().getLogger().info("[TRACE][multi-block-update] user=" + getTraceUser()
+                    + " changes=" + sulfurChanges + "/" + blockData.length
+                    + " sample=" + sample);
+        }
+    }
+
+    private String getStateNameSafe(int blockId) {
+        try {
+            return WrappedBlockState.getByGlobalId(serverVersion.toClientVersion(), blockId).getType().getName();
+        } catch (Throwable ignored) {
+            return "unknown";
+        }
+    }
+
+    private boolean isSulfurFamily(String stateName) {
+        String normalized = stateName.toLowerCase();
+        return normalized.contains("sulfur") || normalized.contains("cinnabar");
+    }
+
+    private String getTraceUser() {
+        if (this.user == null) {
+            return "unknown";
+        }
+        return this.user.getName() + "/" + this.user.getUUID();
     }
 
     public static class EncodedBlock {

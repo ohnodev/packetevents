@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.wrapper.play.server;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.DiggingAction;
@@ -48,6 +49,14 @@ public class WrapperPlayServerAcknowledgePlayerDigging extends PacketWrapper<Wra
         blockID = readVarInt();
         action = DiggingAction.getById(readVarInt());
         successful = readBoolean();
+
+        if (shouldTraceDigAction(action)) {
+            PacketEvents.getAPI().getLogger().info("[TRACE][dig-ack] user=" + getTraceUser()
+                    + " action=" + action
+                    + " success=" + successful
+                    + " pos=" + blockPosition
+                    + " blockId=" + blockID);
+        }
     }
 
     @Override
@@ -96,5 +105,18 @@ public class WrapperPlayServerAcknowledgePlayerDigging extends PacketWrapper<Wra
 
     public void setBlockId(int blockID) {
         this.blockID = blockID;
+    }
+
+    private boolean shouldTraceDigAction(DiggingAction diggingAction) {
+        return diggingAction == DiggingAction.START_DIGGING
+                || diggingAction == DiggingAction.FINISHED_DIGGING
+                || diggingAction == DiggingAction.CANCELLED_DIGGING;
+    }
+
+    private String getTraceUser() {
+        if (this.user == null) {
+            return "unknown";
+        }
+        return this.user.getName() + "/" + this.user.getUUID();
     }
 }

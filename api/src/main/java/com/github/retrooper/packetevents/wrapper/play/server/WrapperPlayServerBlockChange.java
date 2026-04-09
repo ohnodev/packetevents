@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.wrapper.play.server;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -53,6 +54,14 @@ public class WrapperPlayServerBlockChange extends PacketWrapper<WrapperPlayServe
         } else {
             blockPosition = readBlockPosition();
             blockID = readVarInt();
+        }
+
+        String stateName = getStateNameSafe();
+        if (isSulfurFamily(stateName)) {
+            PacketEvents.getAPI().getLogger().info("[TRACE][block-update] user=" + getTraceUser()
+                    + " pos=" + blockPosition
+                    + " blockId=" + blockID
+                    + " state=" + stateName);
         }
     }
 
@@ -98,5 +107,25 @@ public class WrapperPlayServerBlockChange extends PacketWrapper<WrapperPlayServe
 
     public void setBlockState(WrappedBlockState blockState) {
         this.blockID = blockState.getGlobalId();
+    }
+
+    private String getStateNameSafe() {
+        try {
+            return WrappedBlockState.getByGlobalId(serverVersion.toClientVersion(), blockID).getType().getName();
+        } catch (Throwable ignored) {
+            return "unknown";
+        }
+    }
+
+    private boolean isSulfurFamily(String stateName) {
+        String normalized = stateName.toLowerCase();
+        return normalized.contains("sulfur") || normalized.contains("cinnabar");
+    }
+
+    private String getTraceUser() {
+        if (this.user == null) {
+            return "unknown";
+        }
+        return this.user.getName() + "/" + this.user.getUUID();
     }
 }

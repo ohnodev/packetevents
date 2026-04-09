@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.wrapper.play.client;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -77,6 +78,14 @@ public class WrapperPlayClientPlayerDigging extends PacketWrapper<WrapperPlayCli
 
         if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_19)) {
             sequence = readVarInt();
+        }
+
+        if (shouldTraceDigAction(action)) {
+            PacketEvents.getAPI().getLogger().info("[TRACE][dig-in] user=" + getTraceUser()
+                    + " action=" + action
+                    + " pos=" + blockPosition
+                    + " face=" + blockFaceId
+                    + " seq=" + sequence);
         }
     }
 
@@ -147,5 +156,18 @@ public class WrapperPlayClientPlayerDigging extends PacketWrapper<WrapperPlayCli
 
     public void setSequence(int sequence) {
         this.sequence = sequence;
+    }
+
+    private boolean shouldTraceDigAction(DiggingAction diggingAction) {
+        return diggingAction == DiggingAction.START_DIGGING
+                || diggingAction == DiggingAction.FINISHED_DIGGING
+                || diggingAction == DiggingAction.CANCELLED_DIGGING;
+    }
+
+    private String getTraceUser() {
+        if (this.user == null) {
+            return "unknown";
+        }
+        return this.user.getName() + "/" + this.user.getUUID();
     }
 }
