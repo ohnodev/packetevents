@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 @NullMarked
@@ -48,6 +49,7 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     private final Map<String, T>[] typeNames;
     private final Map<Integer, T>[] typeIds;
     private final Set<T> entries = new HashSet<>();
+    private static final Set<String> LOGGED_MISSING_MAPPINGS = ConcurrentHashMap.newKeySet();
 
     public VersionedRegistry(String registry) {
         this(registry, new ClientVersion[0]);
@@ -114,14 +116,16 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     public void unloadMappings() {
         this.typesBuilder.unloadFileMappings();
 
-        // Some snapshot version steps can intentionally omit full mapping files.
-        // In that case we inherit the previous step's resolved maps instead of crashing.
+        ClientVersion[] mapperVersions = this.typesBuilder.getVersionMapper().getVersions();
         for (int i = 0; i < this.typeNames.length; i++) {
+            ClientVersion version = i < mapperVersions.length ? mapperVersions[i] : null;
             if (this.typeNames[i] == null) {
-                this.typeNames[i] = i == 0 ? Collections.emptyMap() : this.typeNames[i - 1];
+                this.typeNames[i] = Collections.emptyMap();
+                logCriticalMappingGap(version, "name-map step missing while unloading mappings");
             }
             if (this.typeIds[i] == null) {
-                this.typeIds[i] = i == 0 ? Collections.emptyMap() : this.typeIds[i - 1];
+                this.typeIds[i] = Collections.emptyMap();
+                logCriticalMappingGap(version, "id-map step missing while unloading mappings");
             }
         }
 
@@ -153,14 +157,23 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     @Override
     public @Nullable T getByName(ClientVersion version, ResourceLocation name) {
         int index = this.typesBuilder.getDataIndex(version);
-        return this.typeNames[index].get(name.toString());
+        T mapped = this.typeNames[index].get(name.toString());
+        if (mapped == null) {
+            logCriticalMappingGap(version, "missing name mapping in " + this.registryKey + " for " + name);
+        }
+        return mapped;
     }
 
     @Override
     public @Nullable T getByName(ClientVersion version, String name) {
         int index = this.typesBuilder.getDataIndex(version);
         // prepend "minecraft:" prefix if no other namespace has been specified
-        return this.typeNames[index].get(ResourceLocation.normString(name));
+        String normalized = ResourceLocation.normString(name);
+        T mapped = this.typeNames[index].get(normalized);
+        if (mapped == null) {
+            logCriticalMappingGap(version, "missing name mapping in " + this.registryKey + " for " + normalized);
+        }
+        return mapped;
     }
 
     @Override
@@ -178,7 +191,11 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     @Override
     public @Nullable T getById(ClientVersion version, int id) {
         int index = this.typesBuilder.getDataIndex(version);
-        return this.typeIds[index].get(id);
+        T mapped = this.typeIds[index].get(id);
+        if (mapped == null) {
+            logCriticalMappingGap(version, "missing id mapping in " + this.registryKey + " for #" + id);
+        }
+        return mapped;
     }
 
     @Override
@@ -207,5 +224,17 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     @Override
     public String toString() {
         return "VersionedRegistry[" + this.registryKey + ']';
+    }
+
+    private void logCriticalMappingGap(@Nullable ClientVersion version, String detail) {
+        String versionName = version == null ? "UNKNOWN_VERSION_STEP" : version.name();
+        String dedupeKey = this.registryKey + "|" + versionName + "|" + detail;
+        if (LOGGED_MISSING_MAPPINGS.add(dedupeKey)) {
+            PacketEvents.getAPI().getLogger().severe(
+                    "[CRITICAL] Mapping gap detected (no legacy fallback): " + detail
+                            + " [registry=" + this.registryKey
+                            + ", version=" + versionName + ']'
+            );
+        }
     }
 }

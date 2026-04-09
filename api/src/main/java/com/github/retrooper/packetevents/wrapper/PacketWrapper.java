@@ -897,9 +897,24 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
                 int typeID = v1_10 ? readVarInt() : readUnsignedByte();
                 EntityDataType<?> type = EntityDataTypes.getById(serverVersion.toClientVersion(), typeID);
                 if (type == null) {
-                    throw new IllegalStateException("Unknown entity metadata type id: " + typeID + " version " + serverVersion.toClientVersion());
+                    throw new IllegalStateException(buildEntityMetadataDecodeError(
+                            "Unknown entity metadata type id: " + typeID + " version " + serverVersion.toClientVersion(),
+                            index,
+                            typeID,
+                            list
+                    ));
                 }
-                list.add(new EntityData<>(index, (EntityDataType<Object>) type, type.read(this)));
+                try {
+                    list.add(new EntityData<>(index, (EntityDataType<Object>) type, type.read(this)));
+                } catch (Throwable decodeFailure) {
+                    throw new IllegalStateException(buildEntityMetadataDecodeError(
+                            "Failed to decode entity metadata value for serializer " + type.getName()
+                                    + " (id=" + typeID + ") version " + serverVersion.toClientVersion(),
+                            index,
+                            typeID,
+                            list
+                    ), decodeFailure);
+                }
             }
         } else {
             for (byte data = readByte(); data != Byte.MAX_VALUE; data = readByte()) {
@@ -911,6 +926,53 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
             }
         }
         return list;
+    }
+
+    private String buildEntityMetadataDecodeError(
+            String reason,
+            int index,
+            int typeId,
+            List<EntityData<?>> alreadyDecoded
+    ) {
+        int readerIndex = ByteBufHelper.readerIndex(buffer);
+        int readable = ByteBufHelper.readableBytes(buffer);
+        int dumpLen = Math.min(32, readable);
+        StringBuilder hex = new StringBuilder();
+        for (int i = 0; i < dumpLen; i++) {
+            int b = ByteBufHelper.getUnsignedByte(buffer, readerIndex + i) & 0xFF;
+            if (i > 0) {
+                hex.append(' ');
+            }
+            if (b < 0x10) {
+                hex.append('0');
+            }
+            hex.append(Integer.toHexString(b).toUpperCase());
+        }
+
+        int tailStart = Math.max(0, alreadyDecoded.size() - 5);
+        StringBuilder tail = new StringBuilder();
+        for (int i = tailStart; i < alreadyDecoded.size(); i++) {
+            EntityData<?> data = alreadyDecoded.get(i);
+            if (tail.length() > 0) {
+                tail.append(", ");
+            }
+            tail.append('#')
+                    .append(data.getIndex())
+                    .append(':')
+                    .append(data.getType().getName())
+                    .append("(id=")
+                    .append(data.getType().getId(serverVersion.toClientVersion()))
+                    .append(')');
+        }
+
+        return reason
+                + " [metaIndex=" + index
+                + ", typeId=" + typeId
+                + ", readerIndex=" + readerIndex
+                + ", readableBytes=" + readable
+                + ", nextBytesHex=" + hex
+                + ", decodedTail=" + tail
+                + ']';
     }
 
     @SuppressWarnings("unchecked")
