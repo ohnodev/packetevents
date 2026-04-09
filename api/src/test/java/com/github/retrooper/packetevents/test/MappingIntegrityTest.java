@@ -102,6 +102,19 @@ public class MappingIntegrityTest extends BaseDummyAPITest {
     }
 
     @Test
+    @DisplayName("Test 26.2 sulfur/cinnabar item id mapping")
+    public void test262SulfurItemIdMapping() {
+        assertEquals("minecraft:sulfur",
+                ItemTypes.getRegistry().getByIdOrThrow(ClientVersion.V_26_2, 26).getName().toString());
+        assertEquals("minecraft:potent_sulfur",
+                ItemTypes.getRegistry().getByIdOrThrow(ClientVersion.V_26_2, 27).getName().toString());
+        assertEquals("minecraft:sulfur_bricks",
+                ItemTypes.getRegistry().getByIdOrThrow(ClientVersion.V_26_2, 35).getName().toString());
+        assertEquals("minecraft:cinnabar",
+                ItemTypes.getRegistry().getByIdOrThrow(ClientVersion.V_26_2, 40).getName().toString());
+    }
+
+    @Test
     @DisplayName("Test dimension type mappings")
     public void testDimensionTypeMapping() {
         VersionedRegistry<DimensionType> registry = DimensionTypes.getRegistry();
