@@ -103,6 +103,11 @@ public final class SynchronizedRegistriesHandler {
     private static final boolean FORCE_PER_USER_REGISTRIES = Boolean.getBoolean("packetevents.force-per-user-registries");
     private static final Map<ResourceLocation, RegistryEntry<?>> REGISTRY_KEYS = new HashMap<>();
     private static final Map<Object, SimpleRegistry<ItemType>> SYNCED_ITEM_REGISTRIES = new ConcurrentHashMap<>(2);
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static final RegistryEntry<?> ITEM_REGISTRY_ENTRY = new RegistryEntry(
+            (IRegistry) ItemTypes.getRegistry(),
+            (NbtEntryDecoder) (tag, wrapper, data) -> null
+    );
 
     static {
         // packetevents ignores a few unimportant registries which aren't used anywhere else in the protocol:
@@ -175,6 +180,10 @@ public final class SynchronizedRegistriesHandler {
             } else {
                 itemRegistry = SYNCED_ITEM_REGISTRIES.computeIfAbsent(cacheKey, key -> createSyncedItemRegistry(elements, wrapper));
             }
+            REGISTRY_KEYS.putIfAbsent(registryName, ITEM_REGISTRY_ENTRY);
+            // Keep global lookup path in sync with the cached synced registry path.
+            Object itemCacheKey = cacheKey != null ? cacheKey : wrapper.getServerVersion().toClientVersion();
+            ITEM_REGISTRY_ENTRY.computeSyncedRegistry(itemCacheKey, () -> itemRegistry);
             user.putRegistry(itemRegistry);
             return;
         }
@@ -202,13 +211,10 @@ public final class SynchronizedRegistriesHandler {
             RegistryElement element = elements.get(id);
             ResourceLocation elementName = element.getId();
             ItemType itemType = ItemTypes.getRegistry().getByName(version, elementName);
-            if (itemType == null) {
-                itemType = ItemTypes.getRegistry().getByName(elementName);
-            }
             if (itemType != null) {
                 registry.define(elementName, id, itemType);
             } else {
-                PacketEvents.getAPI().getLogger().warning("Unknown item registry entry " + elementName);
+                PacketEvents.getAPI().getLogger().warning("Unknown item registry entry " + elementName + " for " + version);
             }
         }
         return registry;

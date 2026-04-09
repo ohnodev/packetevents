@@ -56,9 +56,12 @@ public class WrapperPlayServerBlockChange extends PacketWrapper<WrapperPlayServe
             blockID = readVarInt();
         }
 
-        String stateName = getStateNameSafe();
-        if (isSulfurFamily(stateName)) {
-            PacketEvents.getAPI().getLogger().info("[TRACE][block-update] user=" + getTraceUser()
+        if (!BlockChangeTraceUtil.shouldDebugTraceBlockUpdates()) {
+            return;
+        }
+        String stateName = BlockChangeTraceUtil.getStateNameSafe(serverVersion, blockID);
+        if (BlockChangeTraceUtil.isSulfurFamily(stateName)) {
+            PacketEvents.getAPI().getLogger().fine("[TRACE][block-update]"
                     + " pos=" + blockPosition
                     + " blockId=" + blockID
                     + " state=" + stateName);
@@ -109,23 +112,4 @@ public class WrapperPlayServerBlockChange extends PacketWrapper<WrapperPlayServe
         this.blockID = blockState.getGlobalId();
     }
 
-    private String getStateNameSafe() {
-        try {
-            return WrappedBlockState.getByGlobalId(serverVersion.toClientVersion(), blockID).getType().getName();
-        } catch (Throwable ignored) {
-            return "unknown";
-        }
-    }
-
-    private boolean isSulfurFamily(String stateName) {
-        String normalized = stateName.toLowerCase();
-        return normalized.contains("sulfur") || normalized.contains("cinnabar");
-    }
-
-    private String getTraceUser() {
-        if (this.user == null) {
-            return "unknown";
-        }
-        return this.user.getName() + "/" + this.user.getUUID();
-    }
 }

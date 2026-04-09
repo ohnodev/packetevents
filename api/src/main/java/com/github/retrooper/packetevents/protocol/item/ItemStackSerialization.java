@@ -33,6 +33,8 @@ import com.github.retrooper.packetevents.util.mappings.IRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.logging.Level;
+
 public final class ItemStackSerialization {
 
     private ItemStackSerialization() {
@@ -162,20 +164,27 @@ public final class ItemStackSerialization {
         if (!shouldTraceInventoryPacket(wrapper)) {
             return;
         }
+        if (PacketEvents.getAPI() == null || PacketEvents.getAPI().getLogger() == null) {
+            return;
+        }
+        // Keep high-frequency inventory tracing behind explicit debug logging.
+        if (!PacketEvents.getAPI().getSettings().isDebugEnabled()
+                || !PacketEvents.getAPI().getLogger().isLoggable(Level.FINE)) {
+            return;
+        }
         try {
-            PacketEvents.getAPI().getLogger().info(String.format(
-                    "[TRACE][pe-item-decode] mode=%s packet=%s nativeId=%d server=%s client=%s rawTypeId=%d resolved=%s amount=%d hasTOOL=%s",
-                    mode,
-                    wrapper.getPacketTypeData().getPacketType(),
-                    wrapper.getNativePacketId(),
-                    wrapper.getServerVersion(),
-                    wrapper.getServerVersion().toClientVersion(),
-                    rawTypeId,
-                    resolvedType != null ? resolvedType.getName() : "null",
-                    amount,
-                    hasToolComponent
-            ));
-        } catch (Throwable ignored) {
+            PacketEvents.getAPI().getLogger().fine(
+                    "[TRACE][pe-item-decode] mode=" + mode
+                            + " packet=" + wrapper.getPacketTypeData().getPacketType()
+                            + " nativeId=" + wrapper.getNativePacketId()
+                            + " server=" + wrapper.getServerVersion()
+                            + " client=" + wrapper.getServerVersion().toClientVersion()
+                            + " rawTypeId=" + rawTypeId
+                            + " resolved=" + (resolvedType != null ? resolvedType.getName() : "null")
+                            + " amount=" + amount
+                            + " hasTOOL=" + hasToolComponent
+            );
+        } catch (Exception ignored) {
             // Never fail packet decode due to tracing.
         }
     }

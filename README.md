@@ -77,6 +77,10 @@ This branch also includes a prebuilt Fabric artifact for convenience:
 - `prebuilt/packetevents-fabric-2.12.0+8111402-SNAPSHOT.zip`
 - `prebuilt/packetevents-fabric-2.12.0+8111402-SNAPSHOT.jar.sha256`
 - `prebuilt/packetevents-fabric-2.12.0+8111402-SNAPSHOT.zip.sha256`
+- `prebuilt/packetevents-fabric-common-2.12.0+8111402-SNAPSHOT.jar`
+- `prebuilt/packetevents-fabric-common-2.12.0+8111402-SNAPSHOT.zip`
+- `prebuilt/packetevents-fabric-common-2.12.0+8111402-SNAPSHOT.jar.sha256`
+- `prebuilt/packetevents-fabric-common-2.12.0+8111402-SNAPSHOT.zip.sha256`
 
 That lets teammates pull this branch and deploy directly without building first.
 
@@ -86,10 +90,14 @@ Before using prebuilt artifacts, verify integrity:
 # Linux
 sha256sum -c prebuilt/packetevents-fabric-2.12.0+8111402-SNAPSHOT.jar.sha256
 sha256sum -c prebuilt/packetevents-fabric-2.12.0+8111402-SNAPSHOT.zip.sha256
+sha256sum -c prebuilt/packetevents-fabric-common-2.12.0+8111402-SNAPSHOT.jar.sha256
+sha256sum -c prebuilt/packetevents-fabric-common-2.12.0+8111402-SNAPSHOT.zip.sha256
 
 # macOS alternative
 shasum -a 256 prebuilt/packetevents-fabric-2.12.0+8111402-SNAPSHOT.jar
 shasum -a 256 prebuilt/packetevents-fabric-2.12.0+8111402-SNAPSHOT.zip
+shasum -a 256 prebuilt/packetevents-fabric-common-2.12.0+8111402-SNAPSHOT.jar
+shasum -a 256 prebuilt/packetevents-fabric-common-2.12.0+8111402-SNAPSHOT.zip
 ```
 
 ### Troubleshooting

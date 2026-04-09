@@ -146,6 +146,9 @@ public class WrapperPlayServerMultiBlockChange extends PacketWrapper<WrapperPlay
     }
 
     private void logSulfurChanges() {
+        if (!BlockChangeTraceUtil.shouldDebugTraceBlockUpdates()) {
+            return;
+        }
         if (blockData == null || blockData.length == 0) {
             return;
         }
@@ -154,8 +157,8 @@ public class WrapperPlayServerMultiBlockChange extends PacketWrapper<WrapperPlay
         StringBuilder sample = new StringBuilder();
         int sampleBudget = 3;
         for (EncodedBlock encodedBlock : blockData) {
-            String stateName = getStateNameSafe(encodedBlock.getBlockId());
-            if (!isSulfurFamily(stateName)) {
+            String stateName = BlockChangeTraceUtil.getStateNameSafe(serverVersion, encodedBlock.getBlockId());
+            if (!BlockChangeTraceUtil.isSulfurFamily(stateName)) {
                 continue;
             }
             sulfurChanges++;
@@ -169,30 +172,10 @@ public class WrapperPlayServerMultiBlockChange extends PacketWrapper<WrapperPlay
         }
 
         if (sulfurChanges > 0) {
-            PacketEvents.getAPI().getLogger().info("[TRACE][multi-block-update] user=" + getTraceUser()
+            PacketEvents.getAPI().getLogger().fine("[TRACE][multi-block-update]"
                     + " changes=" + sulfurChanges + "/" + blockData.length
                     + " sample=" + sample);
         }
-    }
-
-    private String getStateNameSafe(int blockId) {
-        try {
-            return WrappedBlockState.getByGlobalId(serverVersion.toClientVersion(), blockId).getType().getName();
-        } catch (Throwable ignored) {
-            return "unknown";
-        }
-    }
-
-    private boolean isSulfurFamily(String stateName) {
-        String normalized = stateName.toLowerCase();
-        return normalized.contains("sulfur") || normalized.contains("cinnabar");
-    }
-
-    private String getTraceUser() {
-        if (this.user == null) {
-            return "unknown";
-        }
-        return this.user.getName() + "/" + this.user.getUUID();
     }
 
     public static class EncodedBlock {

@@ -2195,7 +2195,7 @@ public final class ItemTypes {
                 ClientVersion.V_1_20_5, ClientVersion.V_1_21, ClientVersion.V_1_21_2,
                 ClientVersion.V_1_21_4, ClientVersion.V_1_21_5, ClientVersion.V_1_21_6,
                 ClientVersion.V_1_21_7, ClientVersion.V_1_21_9, ClientVersion.V_1_21_11,
-                ClientVersion.V_26_1,
+                ClientVersion.V_26_1, ClientVersion.V_26_2,
         };
         for (ClientVersion version : versions) {
             parseAllComponents(version);

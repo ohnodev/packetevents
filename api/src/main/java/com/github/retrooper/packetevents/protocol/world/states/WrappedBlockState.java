@@ -85,19 +85,7 @@ public class WrappedBlockState {
         ClientVersion[] versions = ClientVersion.values();
         MAPPING_INDEXES = new byte[versions.length];
         MAPPING_VERSIONS = new ClientVersion[versions.length];
-
-        ClientVersion mappingVersion = versions[0];
-        for (int i = 0, j = 0; i < versions.length; i++) {
-            ClientVersion version = versions[i];
-            if (j < MAPPING_VERSION_STEPS.length && version == MAPPING_VERSION_STEPS[j]) {
-                j++;
-                mappingVersion = version;
-            }
-            MAPPING_INDEXES[version.ordinal()] = (byte) (LEGACY_MAPPING_INDEX + j);
-            MAPPING_VERSIONS[version.ordinal()] = mappingVersion;
-        }
-        // Force a single mapping source for all callers in this 26.2-only runtime.
-        byte latestMappingIndex = MAPPING_INDEXES[ClientVersion.V_26_2.ordinal()];
+        byte latestMappingIndex = (byte) (LEGACY_MAPPING_INDEX + MAPPING_VERSION_STEPS.length);
         for (ClientVersion version : versions) {
             MAPPING_INDEXES[version.ordinal()] = latestMappingIndex;
             MAPPING_VERSIONS[version.ordinal()] = ClientVersion.V_26_2;

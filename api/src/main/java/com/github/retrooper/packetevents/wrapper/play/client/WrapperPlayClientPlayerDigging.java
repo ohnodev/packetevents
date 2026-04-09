@@ -27,7 +27,10 @@ import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 
+import java.util.logging.Level;
+
 public class WrapperPlayClientPlayerDigging extends PacketWrapper<WrapperPlayClientPlayerDigging> {
+    private static final boolean DEBUG_DIG_TRACE = Boolean.getBoolean("packetevents.debug.dig.trace");
     private DiggingAction action;
     private Vector3i blockPosition;
     private BlockFace blockFace;
@@ -80,9 +83,8 @@ public class WrapperPlayClientPlayerDigging extends PacketWrapper<WrapperPlayCli
             sequence = readVarInt();
         }
 
-        if (shouldTraceDigAction(action)) {
-            PacketEvents.getAPI().getLogger().info("[TRACE][dig-in] user=" + getTraceUser()
-                    + " action=" + action
+        if (shouldDebugTraceDigAction(action)) {
+            PacketEvents.getAPI().getLogger().fine("[TRACE][dig-in] action=" + action
                     + " pos=" + blockPosition
                     + " face=" + blockFaceId
                     + " seq=" + sequence);
@@ -164,10 +166,12 @@ public class WrapperPlayClientPlayerDigging extends PacketWrapper<WrapperPlayCli
                 || diggingAction == DiggingAction.CANCELLED_DIGGING;
     }
 
-    private String getTraceUser() {
-        if (this.user == null) {
-            return "unknown";
+    private boolean shouldDebugTraceDigAction(DiggingAction diggingAction) {
+        if (!shouldTraceDigAction(diggingAction) || PacketEvents.getAPI() == null) {
+            return false;
         }
-        return this.user.getName() + "/" + this.user.getUUID();
+        return DEBUG_DIG_TRACE
+                && PacketEvents.getAPI().getSettings().isDebugEnabled()
+                && PacketEvents.getAPI().getLogger().isLoggable(Level.FINE);
     }
 }

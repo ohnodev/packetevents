@@ -31,9 +31,11 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -49,7 +51,10 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     private final Map<String, T>[] typeNames;
     private final Map<Integer, T>[] typeIds;
     private final Set<T> entries = new HashSet<>();
-    private static final Set<String> LOGGED_MISSING_MAPPINGS = ConcurrentHashMap.newKeySet();
+    private static final int MAX_LOGGED_MISSING_MAPPINGS = Integer.getInteger("packetevents.mapping-gap-log.max", 4096);
+    private static final Map<String, Boolean> LOGGED_MISSING_MAPPINGS = new ConcurrentHashMap<>();
+    private static final Deque<String> LOGGED_MISSING_ORDER = new ConcurrentLinkedDeque<>();
+    private static final boolean STRICT_LOOKUP_MISS_LOGGING = Boolean.getBoolean("packetevents.strict.registry.lookup");
 
     public VersionedRegistry(String registry) {
         this(registry, new ClientVersion[0]);
@@ -159,7 +164,7 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
         int index = this.typesBuilder.getDataIndex(version);
         T mapped = this.typeNames[index].get(name.toString());
         if (mapped == null) {
-            logCriticalMappingGap(version, "missing name mapping in " + this.registryKey + " for " + name);
+            logLookupMappingGap(version, "missing name mapping in " + this.registryKey + " for " + name);
         }
         return mapped;
     }
@@ -171,7 +176,7 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
         String normalized = ResourceLocation.normString(name);
         T mapped = this.typeNames[index].get(normalized);
         if (mapped == null) {
-            logCriticalMappingGap(version, "missing name mapping in " + this.registryKey + " for " + normalized);
+            logLookupMappingGap(version, "missing name mapping in " + this.registryKey + " for " + normalized);
         }
         return mapped;
     }
@@ -193,7 +198,7 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
         int index = this.typesBuilder.getDataIndex(version);
         T mapped = this.typeIds[index].get(id);
         if (mapped == null) {
-            logCriticalMappingGap(version, "missing id mapping in " + this.registryKey + " for #" + id);
+            logLookupMappingGap(version, "missing id mapping in " + this.registryKey + " for #" + id);
         }
         return mapped;
     }
@@ -227,14 +232,41 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     }
 
     private void logCriticalMappingGap(@Nullable ClientVersion version, String detail) {
+        logMappingGap(version, detail, true);
+    }
+
+    private void logLookupMappingGap(@Nullable ClientVersion version, String detail) {
+        logMappingGap(version, detail, STRICT_LOOKUP_MISS_LOGGING);
+    }
+
+    private void logMappingGap(@Nullable ClientVersion version, String detail, boolean critical) {
         String versionName = version == null ? "UNKNOWN_VERSION_STEP" : version.name();
         String dedupeKey = this.registryKey + "|" + versionName + "|" + detail;
-        if (LOGGED_MISSING_MAPPINGS.add(dedupeKey)) {
-            PacketEvents.getAPI().getLogger().severe(
-                    "[CRITICAL] Mapping gap detected (no legacy fallback): " + detail
-                            + " [registry=" + this.registryKey
-                            + ", version=" + versionName + ']'
-            );
+        if (!markLoggedMappingGap(dedupeKey)) {
+            return;
         }
+        String message = (critical ? "[CRITICAL]" : "[WARN]") + " Mapping gap detected (no legacy fallback): " + detail
+                + " [registry=" + this.registryKey
+                + ", version=" + versionName + ']';
+        if (critical) {
+            PacketEvents.getAPI().getLogger().severe(message);
+        } else {
+            PacketEvents.getAPI().getLogger().warning(message);
+        }
+    }
+
+    private static boolean markLoggedMappingGap(String key) {
+        if (LOGGED_MISSING_MAPPINGS.putIfAbsent(key, Boolean.TRUE) != null) {
+            return false;
+        }
+        LOGGED_MISSING_ORDER.addLast(key);
+        while (LOGGED_MISSING_MAPPINGS.size() > MAX_LOGGED_MISSING_MAPPINGS) {
+            String oldest = LOGGED_MISSING_ORDER.pollFirst();
+            if (oldest == null) {
+                break;
+            }
+            LOGGED_MISSING_MAPPINGS.remove(oldest);
+        }
+        return true;
     }
 }
