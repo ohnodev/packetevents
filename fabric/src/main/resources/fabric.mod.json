@@ -22,7 +22,6 @@
   "mixins": [
     "packetevents.mixins.json"
   ],
-  "accessWidener": "packetevents.accesswidener",
   "depends": {
     "fabricloader": "*"
   }
