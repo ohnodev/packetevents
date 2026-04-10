@@ -44,22 +44,9 @@ import org.jetbrains.annotations.Nullable;
 @ApiStatus.Internal @ChannelHandler.Sharable
 public class PacketEncoder extends ChannelOutboundHandlerAdapter {
 
-    private static final boolean NETTY_4_1_0;
-
-    static {
-        boolean netty410 = false;
-        try {
-            ChannelPromise.class.getDeclaredMethod("unvoid");
-            netty410 = true;
-        } catch (NoSuchMethodException ignored) {
-        }
-        NETTY_4_1_0 = netty410;
-    }
-
     private final PacketSide side;
     public User user;
     public Object player;
-    private ChannelPromise promise;
     private final boolean preViaVersion;
 
     public PacketEncoder(PacketSide side, User user, boolean preViaVersion) {
@@ -78,14 +65,10 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
             ctx.write(msg, promise);
             return;
         }
-
-        // Handle promise management
-        ChannelPromise oldPromise = this.promise != null && !this.promise.isSuccess() ? this.promise : null;
-        if (NETTY_4_1_0) {
-            promise = promise.unvoid();
+        if (!in.isReadable()) {
+            in.release();
+            return;
         }
-        promise.addListener(p -> this.promise = oldPromise);
-        this.promise = promise;
 
         handlePacket(ctx, in, promise);
 
@@ -102,18 +85,20 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
             PacketEventsImplHelper.handlePacket(ctx.channel(), user, player, buffer, preViaVersion, this.side);
         }
 
-        ProtocolPacketEvent protocolPacketEvent = PacketEventsImplHelper.handlePacket(
+        ProtocolPacketEvent event = PacketEventsImplHelper.handlePacket(
                 ctx.channel(), this.user, this.player, buffer, !preViaVersion, this.side
         );
 
-        if (protocolPacketEvent instanceof PacketSendEvent packetSendEvent && packetSendEvent.hasTasksAfterSend()) {
-            promise.addListener((p) -> {
-                for (Runnable task : packetSendEvent.getTasksAfterSend()) {
+        if (event instanceof PacketSendEvent sendEvent && sendEvent.hasTasksAfterSend()) {
+            for (Runnable task : sendEvent.getTasksAfterSend()) {
+                try {
                     task.run();
+                } catch (Throwable throwable) {
+                    throw new PacketProcessException("Error while handling post-send-task " + task + " for " + event, throwable);
                 }
-            });
+            }
         }
-        return protocolPacketEvent;
+        return event;
     }
 
     @Override
