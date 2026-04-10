@@ -11,10 +11,6 @@ dependencies {
     include(project(":api", "shadow"))
     include(project(":netty-common"))
     include(libs.gson)
-    include(libs.netty.buffer)
-    include(libs.netty.common)
-    include(libs.netty.transport)
-    include(libs.netty.codec)
 
     include(project(":fabric-common"))
     include(project(":fabric-intermediary"))
