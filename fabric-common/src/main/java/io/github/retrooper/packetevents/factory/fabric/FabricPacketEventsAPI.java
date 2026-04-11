@@ -21,6 +21,7 @@ package io.github.retrooper.packetevents.factory.fabric;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.PacketEventsAPI;
 import com.github.retrooper.packetevents.injector.ChannelInjector;
+import com.github.retrooper.packetevents.manager.InternalPacketListener;
 import com.github.retrooper.packetevents.manager.protocol.ProtocolManager;
 import com.github.retrooper.packetevents.manager.registry.RegistryManager;
 import com.github.retrooper.packetevents.manager.server.ServerManager;
@@ -37,7 +38,6 @@ import io.github.retrooper.packetevents.manager.AbstractFabricPlayerManager;
 import io.github.retrooper.packetevents.manager.FabricLoggerManager;
 import io.github.retrooper.packetevents.manager.FabricProtocolManager;
 import io.github.retrooper.packetevents.manager.FabricServerManager;
-import io.github.retrooper.packetevents.manager.InternalFabricPacketListener;
 import io.github.retrooper.packetevents.manager.logger.jul.JULoggerFactory;
 import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 import net.fabricmc.api.EnvType;
@@ -96,7 +96,7 @@ public class FabricPacketEventsAPI extends PacketEventsAPI<ModInitializer> {
 
         // register internal packet listener (should be the first listener)
         // this listener doesn't do any modifications to the packets, just reads data
-        this.getEventManager().registerListener(new InternalFabricPacketListener());
+        this.getEventManager().registerListener(new InternalPacketListener());
         this.loaded = true;
     }
 

@@ -32,7 +32,6 @@ import com.github.retrooper.packetevents.util.ExceptionUtil;
 import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDisconnect;
 import io.github.retrooper.packetevents.factory.fabric.FabricPacketEventsAPI;
-import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -47,6 +46,7 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
     private final PacketSide side;
     public User user;
     public Object player;
+    @SuppressWarnings("unused")
     private final boolean preViaVersion;
 
     public PacketEncoder(PacketSide side, User user, boolean preViaVersion) {
@@ -80,13 +80,10 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
     }
 
     private @Nullable ProtocolPacketEvent handlePacket(ChannelHandlerContext ctx, ByteBuf buffer, ChannelPromise promise) throws Exception {
-        if (!preViaVersion && PacketEvents.getAPI().getSettings().isPreViaInjection() && !ViaVersionUtil.isAvailable(user)) {
-            // Intentionally ignore the pre-Via return; the authoritative event is produced by the main pass below.
-            PacketEventsImplHelper.handlePacket(ctx.channel(), user, player, buffer, preViaVersion, this.side);
-        }
-
+        // One strict path: map using server-native protocol in this handler.
+        boolean autoProtocolTranslation = true;
         ProtocolPacketEvent event = PacketEventsImplHelper.handlePacket(
-                ctx.channel(), this.user, this.player, buffer, !preViaVersion, this.side
+                ctx.channel(), this.user, this.player, buffer, autoProtocolTranslation, this.side
         );
 
         if (event instanceof PacketSendEvent sendEvent && sendEvent.hasTasksAfterSend()) {

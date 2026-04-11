@@ -18,7 +18,6 @@
 
 package io.github.retrooper.packetevents.handler;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.event.ProtocolPacketEvent;
 import com.github.retrooper.packetevents.exception.PacketProcessException;
@@ -26,7 +25,6 @@ import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
 import io.github.retrooper.packetevents.util.FabricInjectionUtil;
-import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -41,6 +39,7 @@ public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
     private final PacketSide side;
     public User user;
     public Object player;
+    @SuppressWarnings("unused")
     private final boolean preViaVersion;
 
     public PacketDecoder(PacketSide side, User user, boolean preViaVersion) {
@@ -58,12 +57,9 @@ public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
         if (!msg.isReadable()) {
             return;
         }
-        // We still call preVia listeners if ViaVersion is not available
-        if (!preViaVersion && PacketEvents.getAPI().getSettings().isPreViaInjection() && !ViaVersionUtil.isAvailable(user)) {
-            PacketEventsImplHelper.handleServerBoundPacket(ctx.channel(), user, player, msg, false);
-        }
+        boolean autoProtocolTranslation = true;
         ProtocolPacketEvent event = PacketEventsImplHelper.handlePacket(ctx.channel(), this.user, this.player,
-                msg, !preViaVersion, this.side);
+                msg, autoProtocolTranslation, this.side);
         if (msg.isReadable()) {
             out.add(msg.retain());
         }
