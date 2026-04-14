@@ -78,6 +78,8 @@ public abstract class AbstractFabricPlayerManager extends PlayerManagerAbstract 
         packetEventsAPI.getProtocolManager().receivePacketSilently(getChannel(player), wrapper);
     }
 
+    public abstract boolean isServerPlayer(Object player);
+
     public abstract void disconnectPlayer(Object serverPlayer, String message);
 
     /**

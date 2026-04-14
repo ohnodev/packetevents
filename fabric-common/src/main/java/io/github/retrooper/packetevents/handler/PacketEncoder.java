@@ -32,6 +32,7 @@ import com.github.retrooper.packetevents.util.ExceptionUtil;
 import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDisconnect;
 import io.github.retrooper.packetevents.factory.fabric.FabricPacketEventsAPI;
+import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -43,10 +44,22 @@ import org.jetbrains.annotations.Nullable;
 @ApiStatus.Internal @ChannelHandler.Sharable
 public class PacketEncoder extends ChannelOutboundHandlerAdapter {
 
+    private static final boolean NETTY_4_1_0;
+
+    static {
+        boolean netty410 = false;
+        try {
+            ChannelPromise.class.getDeclaredMethod("unvoid");
+            netty410 = true;
+        } catch (NoSuchMethodException ignored) {
+        }
+        NETTY_4_1_0 = netty410;
+    }
+
     private final PacketSide side;
     public User user;
     public Object player;
-    @SuppressWarnings("unused")
+    private ChannelPromise promise;
     private final boolean preViaVersion;
 
     public PacketEncoder(PacketSide side, User user, boolean preViaVersion) {
@@ -65,10 +78,14 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
             ctx.write(msg, promise);
             return;
         }
-        if (!in.isReadable()) {
-            in.release();
-            return;
+
+        // Keep the previous promise chain so post-send tasks run at the right time.
+        ChannelPromise oldPromise = this.promise != null && !this.promise.isSuccess() ? this.promise : null;
+        if (NETTY_4_1_0) {
+            promise = promise.unvoid();
         }
+        promise.addListener(p -> this.promise = oldPromise);
+        this.promise = promise;
 
         handlePacket(ctx, in, promise);
 
@@ -80,22 +97,26 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
     }
 
     private @Nullable ProtocolPacketEvent handlePacket(ChannelHandlerContext ctx, ByteBuf buffer, ChannelPromise promise) throws Exception {
-        // One strict path: map using server-native protocol in this handler.
-        boolean autoProtocolTranslation = true;
-        ProtocolPacketEvent event = PacketEventsImplHelper.handlePacket(
-                ctx.channel(), this.user, this.player, buffer, autoProtocolTranslation, this.side
+        if (!preViaVersion && PacketEvents.getAPI().getSettings().isPreViaInjection() && !ViaVersionUtil.isAvailable(user)) {
+            PacketEventsImplHelper.handlePacket(ctx.channel(), user, player, buffer, preViaVersion, this.side);
+        }
+
+        ProtocolPacketEvent protocolPacketEvent = PacketEventsImplHelper.handlePacket(
+                ctx.channel(), this.user, this.player, buffer, !preViaVersion, this.side
         );
 
-        if (event instanceof PacketSendEvent sendEvent && sendEvent.hasTasksAfterSend()) {
-            for (Runnable task : sendEvent.getTasksAfterSend()) {
-                try {
-                    task.run();
-                } catch (Throwable throwable) {
-                    throw new PacketProcessException("Error while handling post-send-task " + task + " for " + event, throwable);
+        if (protocolPacketEvent instanceof PacketSendEvent packetSendEvent && packetSendEvent.hasTasksAfterSend()) {
+            promise.addListener((p) -> {
+                for (Runnable task : packetSendEvent.getTasksAfterSend()) {
+                    try {
+                        task.run();
+                    } catch (Throwable throwable) {
+                        throw new PacketProcessException("Error while handling post-send-task " + task + " for " + protocolPacketEvent, throwable);
+                    }
                 }
-            }
+            });
         }
-        return event;
+        return protocolPacketEvent;
     }
 
     @Override
@@ -115,7 +136,7 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
                     }
                 } catch (Exception ignored) {}
                 ctx.channel().close();
-                if (player != null) {
+                if (player != null && FabricPacketEventsAPI.getServerAPI().getPlayerManager().isServerPlayer(player)) {
                     FabricPacketEventsAPI.getServerAPI().getPlayerManager().kickOnException(player, "Invalid packet");
                 }
             }
