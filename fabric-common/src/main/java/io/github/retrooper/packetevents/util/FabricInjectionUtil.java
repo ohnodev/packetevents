@@ -53,8 +53,11 @@ public class FabricInjectionUtil {
         String encoderName = channel.pipeline().names().contains("outbound_config") ? "outbound_config" : "encoder";
         channel.pipeline().addBefore(encoderName, PacketEvents.ENCODER_NAME, new PacketEncoder(pipelineSide, user, false));
         if (PacketEvents.getAPI().getSettings().isPreViaInjection() && ViaVersionUtil.isAvailable(user)) {
-            channel.pipeline().addBefore(VIA_DECODER_NAME, "pre-" + PacketEvents.DECODER_NAME, new PacketDecoder(pipelineSide, user, true));
-            channel.pipeline().addBefore(VIA_ENCODER_NAME, "pre-" + PacketEvents.ENCODER_NAME, new PacketEncoder(pipelineSide, user, true));
+            List<String> names = channel.pipeline().names();
+            if (names.contains(VIA_DECODER_NAME) && names.contains(VIA_ENCODER_NAME)) {
+                channel.pipeline().addBefore(VIA_DECODER_NAME, "pre-" + PacketEvents.DECODER_NAME, new PacketDecoder(pipelineSide, user, true));
+                channel.pipeline().addBefore(VIA_ENCODER_NAME, "pre-" + PacketEvents.ENCODER_NAME, new PacketEncoder(pipelineSide, user, true));
+            }
         }
         channel.closeFuture().addListener((ChannelFutureListener) future ->
                 PacketEventsImplHelper.handleDisconnection(user.getChannel(), user.getUUID()));
